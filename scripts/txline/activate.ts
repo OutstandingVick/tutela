@@ -52,6 +52,7 @@ const API_BASE_URL = `${API_ORIGIN}/api`;
 const SERVICE_LEVEL_ID = 1; // Free World Cup tier
 const DURATION_WEEKS = 4;
 const SELECTED_LEAGUES: number[] = []; // Standard free bundle
+const EXISTING_SUBSCRIBE_TX_SIG = process.env.TXLINE_SUBSCRIBE_TX_SIG;
 
 async function main() {
   const secret = Uint8Array.from(JSON.parse(readFileSync(WALLET_PATH, "utf8")));
@@ -101,34 +102,39 @@ async function main() {
   const [tokenTreasuryPda] = PublicKey.findProgramAddressSync([Buffer.from("token_treasury_v2")], PROGRAM_ID);
   const tokenTreasuryVault = getAssociatedTokenAddressSync(TXL_MINT, tokenTreasuryPda, true, TOKEN_2022_PROGRAM_ID);
 
-  console.log(`Subscribing on-chain: service level ${SERVICE_LEVEL_ID}, ${DURATION_WEEKS} weeks (free tier, no TxL charge)...`);
+  let txSig = EXISTING_SUBSCRIBE_TX_SIG;
+  if (txSig) {
+    console.log(`Reusing existing subscribe transaction: ${txSig}`);
+  } else {
+    console.log(`Subscribing on-chain: service level ${SERVICE_LEVEL_ID}, ${DURATION_WEEKS} weeks (free tier, no TxL charge)...`);
 
-  const subscribeTx: Transaction = await program.methods
-    .subscribe(SERVICE_LEVEL_ID, DURATION_WEEKS)
-    .accounts({
-      user: wallet.publicKey,
-      pricingMatrix: pricingMatrixPda,
-      tokenMint: TXL_MINT,
-      userTokenAccount,
-      tokenTreasuryVault,
-      tokenTreasuryPda,
-      tokenProgram: TOKEN_2022_PROGRAM_ID,
-      systemProgram: SystemProgram.programId,
-      associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID
-    })
-    .transaction();
+    const subscribeTx: Transaction = await program.methods
+      .subscribe(SERVICE_LEVEL_ID, DURATION_WEEKS)
+      .accounts({
+        user: wallet.publicKey,
+        pricingMatrix: pricingMatrixPda,
+        tokenMint: TXL_MINT,
+        userTokenAccount,
+        tokenTreasuryVault,
+        tokenTreasuryPda,
+        tokenProgram: TOKEN_2022_PROGRAM_ID,
+        systemProgram: SystemProgram.programId,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID
+      })
+      .transaction();
 
-  const latestBlockhash = await connection.getLatestBlockhash("confirmed");
-  subscribeTx.recentBlockhash = latestBlockhash.blockhash;
-  subscribeTx.feePayer = wallet.publicKey;
-  subscribeTx.sign(wallet);
+    const latestBlockhash = await connection.getLatestBlockhash("confirmed");
+    subscribeTx.recentBlockhash = latestBlockhash.blockhash;
+    subscribeTx.feePayer = wallet.publicKey;
+    subscribeTx.sign(wallet);
 
-  const txSig = await connection.sendRawTransaction(subscribeTx.serialize());
-  await connection.confirmTransaction(
-    { signature: txSig, blockhash: latestBlockhash.blockhash, lastValidBlockHeight: latestBlockhash.lastValidBlockHeight },
-    "confirmed"
-  );
-  console.log(`Subscribe transaction confirmed: ${txSig}`);
+    txSig = await connection.sendRawTransaction(subscribeTx.serialize());
+    await connection.confirmTransaction(
+      { signature: txSig, blockhash: latestBlockhash.blockhash, lastValidBlockHeight: latestBlockhash.lastValidBlockHeight },
+      "confirmed"
+    );
+    console.log(`Subscribe transaction confirmed: ${txSig}`);
+  }
   console.log(`https://explorer.solana.com/tx/${txSig}?cluster=devnet`);
 
   console.log("Requesting guest JWT...");
@@ -150,7 +156,13 @@ async function main() {
     const body = await activationResponse.text();
     throw new Error(`Activation failed with ${activationResponse.status}: ${body}`);
   }
-  const activationBody = (await activationResponse.json()) as { token?: string } | string;
+  const activationText = await activationResponse.text();
+  let activationBody: { token?: string } | string = activationText.trim();
+  try {
+    activationBody = JSON.parse(activationText) as { token?: string } | string;
+  } catch {
+    // TxLINE may return the token as plain text rather than JSON.
+  }
   const apiToken = typeof activationBody === "string" ? activationBody : activationBody.token;
   if (!apiToken) throw new Error(`Activation response did not include a token: ${JSON.stringify(activationBody)}`);
 
