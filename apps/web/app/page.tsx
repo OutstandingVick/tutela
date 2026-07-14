@@ -114,28 +114,28 @@ const tutelaSteps = ["Final data", "Proof validation", "Condition evaluation", "
  */
 const productPreviews = [
   {
-    src: "/product-preview-match-markets.png",
+    src: "/match-markets.png",
     label: "Match Markets",
     alt: "Tutela match markets screen showing the live France v Spain scoreline and stat markets",
     translate: "md:translate-y-6",
     emphasis: false
   },
   {
-    src: "/product-preview-create-markets.png",
+    src: "/create-markets.png",
     label: "Create Markets",
     alt: "Tutela create markets screen with the AND/OR condition builder",
     translate: "md:-translate-y-3",
     emphasis: true
   },
   {
-    src: "/product-preview-leaderboards.png",
+    src: "/leaderboards.png",
     label: "Leaderboards",
     alt: "Tutela leaderboards screen showing global rankings",
     translate: "md:-translate-y-1",
     emphasis: true
   },
   {
-    src: "/product-preview-profile.png",
+    src: "/preview-profile.png",
     label: "Profile",
     alt: "Tutela profile screen showing test-coin balance and activity",
     translate: "md:translate-y-8",
@@ -249,9 +249,6 @@ export default function LandingPage() {
                 See How Verification Works <ChevronDown size={18} />
               </a>
             </div>
-            <p className="mt-5 text-sm font-bold text-[#D0FEF5]/80">
-              Solana Devnet · Test tokens only · Powered by verifiable match data
-            </p>
           </div>
         </div>
       </section>
@@ -265,10 +262,7 @@ export default function LandingPage() {
             </p>
             <h2 className="mx-auto max-w-3xl text-4xl font-black leading-tight tracking-normal text-white md:text-6xl">
               Everything football markets need, in one app.
-            </h2>
-            <p className="mx-auto mt-6 max-w-2xl text-lg font-semibold leading-8 text-[#D0FEF5]/80">
-              Discover live match markets, construct multi-condition outcomes, compete on global leaderboards and track every proof-settled result from one mobile-first interface.
-            </p>
+            </h2> solana
           </div>
 
           <ProductShowcase />
