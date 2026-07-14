@@ -217,7 +217,7 @@ export default function LandingPage() {
       </div>
       <section
         id="product"
-        className="relative flex min-h-[calc(100vh-5rem)] flex-col justify-center overflow-hidden px-4 py-14 md:px-6 md:py-20 lg:px-8"
+        className="relative overflow-hidden px-4 pb-0 pt-14 md:px-6 md:pt-20 lg:px-8"
       >
         <div className="absolute inset-0 z-0 overflow-hidden">
           <img
@@ -249,20 +249,6 @@ export default function LandingPage() {
                 See How Verification Works <ChevronDown size={18} />
               </a>
             </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="app-experience" className="relative overflow-hidden bg-[#020B12] px-4 py-16 md:px-6 md:py-24 lg:px-8">
-        <div className="pointer-events-none absolute inset-x-0 top-0 z-0 mx-auto h-[420px] max-w-4xl rounded-full bg-[#6FB4EB]/10 blur-3xl" />
-        <div className="relative z-10 mx-auto max-w-[90rem]">
-          <div className="mx-auto max-w-3xl text-center">
-            <p className="mx-auto mb-5 inline-flex items-center gap-2 rounded-full border border-[#D0FEF5]/20 bg-[#D0FEF5]/10 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-[#D0FEF5] backdrop-blur">
-              The consumer experience
-            </p>
-            <h2 className="mx-auto max-w-3xl text-4xl font-black leading-tight tracking-normal text-white md:text-6xl">
-              Everything football markets need, in one app.
-            </h2> solana
           </div>
 
           <ProductShowcase />
@@ -407,7 +393,7 @@ function ProductShowcase() {
   return (
     <>
       {/* Desktop / tablet: staggered showcase */}
-      <div className="mt-16 hidden items-end justify-center gap-6 md:flex lg:gap-8">
+      <div className="mt-12 hidden items-end justify-center gap-6 md:flex lg:gap-8">
         {productPreviews.map((preview) => (
           <figure
             key={preview.label}
@@ -425,7 +411,7 @@ function ProductShowcase() {
       </div>
 
       {/* Mobile: swipeable, scroll-snapped row */}
-      <div className="no-scrollbar -mx-4 mt-12 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 md:hidden">
+      <div className="no-scrollbar -mx-4 mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 md:hidden">
         {productPreviews.map((preview) => (
           <figure key={preview.label} className="flex w-[72%] shrink-0 snap-center flex-col items-center">
             <div
