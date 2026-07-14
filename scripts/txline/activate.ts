@@ -45,7 +45,7 @@ import idl from "./idl/txoracle.devnet.json" with { type: "json" };
 const RPC_URL = process.env.ANCHOR_PROVIDER_URL || "https://api.devnet.solana.com";
 const WALLET_PATH = (process.env.ANCHOR_WALLET || `${homedir()}/.config/solana/id.json`).replace(/^~/, homedir());
 const TXL_MINT = new PublicKey(process.env.TOKEN_MINT_ADDRESS || "4Zao8ocPhmMgq7PdsYWyxvqySMGx7xb9cMftPMkEokRG");
-const PROGRAM_ID = new PublicKey(idl.address);
+const PROGRAM_ID = new PublicKey(process.env.TXLINE_PROGRAM_ID || "6pW64gN1s2uqjHkn1unFeEjAwJkPGHoppGvS715wyP2J");
 const API_ORIGIN = process.env.TXLINE_API_ORIGIN || "https://txline-dev.txodds.com";
 const GUEST_AUTH_URL = `${API_ORIGIN}/auth/guest/start`;
 const API_BASE_URL = `${API_ORIGIN}/api`;
@@ -69,6 +69,11 @@ async function main() {
 
   const provider = new anchor.AnchorProvider(connection, new anchor.Wallet(wallet), { commitment: "confirmed" });
   const program = new anchor.Program(idl as anchor.Idl, provider);
+  if (!program.programId.equals(PROGRAM_ID)) {
+    throw new Error(
+      `Loaded IDL program ${program.programId.toBase58()} does not match devnet program ${PROGRAM_ID.toBase58()}`
+    );
+  }
 
   const userTokenAccount = getAssociatedTokenAddressSync(TXL_MINT, wallet.publicKey, false, TOKEN_2022_PROGRAM_ID);
 
