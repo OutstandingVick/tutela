@@ -1,0 +1,9 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "cd ../.. && corepack pnpm --filter @tutela/web build",
+  "installCommand": "cd ../.. && corepack pnpm install --frozen-lockfile",
+  "devCommand": "corepack pnpm --filter @tutela/web dev",
+  "env": {
+    "NEXT_PUBLIC_SOLANA_CLUSTER": "devnet"
+  }
+}

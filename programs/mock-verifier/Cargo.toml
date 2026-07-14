@@ -1,0 +1,18 @@
+[package]
+name = "mock-verifier"
+version = "0.1.0"
+description = "Labelled mock verifier for Tutela devnet demos"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "mock_verifier"
+
+[features]
+no-entrypoint = []
+no-idl = []
+cpi = ["no-entrypoint"]
+default = []
+
+[dependencies]
+anchor-lang = { workspace = true }

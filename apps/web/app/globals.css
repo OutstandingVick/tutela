@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  background: #094586;
+  color: #D0FEF5;
+  --tutela-primary: #6FB4EB;
+  --tutela-secondary: #094586;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(208, 254, 245, 0.62), transparent 24rem),
+    radial-gradient(circle at 8% 18%, rgba(111, 180, 235, 0.72), transparent 32rem),
+    radial-gradient(circle at 92% 22%, rgba(111, 180, 235, 0.54), transparent 34rem),
+    linear-gradient(135deg, #094586 0%, #6FB4EB 48%, #D0FEF5 100%);
+  background-attachment: fixed;
+  color: #D0FEF5;
+  font-feature-settings: "tnum";
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.focus-ring:focus-visible {
+  outline: 3px solid rgba(111, 180, 235, 0.35);
+  outline-offset: 2px;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.tutela-shell-page {
+  height: calc(100vh - 33px);
+  overflow: hidden;
+}
+
+.tutela-phone-frame {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 65px);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(208, 254, 245, 0.22), transparent 18rem),
+    radial-gradient(circle at 12% 18%, rgba(111, 180, 235, 0.35), transparent 24rem),
+    linear-gradient(150deg, #063261 0%, #094586 46%, #397EB8 100%);
+}
+
+.tutela-shell-header,
+.tutela-bottom-nav {
+  flex: 0 0 auto;
+}
+
+.tutela-shell-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.tutela-bottom-nav {
+  display: grid;
+  background:
+    linear-gradient(150deg, rgba(6, 50, 97, 0.96) 0%, rgba(9, 69, 134, 0.96) 52%, rgba(57, 126, 184, 0.96) 100%);
+}
+
+.bg-\[\#D0FEF5\] .text-\[\#D0FEF5\] {
+  color: #4A051C;
+}
+
+.bg-\[\#D0FEF5\] .bg-\[\#094586\],
+.bg-\[\#D0FEF5\] .bg-\[\#094586\] .text-\[\#D0FEF5\] {
+  color: #D0FEF5;
+}
