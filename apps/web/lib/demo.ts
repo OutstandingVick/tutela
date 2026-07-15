@@ -7,11 +7,11 @@ export const sportsAdapter = new MockSportsDataAdapter();
 export const coinBalance = 1_000;
 
 export const liveStatMarkets = [
-  { id: "stat-cards", label: "Cards", line: "Over 4.5", yes: 62, no: 38, volume: 420, status: "Proof-ready", minute: "61'", coverage: "TxLINE stat keys: yellow and red cards" },
-  { id: "stat-corners", label: "Corners", line: "Over 8.5", yes: 57, no: 43, volume: 390, status: "Proof-ready", minute: "61'", coverage: "TxLINE stat keys: team corners" },
-  { id: "stat-goals", label: "Total goals", line: "Over 2.5", yes: 49, no: 51, volume: 510, status: "Proof-ready", minute: "61'", coverage: "TxLINE stat keys: team goals" },
-  { id: "stat-offsides", label: "Offsides", line: "Team 2+", yes: 44, no: 56, volume: 280, status: "Adapter pending", minute: "61'", coverage: "TxLINE feed-derived event; not settled by the current adapter" },
-  { id: "stat-sot", label: "Shots on target", line: "Both teams 4+", yes: 36, no: 64, volume: 190, status: "Adapter pending", minute: "61'", coverage: "TxLINE feed-derived shot outcome; not settled by the current adapter" }
+  { id: "stat-cards", label: "Cards", line: "Over 4.5", yes: 62, no: 38, volume: 420, status: "Proof-ready", minute: "61'" },
+  { id: "stat-corners", label: "Corners", line: "Over 8.5", yes: 57, no: 43, volume: 390, status: "Proof-ready", minute: "61'" },
+  { id: "stat-goals", label: "Total goals", line: "Over 2.5", yes: 49, no: 51, volume: 510, status: "Proof-ready", minute: "61'" },
+  { id: "stat-offsides", label: "Offsides", line: "Team 2+", yes: 44, no: 56, volume: 280, status: "Adapter pending", minute: "61'" },
+  { id: "stat-sot", label: "Shots on target", line: "Both teams 4+", yes: 36, no: 64, volume: 190, status: "Adapter pending", minute: "61'" }
 ];
 
 export const upcomingMatchMarkets = [

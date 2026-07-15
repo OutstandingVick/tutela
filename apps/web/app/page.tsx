@@ -252,7 +252,6 @@ export default function LandingPage() {
           <br />
           <br />
           <br />
-          <br />
           <ProductShowcase />
         </div>
       </section>

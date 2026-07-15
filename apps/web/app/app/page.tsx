@@ -3,20 +3,11 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
-import { useEffect } from "react";
-import { WELCOME_SCREEN_ENABLED, WELCOME_STORAGE_KEY } from "@/lib/welcome";
 
 export default function AppWelcomePage() {
   const router = useRouter();
 
-  useEffect(() => {
-    if (!WELCOME_SCREEN_ENABLED || getWelcomeCompleted()) {
-      router.replace("/matches");
-    }
-  }, [router]);
-
   function enterApp() {
-    setWelcomeCompleted();
     router.push("/matches");
   }
 
@@ -67,20 +58,4 @@ export default function AppWelcomePage() {
       </section>
     </main>
   );
-}
-
-function getWelcomeCompleted() {
-  try {
-    return window.localStorage.getItem(WELCOME_STORAGE_KEY) === "true";
-  } catch {
-    return false;
-  }
-}
-
-function setWelcomeCompleted() {
-  try {
-    window.localStorage.setItem(WELCOME_STORAGE_KEY, "true");
-  } catch {
-    // Storage can be unavailable in restricted browser contexts. The CTA should still enter the app.
-  }
 }
