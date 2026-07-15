@@ -28,10 +28,10 @@ export default function AppWelcomePage() {
             </h1>
             <div className="mx-auto mt-5 h-1 w-20 rounded-full bg-[#6FB4EB]" />
             <p className="mt-8 text-2xl font-black leading-tight text-white sm:text-3xl">
-              Read the match. Verify the outcome.
+               Watch the game. Predict every match moment.
             </p>
             <p className="mx-auto mt-4 max-w-[24rem] text-base font-semibold leading-7 text-[#D0FEF5]/72 sm:text-lg">
-              Complex football predictions, resolved through verifiable data on Solana.
+              Predict goals, cards, corners, and outcomes.
             </p>
           </div>
         </div>
