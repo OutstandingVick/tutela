@@ -2,12 +2,16 @@ import Link from "next/link";
 import { ChevronRight, Clock, Flame, ShieldCheck } from "lucide-react";
 import { AppShell } from "@/components/layout/app-shell";
 import { liveStatMarkets, upcomingMatchMarkets } from "@/lib/demo";
-import { formatMatchClock, formatScoreline, getLiveMatchOrFallback } from "@/lib/live";
+import { formatMatchClock, formatScoreline, getLiveMatchOrFallback, listLiveMatchesOrFallback } from "@/lib/live";
+
+const TONIGHT_MATCH_ID = "worldcup-sf-england-argentina-2026-07-15";
 
 export default async function MatchesPage() {
-  const currentMatch = upcomingMatchMarkets[0];
   const featuredLiveMarkets = liveStatMarkets.slice(0, 2);
-  const { match: liveMatch, live } = await getLiveMatchOrFallback(currentMatch.id);
+  const { matches, live: listIsLive } = await listLiveMatchesOrFallback();
+  const currentMatch = matches.find((match) => match.id === TONIGHT_MATCH_ID) ?? matches[0];
+  const { match: liveMatch, live: detailIsLive } = await getLiveMatchOrFallback(currentMatch.id);
+  const live = listIsLive || detailIsLive;
 
   return (
     <AppShell>
@@ -44,7 +48,7 @@ export default async function MatchesPage() {
         <div className="mb-3 flex items-end justify-between">
           <div>
             <h2 className="text-sm font-black uppercase tracking-[0.18em] text-[#D0FEF5]">Live stat markets</h2>
-            <p className="mt-1 text-sm text-[#D0FEF5]">Cards, offsides, throw-ins, shots and every match statistic.</p>
+            <p className="mt-1 text-sm text-[#D0FEF5]">Proof-ready cards and corners. Feed-derived markets are labelled before use.</p>
           </div>
           <Flame size={18} className="text-[#6FB4EB]" />
         </div>
@@ -55,6 +59,7 @@ export default async function MatchesPage() {
                 <div>
                   <p className="text-lg font-black">{market.label}</p>
                   <p className="mt-1 text-sm font-semibold text-[#4A051C]">{market.line} · {market.volume} coins matched</p>
+                  <p className="mt-1 text-[11px] font-black uppercase tracking-[0.12em] text-[#094586]">{market.coverage}</p>
                 </div>
                 <div className="rounded-full bg-[#094586] px-3 py-1 text-xs font-black text-[#6FB4EB]">{market.status}</div>
               </div>
@@ -79,20 +84,30 @@ export default async function MatchesPage() {
         </div>
         <div className="max-h-[390px] overflow-y-auto pr-1 no-scrollbar">
           <div className="grid gap-3">
-            {upcomingMatchMarkets.map((match) => (
+            {matches.map((match) => {
+              const meta = upcomingMatchMarkets.find((item) => item.id === match.id);
+              const kickoff = new Date(match.startsAt);
+              const time = formatKickoffTime(kickoff);
+              const date = formatKickoffDate(kickoff);
+              const marketCount = meta?.markets ?? (match.competition.includes("World Cup") ? 16 : 9);
+              const liquidity = meta?.liquidity ?? (match.competition.includes("World Cup") ? 980 : 360);
+
+              return (
               <Link key={match.id} href={`/matches/${match.id}`} className="grid grid-cols-[64px_1fr_auto] items-center gap-3 rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] text-[#4A051C] p-4">
-                <div className="text-lg font-black">{match.time}</div>
+                <div className="text-lg font-black">{time}</div>
                 <div>
-                  <p className="font-black">{match.home}</p>
-                  <p className="font-black">{match.away}</p>
-                  <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-[#4A051C]"><Clock size={13} /> {match.date} · {match.markets} markets</p>
+                  <p className="font-black">{match.homeTeam}</p>
+                  <p className="font-black">{match.awayTeam}</p>
+                  <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-[#4A051C]"><Clock size={13} /> {date} · {marketCount} markets</p>
+                  <p className="mt-1 text-[11px] font-black uppercase tracking-[0.12em] text-[#094586]">{match.competition}</p>
                 </div>
                 <div className="flex items-center gap-1 text-[#094586]">
-                  <span className="text-xs font-bold">{match.liquidity}</span>
+                  <span className="text-xs font-bold">{liquidity}</span>
                   <ChevronRight size={18} />
                 </div>
               </Link>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -103,4 +118,23 @@ export default async function MatchesPage() {
       </div>
     </AppShell>
   );
+}
+
+function formatKickoffTime(date: Date) {
+  return new Intl.DateTimeFormat("en-NG", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "Africa/Lagos"
+  }).format(date);
+}
+
+function formatKickoffDate(date: Date) {
+  return new Intl.DateTimeFormat("en-NG", {
+    weekday: "short",
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    timeZone: "Africa/Lagos"
+  }).format(date);
 }

@@ -51,8 +51,17 @@ export const TXLINE_DEVNET = {
  */
 export const TXLINE_FIXTURE_MAP: Record<string, number> = {
   "worldcup-sf-france-spain-2026-07-14": 18237038,
-  "worldcup-sf-england-argentina-2026-07-15": 18241006
+  "worldcup-sf-england-argentina-2026-07-15": 18241006,
+  "friendly-vietnam-myanmar-2026-07-18": 18143850,
+  "friendly-australia-brazil-2026-09-25": 18182808,
+  "friendly-australia-brazil-2026-09-29": 18182864,
+  "friendly-new-zealand-india-2026-11-12": 18242838,
+  "friendly-new-zealand-india-2026-11-15": 18242839
 };
+
+const FIXTURE_ID_TO_MATCH_ID = Object.fromEntries(
+  Object.entries(TXLINE_FIXTURE_MAP).map(([matchId, fixtureId]) => [fixtureId, matchId])
+) as Record<number, string>;
 
 /**
  * Soccer feed full-game (period prefix 0) stat keys.
@@ -92,6 +101,13 @@ function deriveStatus(phaseId: number | undefined): MatchSummary["status"] {
   if (PHASE_LIVE.has(phaseId)) return "live";
   if (PHASE_UPCOMING.has(phaseId)) return "upcoming";
   return "upcoming";
+}
+
+function deriveFixtureStatus(base: MatchDetails): MatchSummary["status"] {
+  const now = Date.now();
+  if (now < Date.parse(base.startsAt)) return "upcoming";
+  if (now > Date.parse(base.expectedEndAt)) return "completed";
+  return "live";
 }
 
 function readStatValue(record: Record<string, unknown>, key: number): number {
@@ -265,9 +281,31 @@ export class TxLineSportsDataAdapter implements SportsDataAdapter {
     return records[records.length - 1];
   }
 
+  private async fetchFixtureSnapshot(): Promise<Record<string, unknown>[]> {
+    const snapshot = await this.client.getJson<Array<Record<string, unknown>> | Record<string, unknown>>(
+      "/fixtures/snapshot"
+    );
+    return Array.isArray(snapshot) ? snapshot : [snapshot];
+  }
+
   async listMatches(filters?: MatchFilters): Promise<MatchSummary[]> {
+    let matchIds = Object.keys(TXLINE_FIXTURE_MAP);
+    try {
+      const fixtureSnapshot = await this.fetchFixtureSnapshot();
+      const discoveredMatchIds = fixtureSnapshot
+        .map((fixture) => Number(fixture.FixtureId ?? fixture.fixtureId ?? fixture.id))
+        .map((fixtureId) => FIXTURE_ID_TO_MATCH_ID[fixtureId])
+        .filter((matchId): matchId is string => Boolean(matchId));
+
+      if (discoveredMatchIds.length > 0) {
+        matchIds = discoveredMatchIds;
+      }
+    } catch {
+      // Keep the verified static fixture IDs available when the snapshot route is unavailable.
+    }
+
     const summaries = await Promise.all(
-      Object.entries(TXLINE_FIXTURE_MAP).map(async ([matchId]) => {
+      matchIds.map(async (matchId) => {
         const details = await this.getMatch(matchId);
         return details;
       })
@@ -280,9 +318,15 @@ export class TxLineSportsDataAdapter implements SportsDataAdapter {
     if (!base) throw new Error(`Unknown match "${matchId}"`);
 
     const fixtureId = this.fixtureIdFor(matchId);
-    const record = await this.fetchLatestRecord(fixtureId);
+    let record: Record<string, unknown> | undefined;
+    try {
+      record = await this.fetchLatestRecord(fixtureId);
+    } catch {
+      return { ...base, status: deriveFixtureStatus(base), simulated: false };
+    }
+
     if (!record) {
-      return { ...base, status: "upcoming", simulated: false };
+      return { ...base, status: deriveFixtureStatus(base), simulated: false };
     }
 
     const phaseId = derivePhaseId(record);
@@ -398,6 +442,61 @@ const STATIC_FIXTURE_METADATA: Record<string, MatchDetails> = {
     expectedEndAt: "2026-07-15T21:00:00.000Z",
     status: "upcoming",
     venue: "World Cup Semifinal Venue",
+    simulated: false
+  },
+  "friendly-vietnam-myanmar-2026-07-18": {
+    id: "friendly-vietnam-myanmar-2026-07-18",
+    homeTeam: "Vietnam",
+    awayTeam: "Myanmar",
+    competition: "International Friendlies",
+    startsAt: "2026-07-18T12:00:00.000Z",
+    expectedEndAt: "2026-07-18T14:00:00.000Z",
+    status: "upcoming",
+    venue: "International Friendly Venue",
+    simulated: false
+  },
+  "friendly-australia-brazil-2026-09-25": {
+    id: "friendly-australia-brazil-2026-09-25",
+    homeTeam: "Australia",
+    awayTeam: "Brazil",
+    competition: "International Friendlies",
+    startsAt: "2026-09-25T15:00:00.000Z",
+    expectedEndAt: "2026-09-25T17:00:00.000Z",
+    status: "upcoming",
+    venue: "International Friendly Venue",
+    simulated: false
+  },
+  "friendly-australia-brazil-2026-09-29": {
+    id: "friendly-australia-brazil-2026-09-29",
+    homeTeam: "Australia",
+    awayTeam: "Brazil",
+    competition: "International Friendlies",
+    startsAt: "2026-09-29T15:00:00.000Z",
+    expectedEndAt: "2026-09-29T17:00:00.000Z",
+    status: "upcoming",
+    venue: "International Friendly Venue",
+    simulated: false
+  },
+  "friendly-new-zealand-india-2026-11-12": {
+    id: "friendly-new-zealand-india-2026-11-12",
+    homeTeam: "New Zealand",
+    awayTeam: "India",
+    competition: "International Friendlies",
+    startsAt: "2026-11-12T09:00:00.000Z",
+    expectedEndAt: "2026-11-12T11:00:00.000Z",
+    status: "upcoming",
+    venue: "International Friendly Venue",
+    simulated: false
+  },
+  "friendly-new-zealand-india-2026-11-15": {
+    id: "friendly-new-zealand-india-2026-11-15",
+    homeTeam: "New Zealand",
+    awayTeam: "India",
+    competition: "International Friendlies",
+    startsAt: "2026-11-15T09:00:00.000Z",
+    expectedEndAt: "2026-11-15T11:00:00.000Z",
+    status: "upcoming",
+    venue: "International Friendly Venue",
     simulated: false
   }
 };

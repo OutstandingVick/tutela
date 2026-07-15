@@ -18,7 +18,8 @@ export default async function MarketDetailPage({ params }: { params: Promise<{ i
             <div>
               <p className="text-xs font-black uppercase tracking-[0.18em] text-[#6FB4EB]">Live market · {stat.minute}</p>
               <h1 className="mt-3 text-3xl font-black">{stat.label}</h1>
-              <p className="mt-1 text-sm font-semibold text-[#4A051C]">{stat.line} · France v Spain</p>
+              <p className="mt-1 text-sm font-semibold text-[#4A051C]">{stat.line} · World Cup test match</p>
+              <p className="mt-2 text-xs font-black uppercase tracking-[0.12em] text-[#094586]">{stat.coverage}</p>
             </div>
             <div className="rounded-full bg-[#094586] px-3 py-2 text-sm font-black text-[#6FB4EB]">{stat.status}</div>
           </div>

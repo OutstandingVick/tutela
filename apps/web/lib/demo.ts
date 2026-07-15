@@ -7,11 +7,11 @@ export const sportsAdapter = new MockSportsDataAdapter();
 export const coinBalance = 1_000;
 
 export const liveStatMarkets = [
-  { id: "stat-cards", label: "Cards", line: "Over 4.5", yes: 62, no: 38, volume: 420, status: "Live", minute: "61'" },
-  { id: "stat-offsides", label: "Offsides", line: "Spain 2+", yes: 44, no: 56, volume: 280, status: "Live", minute: "61'" },
-  { id: "stat-throwins", label: "Throw-ins", line: "Over 34.5", yes: 71, no: 29, volume: 610, status: "Hot", minute: "61'" },
-  { id: "stat-shots", label: "Shots", line: "France 12+", yes: 53, no: 47, volume: 355, status: "Live", minute: "61'" },
-  { id: "stat-sot", label: "Shots on target", line: "Both teams 4+", yes: 36, no: 64, volume: 190, status: "Proof-ready", minute: "61'" }
+  { id: "stat-cards", label: "Cards", line: "Over 4.5", yes: 62, no: 38, volume: 420, status: "Proof-ready", minute: "61'", coverage: "TxLINE stat keys: yellow and red cards" },
+  { id: "stat-corners", label: "Corners", line: "Over 8.5", yes: 57, no: 43, volume: 390, status: "Proof-ready", minute: "61'", coverage: "TxLINE stat keys: team corners" },
+  { id: "stat-goals", label: "Total goals", line: "Over 2.5", yes: 49, no: 51, volume: 510, status: "Proof-ready", minute: "61'", coverage: "TxLINE stat keys: team goals" },
+  { id: "stat-offsides", label: "Offsides", line: "Team 2+", yes: 44, no: 56, volume: 280, status: "Adapter pending", minute: "61'", coverage: "TxLINE feed-derived event; not settled by the current adapter" },
+  { id: "stat-sot", label: "Shots on target", line: "Both teams 4+", yes: 36, no: 64, volume: 190, status: "Adapter pending", minute: "61'", coverage: "TxLINE feed-derived shot outcome; not settled by the current adapter" }
 ];
 
 export const upcomingMatchMarkets = [
@@ -32,6 +32,51 @@ export const upcomingMatchMarkets = [
     away: "Argentina",
     markets: 16,
     liquidity: 980
+  },
+  {
+    id: "friendly-vietnam-myanmar-2026-07-18",
+    time: "13:00",
+    date: "Sat 18 Jul 2026",
+    home: "Vietnam",
+    away: "Myanmar",
+    markets: 10,
+    liquidity: 420
+  },
+  {
+    id: "friendly-australia-brazil-2026-09-25",
+    time: "16:00",
+    date: "Fri 25 Sep 2026",
+    home: "Australia",
+    away: "Brazil",
+    markets: 12,
+    liquidity: 760
+  },
+  {
+    id: "friendly-australia-brazil-2026-09-29",
+    time: "16:00",
+    date: "Tue 29 Sep 2026",
+    home: "Australia",
+    away: "Brazil",
+    markets: 12,
+    liquidity: 720
+  },
+  {
+    id: "friendly-new-zealand-india-2026-11-12",
+    time: "10:00",
+    date: "Thu 12 Nov 2026",
+    home: "New Zealand",
+    away: "India",
+    markets: 9,
+    liquidity: 380
+  },
+  {
+    id: "friendly-new-zealand-india-2026-11-15",
+    time: "10:00",
+    date: "Sun 15 Nov 2026",
+    home: "New Zealand",
+    away: "India",
+    markets: 9,
+    liquidity: 360
   }
 ];
 

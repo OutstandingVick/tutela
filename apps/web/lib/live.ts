@@ -1,5 +1,5 @@
 import { createSportsDataAdapter, loadTxLineConfigFromEnv } from "@tutela/txline-adapter";
-import type { MatchDetails } from "@tutela/types";
+import type { MatchDetails, MatchSummary } from "@tutela/types";
 import { sportsAdapter as mockAdapter } from "./demo";
 
 const dataSource = process.env.NEXT_PUBLIC_DATA_SOURCE === "txline" ? "txline" : "mock";
@@ -20,6 +20,16 @@ export async function getLiveMatchOrFallback(matchId: string): Promise<{ match: 
     console.warn(`Live match fetch failed for ${matchId}, using simulated fallback: ${(error as Error).message}`);
     const match = await mockAdapter.getMatch(matchId);
     return { match, live: false };
+  }
+}
+
+export async function listLiveMatchesOrFallback(): Promise<{ matches: MatchSummary[]; live: boolean }> {
+  try {
+    const matches = await liveAdapter.listMatches();
+    return { matches, live: dataSource === "txline" };
+  } catch (error) {
+    console.warn(`Live match list fetch failed, using simulated fallback: ${(error as Error).message}`);
+    return { matches: await mockAdapter.listMatches(), live: false };
   }
 }
 

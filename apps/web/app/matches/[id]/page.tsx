@@ -38,6 +38,7 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ id
               <div>
                 <p className="font-black">{stat.label}</p>
                 <p className="mt-1 text-sm font-semibold text-[#4A051C]">{stat.line} · {stat.volume} coins matched</p>
+                <p className="mt-1 text-[11px] font-black uppercase tracking-[0.12em] text-[#094586]">{stat.coverage}</p>
               </div>
               <ChevronRight size={18} className="text-[#094586]" />
             </Link>
