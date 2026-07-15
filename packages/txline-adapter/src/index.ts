@@ -226,12 +226,14 @@ class TxLineHttpClient {
 
     const jwt = await this.ensureJwt();
     let response = await fetch(url, {
+      cache: "no-store",
       headers: { Authorization: `Bearer ${jwt}`, "X-Api-Token": this.config.apiToken }
     });
 
     if (response.status === 401) {
       this.jwt = await fetchGuestJwt(this.config.guestAuthUrl);
       response = await fetch(url, {
+        cache: "no-store",
         headers: { Authorization: `Bearer ${this.jwt}`, "X-Api-Token": this.config.apiToken }
       });
     }

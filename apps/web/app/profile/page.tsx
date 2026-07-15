@@ -1,14 +1,15 @@
 "use client";
 
-import Link from "next/link";
 import { Camera, ChevronRight, Coins, FileText, LogOut, ShieldCheck, Sparkles, Wallet } from "lucide-react";
 import { AppShell } from "@/components/layout/app-shell";
-import { demoActivity } from "@/lib/demo";
 import { useTutelaAuth } from "@/providers/tutela-auth-provider";
 
 export default function ProfilePage() {
-  const { authenticated, demoPoints, displayName, email, enabled, login, logout, ready, userId, walletAddress } = useTutelaAuth();
+  const { activity, authenticated, demoPoints, displayName, email, enabled, login, logout, profileError, profileLoading, ready, userId, walletAddress } = useTutelaAuth();
   const initials = displayName.slice(0, 1).toUpperCase();
+  const committedPoints = activity.reduce((total, item) => total + item.points, 0);
+  const settled = activity.filter((item) => item.status === "Won" || item.status === "Lost");
+  const wins = settled.filter((item) => item.status === "Won").length;
 
   return (
     <AppShell>
@@ -39,7 +40,7 @@ export default function ProfilePage() {
             <p className="font-black">{authenticated ? "Signed in for testnet play" : "Create your Tutela account"}</p>
             <p className="mt-1 text-sm font-semibold">
               {authenticated
-                ? "Your 1,000 free demo coins are tied to this Privy account in this browser. They cannot be bought, transferred, cashed out or redeemed."
+                ? "Your free demo points are stored against this Privy account. They cannot be bought, transferred, cashed out or redeemed."
                 : "Use email or Google through Privy. New users receive 1,000 free demo coins for devnet forecasting only."}
             </p>
           </div>
@@ -65,9 +66,9 @@ export default function ProfilePage() {
       </div>
 
       <section className="mt-5 grid grid-cols-3 gap-2">
-        <Tile value="2" label="markets" />
-        <Tile value="x3" label="best streak" accent />
-        <Tile value="67%" label="hit rate" good />
+        <Tile value={String(activity.length)} label="forecasts" />
+        <Tile value={String(committedPoints)} label="points played" accent />
+        <Tile value={settled.length > 0 ? `${Math.round((wins / settled.length) * 100)}%` : "-"} label="hit rate" good />
       </section>
 
       <section className="mt-7">
@@ -82,16 +83,22 @@ export default function ProfilePage() {
 
       <section className="mt-7">
         <h2 className="mb-3 text-sm font-black uppercase tracking-[0.18em] text-[#D0FEF5]">Activity & bets</h2>
+        {profileError && <p className="mb-3 rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] p-3 text-sm font-bold text-[#4A051C]">{profileError}</p>}
         <div className="grid gap-3">
-          {demoActivity.map((item) => (
-            <Link key={item.id} href={item.explorerUrl} className="grid grid-cols-[34px_1fr_auto] items-center gap-3 rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] text-[#4A051C] p-4">
+          {profileLoading ? (
+            <p className="rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] p-4 text-sm font-bold text-[#4A051C]">Loading your activity...</p>
+          ) : activity.length === 0 ? (
+            <p className="rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] p-4 text-sm font-bold text-[#4A051C]">No forecasts yet. Create one to see it here.</p>
+          ) : activity.map((item) => (
+            <div key={item.id} className="grid grid-cols-[34px_1fr_auto] items-center gap-3 rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] text-[#4A051C] p-4">
               <ShieldCheck size={22} className="text-[#6FB4EB]" />
               <div>
                 <p className="font-black">{item.title}</p>
-                <p className="text-sm font-semibold text-[#D0FEF5]">{new Date(item.createdAt).toLocaleString()}</p>
+                <p className="text-sm font-semibold text-[#094586]">{item.side} · {item.points} points · {item.status}</p>
+                <p className="text-xs font-semibold text-[#4A051C]/70">{new Date(item.createdAt).toLocaleString()}</p>
               </div>
-              <ChevronRight size={18} className="text-[#D0FEF5]" />
-            </Link>
+              <ChevronRight size={18} className="text-[#094586]" />
+            </div>
           ))}
         </div>
       </section>
@@ -117,7 +124,7 @@ export default function ProfilePage() {
             <p className="font-black">On-chain receipts</p>
             <p className="text-sm font-semibold text-[#D0FEF5]">verified settlement references</p>
           </div>
-          <p className="text-2xl font-black text-[#6FB4EB]">2</p>
+          <p className="text-2xl font-black text-[#6FB4EB]">{settled.length}</p>
         </div>
       </section>
     </AppShell>

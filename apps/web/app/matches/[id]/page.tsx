@@ -4,6 +4,9 @@ import { AppShell } from "@/components/layout/app-shell";
 import { liveStatMarkets, upcomingMatchMarkets } from "@/lib/demo";
 import { formatMatchClock, formatScoreline, getLiveMatchOrFallback } from "@/lib/live";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function MatchDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const match = upcomingMatchMarkets.find((item) => item.id === id) ?? upcomingMatchMarkets[0];
@@ -37,7 +40,7 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ id
             <Link key={stat.id} href={`/markets/${stat.id}`} className="grid grid-cols-[1fr_auto] items-center gap-3 rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] text-[#4A051C] p-4">
               <div>
                 <p className="font-black">{stat.label}</p>
-                <p className="mt-1 text-sm font-semibold text-[#4A051C]">{stat.line} · {stat.volume} coins matched</p>
+                <p className="mt-1 text-sm font-semibold text-[#4A051C]">{stat.line} · no seeded pool data</p>
               </div>
               <ChevronRight size={18} className="text-[#094586]" />
             </Link>

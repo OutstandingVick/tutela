@@ -1,10 +1,17 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { conditionHash } from "@tutela/condition-engine";
 import { validateConditionGroup } from "@tutela/validation";
 import type { BooleanOperator, ConditionGroup, MarketCondition } from "@tutela/types";
 import { AlertCircle, CheckCircle2, Copy, Plus, Trash2 } from "lucide-react";
+import { useTutelaAuth } from "@/providers/tutela-auth-provider";
+
+const demoMatch = {
+  id: "worldcup-sf-england-argentina-2026-07-15",
+  title: "England vs Argentina",
+  kickoffAt: "2026-07-15T19:00:00.000Z"
+};
 
 const defaultCondition: MarketCondition = {
   field: "TotalGoals",
@@ -13,9 +20,9 @@ const defaultCondition: MarketCondition = {
   value: { kind: "u16", value: 2 }
 };
 
-const fieldOptions: MarketCondition["field"][] = ["TotalGoals", "TeamGoals", "MatchWinner", "BothTeamsScore", "TotalCorners", "TotalCards", "CleanSheet"];
-const operatorOptions: MarketCondition["operator"][] = ["Eq", "Neq", "Gt", "Gte", "Lt", "Lte", "IsTrue", "IsFalse"];
-const scopeOptions: MarketCondition["scope"][] = ["FullTime", "RegulationTime", "Match", "Team", "Player"];
+const fieldOptions: MarketCondition["field"][] = ["MatchWinner", "TotalGoals", "TotalCorners", "TotalCards", "BothTeamsScore"];
+const operatorOptions: MarketCondition["operator"][] = ["Eq", "Gt", "Gte", "Lt", "Lte"];
+const scopeOptions: MarketCondition["scope"][] = ["FullTime", "RegulationTime", "Match"];
 
 const fieldLabel: Record<MarketCondition["field"], string> = {
   MatchWinner: "Match winner",
@@ -63,13 +70,19 @@ const scopeLabel: Record<MarketCondition["scope"], string> = {
 };
 
 export function ConditionBuilder() {
+  const { authenticated, authenticatedFetch, demoPoints, enabled, login, refreshProfile } = useTutelaAuth();
   const [operator, setOperator] = useState<BooleanOperator>("AND");
   const [conditions, setConditions] = useState<MarketCondition[]>([defaultCondition]);
+  const [side, setSide] = useState<"YES" | "NO">("YES");
+  const [points, setPoints] = useState(25);
+  const [submission, setSubmission] = useState<{ state: "idle" | "pending" | "success" | "error"; message?: string }>({ state: "idle" });
+  const requestKey = useRef<string | null>(null);
   const group: ConditionGroup = { operator, conditions };
   const errors = useMemo(() => validateConditionGroup(group), [group]);
   const hash = useMemo(() => conditionHash(group), [group]);
   const prediction = useMemo(() => describePrediction(group), [group]);
   const remainingConditions = 5 - conditions.length;
+  const closed = Date.now() >= new Date(demoMatch.kickoffAt).getTime();
 
   return (
     <div className="rounded-lg border border-[#6FB4EB]/70 bg-[#D0FEF5] p-4 text-[#4A051C] shadow-[0_12px_30px_rgba(9,69,134,0.18)]">
@@ -111,19 +124,45 @@ export function ConditionBuilder() {
             </div>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)_minmax(74px,0.72fr)_minmax(0,1fr)_44px]">
               <Field label="Statistic" className="col-span-2 sm:col-span-1">
-                <Select value={condition.field} onChange={(field) => update(index, { ...condition, field: field as MarketCondition["field"] })} options={fieldOptions} labels={fieldLabel} />
+                <Select value={condition.field} onChange={(field) => updateField(index, field as MarketCondition["field"])} options={fieldOptions} labels={fieldLabel} />
               </Field>
               <Field label="Operator">
-                <Select value={condition.operator} onChange={(op) => update(index, { ...condition, operator: op as MarketCondition["operator"] })} options={operatorOptions} labels={operatorLabel} />
+                <Select
+                  value={condition.operator}
+                  onChange={(op) => update(index, { ...condition, operator: op as MarketCondition["operator"] })}
+                  options={condition.field === "MatchWinner" || condition.field === "BothTeamsScore" ? ["Eq"] : operatorOptions}
+                  labels={operatorLabel}
+                />
               </Field>
               <Field label="Value">
-                <input
-                  className="min-h-11 w-full rounded-lg border border-[#6FB4EB]/70 bg-[#D0FEF5] px-3 py-2 text-sm font-black text-[#4A051C] outline-none transition placeholder:text-[#4A051C]/45 focus:border-[#094586] focus:ring-2 focus:ring-[#6FB4EB]"
-                  value={String(condition.value.value)}
-                  onChange={(event) => updateValue(index, event.target.value)}
-                  aria-label="Condition value"
-                  inputMode="numeric"
-                />
+                {condition.field === "MatchWinner" ? (
+                  <select
+                    value={String(condition.value.value)}
+                    onChange={(event) => update(index, { ...condition, operator: "Eq", value: { kind: "team", value: event.target.value } })}
+                    className="min-h-11 w-full rounded-lg border border-[#6FB4EB]/70 bg-[#D0FEF5] px-3 py-2 text-sm font-black text-[#4A051C] outline-none focus:border-[#094586] focus:ring-2 focus:ring-[#6FB4EB]"
+                  >
+                    <option value="England">England</option>
+                    <option value="Argentina">Argentina</option>
+                    <option value="Draw">Draw</option>
+                  </select>
+                ) : condition.field === "BothTeamsScore" ? (
+                  <select
+                    value={String(condition.value.value)}
+                    onChange={(event) => update(index, { ...condition, operator: "Eq", value: { kind: "bool", value: event.target.value === "true" } })}
+                    className="min-h-11 w-full rounded-lg border border-[#6FB4EB]/70 bg-[#D0FEF5] px-3 py-2 text-sm font-black text-[#4A051C] outline-none focus:border-[#094586] focus:ring-2 focus:ring-[#6FB4EB]"
+                  >
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                  </select>
+                ) : (
+                  <input
+                    className="min-h-11 w-full rounded-lg border border-[#6FB4EB]/70 bg-[#D0FEF5] px-3 py-2 text-sm font-black text-[#4A051C] outline-none transition placeholder:text-[#4A051C]/45 focus:border-[#094586] focus:ring-2 focus:ring-[#6FB4EB]"
+                    value={String(condition.value.value)}
+                    onChange={(event) => updateValue(index, event.target.value)}
+                    aria-label="Condition value"
+                    inputMode="numeric"
+                  />
+                )}
               </Field>
               <Field label="Period" className="col-span-2 sm:col-span-1">
                 <Select value={condition.scope} onChange={(scope) => update(index, { ...condition, scope: scope as MarketCondition["scope"] })} options={scopeOptions} labels={scopeLabel} />
@@ -154,6 +193,51 @@ export function ConditionBuilder() {
       <section className="mt-4 rounded-lg border border-[#6FB4EB] bg-[#094586] p-3 text-[#D0FEF5]">
         <p className="text-xs font-black uppercase tracking-[0.14em] text-[#6FB4EB]">Your prediction</p>
         <p className="mt-2 text-sm font-black leading-6">{prediction}</p>
+      </section>
+
+      <section className="mt-4 rounded-lg border border-[#6FB4EB]/70 bg-white/35 p-3">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.14em] text-[#094586]">Participate with demo points</p>
+            <p className="mt-1 text-sm font-bold">{demoMatch.title} · maximum 100 points</p>
+          </div>
+          <p className="text-sm font-black text-[#094586]">{demoPoints.toLocaleString()} available</p>
+        </div>
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          {(["YES", "NO"] as const).map((value) => (
+            <button
+              key={value}
+              type="button"
+              onClick={() => setSide(value)}
+              className={`min-h-11 rounded-lg border border-[#094586] px-3 py-2 text-sm font-black ${side === value ? "bg-[#094586] text-[#D0FEF5]" : "bg-[#D0FEF5] text-[#094586]"}`}
+            >
+              {value}
+            </button>
+          ))}
+        </div>
+        <label className="mt-3 grid gap-1">
+          <span className="text-[11px] font-black uppercase tracking-[0.12em] text-[#094586]">Demo points</span>
+          <input
+            type="number"
+            min={1}
+            max={100}
+            value={points}
+            onChange={(event) => setPoints(Number(event.target.value))}
+            className="min-h-11 w-full rounded-lg border border-[#6FB4EB]/70 bg-[#D0FEF5] px-3 py-2 text-sm font-black text-[#4A051C] outline-none focus:border-[#094586] focus:ring-2 focus:ring-[#6FB4EB]"
+          />
+        </label>
+        <p className="mt-2 text-xs font-semibold leading-5">Free, non-transferable testnet points only. No deposits, purchases, prizes, cash-out or monetary value.</p>
+        <button
+          type="button"
+          onClick={submitForecast}
+          disabled={submission.state === "pending" || closed || errors.length > 0 || points < 1 || points > 100 || (authenticated && points > demoPoints)}
+          className="mt-3 min-h-12 w-full rounded-lg bg-[#6FB4EB] px-4 py-3 text-sm font-black text-[#4A051C] transition hover:bg-[#6FB4EB]/85 disabled:cursor-not-allowed disabled:opacity-55"
+        >
+          {closed ? "Forecast closed" : submission.state === "pending" ? "Submitting..." : authenticated ? `Confirm ${side} · ${points} points` : enabled ? "Sign in to participate" : "Authentication unavailable"}
+        </button>
+        {submission.message && (
+          <p role="status" className={`mt-2 text-sm font-bold ${submission.state === "error" ? "text-[#4A051C]" : "text-[#094586]"}`}>{submission.message}</p>
+        )}
       </section>
 
       {errors.length > 0 && (
@@ -191,6 +275,48 @@ export function ConditionBuilder() {
 
   function update(index: number, next: MarketCondition) {
     setConditions((items) => items.map((item, i) => (i === index ? next : item)));
+  }
+
+  function updateField(index: number, field: MarketCondition["field"]) {
+    setConditions((items) => items.map((item, i) => {
+      if (i !== index) return item;
+      if (field === "MatchWinner") return { ...item, field, operator: "Eq", scope: "FullTime", value: { kind: "team", value: "England" } };
+      if (field === "BothTeamsScore") return { ...item, field, operator: "Eq", scope: "FullTime", value: { kind: "bool", value: true } };
+      return { ...item, field, value: { kind: "u16", value: 1 } };
+    }));
+  }
+
+  async function submitForecast() {
+    if (!authenticated) {
+      login();
+      return;
+    }
+    if (closed || errors.length > 0 || points < 1 || points > 100 || points > demoPoints) return;
+
+    requestKey.current ??= crypto.randomUUID();
+    setSubmission({ state: "pending" });
+    try {
+      const response = await authenticatedFetch("/api/forecasts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          idempotencyKey: requestKey.current,
+          matchId: demoMatch.id,
+          matchTitle: demoMatch.title,
+          kickoffAt: demoMatch.kickoffAt,
+          side,
+          points,
+          group
+        })
+      });
+      const payload = await response.json() as { error?: string };
+      if (!response.ok) throw new Error(payload.error ?? "Forecast submission failed.");
+      setSubmission({ state: "success", message: "Forecast submitted. Your activity and balance are now updated." });
+      requestKey.current = null;
+      await refreshProfile();
+    } catch (error) {
+      setSubmission({ state: "error", message: error instanceof Error ? error.message : "Forecast submission failed." });
+    }
   }
 
   function updateValue(index: number, value: string) {

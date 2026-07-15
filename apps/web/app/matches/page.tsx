@@ -6,6 +6,9 @@ import { formatMatchClock, formatScoreline, getLiveMatchOrFallback, listLiveMatc
 
 const TONIGHT_MATCH_ID = "worldcup-sf-england-argentina-2026-07-15";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function MatchesPage() {
   const featuredLiveMarkets = liveStatMarkets.slice(0, 2);
   const { matches, live: listIsLive } = await listLiveMatchesOrFallback();
@@ -57,19 +60,12 @@ export default async function MatchesPage() {
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="text-lg font-black">{market.label}</p>
-                  <p className="mt-1 text-sm font-semibold text-[#4A051C]">{market.line} · {market.volume} coins matched</p>
+                  <p className="mt-1 text-sm font-semibold text-[#4A051C]">{market.line} · build a community forecast</p>
                 </div>
                 <div className="rounded-full bg-[#094586] px-3 py-1 text-xs font-black text-[#6FB4EB]">{market.status}</div>
               </div>
-              <div className="mt-4 grid grid-cols-2 gap-2">
-                <div className="rounded-lg bg-[#094586] px-3 py-2">
-                  <p className="text-xs font-bold text-[#D0FEF5]">YES</p>
-                  <p className="text-2xl font-black text-[#6FB4EB]">{market.yes}%</p>
-                </div>
-                <div className="rounded-lg bg-[#094586] px-3 py-2 text-right">
-                  <p className="text-xs font-bold text-[#D0FEF5]">NO</p>
-                  <p className="text-2xl font-black text-[#D0FEF5]">{market.no}%</p>
-                </div>
+              <div className="mt-4 rounded-lg bg-[#094586] px-3 py-3 text-sm font-black text-[#D0FEF5]">
+                Pool totals appear after authenticated users submit demo-point forecasts.
               </div>
             </Link>
           ))}

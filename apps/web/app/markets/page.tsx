@@ -1,10 +1,22 @@
 import type { ReactNode } from "react";
-import { MapPin, Swords, Trophy, UsersRound } from "lucide-react";
+import Link from "next/link";
+import { ChevronRight, MapPin, Swords, Trophy, UsersRound } from "lucide-react";
 import { AppShell } from "@/components/layout/app-shell";
 import { ConditionBuilder } from "@/features/conditions/condition-builder";
 import { contests, formatCoins } from "@/lib/demo";
+import { listForecastMarkets, type ForecastMarket } from "@/lib/server/forecast-store";
 
-export default function MarketsPage() {
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+export default async function MarketsPage() {
+  let forecastMarkets: ForecastMarket[] = [];
+  try {
+    forecastMarkets = await listForecastMarkets();
+  } catch (error) {
+    console.warn("Community forecast storage is unavailable", error);
+  }
+
   return (
     <AppShell>
       <div className="mb-6 flex items-center justify-between">
@@ -31,6 +43,32 @@ export default function MarketsPage() {
           <Swords size={18} className="text-[#6FB4EB]" />
         </div>
         <ConditionBuilder />
+      </section>
+
+      <section className="mt-7">
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-sm font-black uppercase tracking-[0.18em] text-[#D0FEF5]">Community forecasts</h2>
+          <UsersRound size={18} className="text-[#6FB4EB]" />
+        </div>
+        <div className="grid gap-3">
+          {forecastMarkets.length === 0 ? (
+            <p className="rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] p-4 text-sm font-bold text-[#4A051C]">No submitted forecasts yet. Be the first to create one.</p>
+          ) : forecastMarkets.map((market) => (
+            <Link key={market.id} href={`/markets/${market.id}`} className="rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] p-4 text-[#4A051C]">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="font-black">{market.title}</p>
+                  <p className="mt-1 text-sm font-semibold text-[#094586]">{market.participantCount} participant{market.participantCount === 1 ? "" : "s"} · {market.status}</p>
+                </div>
+                <ChevronRight size={18} className="text-[#094586]" />
+              </div>
+              <div className="mt-3 grid grid-cols-2 gap-2 text-sm font-black">
+                <p className="rounded-lg bg-[#094586] px-3 py-2 text-[#D0FEF5]">YES · {market.yesPoints}</p>
+                <p className="rounded-lg bg-[#094586] px-3 py-2 text-right text-[#D0FEF5]">NO · {market.noPoints}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
       </section>
 
       <section className="mt-7">

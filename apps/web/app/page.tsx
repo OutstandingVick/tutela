@@ -159,10 +159,9 @@ export default function LandingPage() {
 
   return (
     <main className="min-h-screen bg-[#020B12] text-[#D0FEF5]">
-      <div className="sticky top-0 z-50">
+      <div className="text-[#4A051C] top-0 z-50">
         <nav
-          className={`border-b px-4 md:px-6 lg:px-8 transition ${scrolled ? "border-[#D0FEF5]/12 shadow-sm backdrop-blur" : "border-transparent backdrop-blur"}`}
-          style={{ backgroundColor: scrolled ? "rgba(2, 11, 18, 0.92)" : "rgba(2, 11, 18, 0.22)" }}
+          className={`bg-transparent border-b px-4 md:px-6 lg:px-8 transition ${scrolled ? "border-[#D0FEF5]/12 shadow-sm backdrop-blur" : "border-transparent backdrop-blur"}`}
         >
           <div className="mx-auto flex h-20 max-w-[90rem] items-center justify-between gap-5">
             <Link href="/" className="flex items-center gap-3">

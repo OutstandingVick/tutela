@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, Coins, LogOut, PlusCircle, Trophy, UserRound } from "lucide-react";
+import { BarChart3, ChevronLeft, Coins, LogOut, PlusCircle, Trophy, UserRound } from "lucide-react";
 import { useTutelaAuth } from "@/providers/tutela-auth-provider";
 
 const nav = [
@@ -15,6 +15,7 @@ const nav = [
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { authenticated, demoPoints, displayName, enabled, login, logout, ready } = useTutelaAuth();
+  const isDetailPage = pathname.startsWith("/matches/") || pathname.startsWith("/markets/");
 
   return (
     <div className="tutela-shell-page">
@@ -22,14 +23,23 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <header className="tutela-shell-header px-5 pb-3 pt-5">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-2">
-              <Link href="/matches" className="flex items-center gap-2">
-                <span className="grid h-10 w-10 place-items-center rounded-lg bg-[#D0FEF5] p-1.5">
-                  <img src="/tutela-logo.png" alt="Tutela" className="h-full w-full object-contain" />
-                </span>
-                <span>
+              {isDetailPage ? (
+                <Link
+                  href="/matches"
+                  aria-label="Back to matches"
+                  title="Back to matches"
+                  className="focus-ring inline-flex h-10 w-10 items-center justify-start text-[#D0FEF5] transition hover:text-[#6FB4EB]"
+                >
+                  <ChevronLeft size={34} strokeWidth={2.25} aria-hidden="true" />
+                </Link>
+              ) : (
+                <Link href="/matches" className="flex items-center gap-2">
+                  <span className="grid h-10 w-10 place-items-center rounded-lg bg-[#D0FEF5] p-1.5">
+                    <img src="/tutela-logo.png" alt="Tutela" className="h-full w-full object-contain" />
+                  </span>
                   <span className="block text-xl font-black tracking-normal text-[#D0FEF5]">Tutela</span>
-                </span>
-              </Link>
+                </Link>
+              )}
             </div>
             <div className="flex flex-col items-end gap-2">
               {authenticated ? (

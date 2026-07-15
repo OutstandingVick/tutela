@@ -31,13 +31,15 @@ If `pnpm` is unavailable, install it through Corepack first. Do not connect main
 
 ## Privy Sign-In For Testers
 
-Tutela uses Privy for email and Google sign-in. Create a Privy app, enable **Email** and **Google** login methods, then set this variable locally and in Vercel:
+Tutela uses Privy for email and Google sign-in. Create a Privy app, enable **Email** and **Google** login methods, then set these variables locally and in Vercel:
 
 ```bash
 NEXT_PUBLIC_PRIVY_APP_ID=your_privy_app_id
+PRIVY_APP_SECRET=your_server_only_privy_secret
+DATABASE_URL=postgresql://your_durable_database
 ```
 
-`NEXT_PUBLIC_PRIVY_CLIENT_ID` is optional if your Privy dashboard provides one. New signed-in users receive 1,000 free demo coins for the browser/account session. Demo coins are non-transferable, cannot be purchased, cannot be withdrawn and have no monetary value.
+`NEXT_PUBLIC_PRIVY_CLIENT_ID` is optional if your Privy dashboard provides one. New signed-in users receive one server-side grant of 1,000 free demo points. Demo points are non-transferable, cannot be purchased, cannot be withdrawn and have no monetary value.
 
 ## Safety Notices
 
@@ -60,6 +62,8 @@ NEXT_PUBLIC_PRIVY_APP_ID=your_privy_app_id
 ## Demo
 
 See [docs/demo-script.md](docs/demo-script.md).
+
+For production-like tester hosting, follow the [Vercel deployment checklist](docs/vercel-deployment.md).
 
 ## Verification Status
 

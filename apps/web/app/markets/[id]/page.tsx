@@ -1,14 +1,49 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { CircleDollarSign, ShieldCheck, TimerReset } from "lucide-react";
 import { conditionHash } from "@tutela/condition-engine";
 import { AppShell } from "@/components/layout/app-shell";
 import { demoMarkets, formatUsdc, liveStatMarkets } from "@/lib/demo";
+import { getForecastMarket } from "@/lib/server/forecast-store";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function MarketDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const submittedMarket = await getForecastMarket(id).catch(() => null);
   const stat = liveStatMarkets.find((item) => item.id === id);
   const market = demoMarkets.find((item) => item.id === id);
-  if (!stat && !market) notFound();
+  if (!stat && !market && !submittedMarket) notFound();
+
+  if (submittedMarket) {
+    const total = submittedMarket.yesPoints + submittedMarket.noPoints;
+    return (
+      <AppShell>
+        <section className="rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] p-5 text-[#4A051C]">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-[#094586]">{submittedMarket.status} · demo points only</p>
+          <h1 className="mt-3 text-2xl font-black">{submittedMarket.title}</h1>
+          <p className="mt-2 text-sm font-semibold">{submittedMarket.participantCount} participant{submittedMarket.participantCount === 1 ? "" : "s"} · {total} points committed</p>
+          <div className="mt-5 grid grid-cols-2 gap-3">
+            <Pool label="YES pool" value={`${submittedMarket.yesPoints} points`} />
+            <Pool label="NO pool" value={`${submittedMarket.noPoints} points`} />
+          </div>
+          <div className="mt-5 rounded-lg border border-[#6FB4EB] bg-[#094586] p-4 text-[#D0FEF5]">
+            <h2 className="font-black">Conditions</h2>
+            <p className="mt-2 text-sm">{submittedMarket.operator} across {submittedMarket.conditions.length} condition(s)</p>
+            <ul className="mt-3 grid gap-2 text-sm">
+              {submittedMarket.conditions.map((condition, index) => (
+                <li key={index} className="rounded-lg bg-[#D0FEF5] px-3 py-2 font-semibold text-[#4A051C]">
+                  {condition.field} {condition.operator} {String(condition.value.value)}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <p className="mt-5 text-sm font-semibold">Free, non-transferable demo points. No deposits, purchases, prizes, cash-out or monetary value.</p>
+        </section>
+      </AppShell>
+    );
+  }
 
   if (stat) {
     return (
@@ -22,23 +57,13 @@ export default async function MarketDetailPage({ params }: { params: Promise<{ i
             </div>
             <div className="rounded-full bg-[#094586] px-3 py-2 text-sm font-black text-[#6FB4EB]">{stat.status}</div>
           </div>
-          <div className="mt-6 grid grid-cols-2 gap-3">
-            <Side label="YES" percent={stat.yes} tone="yes" />
-            <Side label="NO" percent={stat.no} tone="no" />
-          </div>
           <div className="mt-5 rounded-lg border border-[#6FB4EB] bg-[#094586] p-4">
-            <p className="text-sm font-semibold text-[#D0FEF5]">Matched volume</p>
-            <p className="mt-1 text-3xl font-black text-[#6FB4EB]">{stat.volume} coins</p>
-            <p className="mt-2 text-xs font-semibold text-[#D0FEF5]">Coins are testnet-only and never cashable.</p>
+            <p className="text-sm font-black text-[#D0FEF5]">No seeded pool data</p>
+            <p className="mt-2 text-xs font-semibold text-[#D0FEF5]">Create an authenticated forecast to start a real demo-point pool. Points are testnet-only and never cashable.</p>
           </div>
-          <div className="mt-5 grid gap-3">
-            <button className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#6FB4EB] px-4 py-3 font-black text-[#4A051C]">
-              <CircleDollarSign size={18} /> Buy YES
-            </button>
-            <button className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#094586] px-4 py-3 font-black text-[#6FB4EB]">
-              Buy NO
-            </button>
-          </div>
+          <Link href="/markets" className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-[#6FB4EB] px-4 py-3 font-black text-[#4A051C]">
+            <CircleDollarSign size={18} /> Build forecast
+          </Link>
         </section>
         <section className="mt-5 rounded-lg border border-dashed border-[#6FB4EB] bg-[#D0FEF5] text-[#4A051C] p-4">
           <div className="flex gap-3">
@@ -91,15 +116,6 @@ export default async function MarketDetailPage({ params }: { params: Promise<{ i
         </button>
       </section>
     </AppShell>
-  );
-}
-
-function Side({ label, percent, tone }: { label: string; percent: number; tone: "yes" | "no" }) {
-  return (
-    <div className="rounded-lg border border-[#6FB4EB] bg-[#094586] p-4">
-      <p className="text-xs font-black text-[#D0FEF5]">{label}</p>
-      <p className={`mt-1 text-4xl font-black ${tone === "yes" ? "text-[#6FB4EB]" : "text-[#D0FEF5]"}`}>{percent}%</p>
-    </div>
   );
 }
 
