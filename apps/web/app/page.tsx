@@ -8,7 +8,6 @@ import {
   ArrowRight,
   BadgeCheck,
   Blocks,
-  ChevronDown,
   Code2,
   DatabaseZap,
   EyeOff,
@@ -215,12 +214,14 @@ export default function LandingPage() {
           )}
         </nav>
       </div>
-      <br />
-      <br />
       <section
         id="product"
         className="relative overflow-hidden px-4 pb-0 pt-14 md:px-6 md:pt-20 lg:px-8"
       >
+      <br />
+      <br />
+      <br />
+      <br />
         <div className="absolute inset-0 z-0 overflow-hidden">
           <img
             src="/landing-stadium-bg.png"
@@ -244,9 +245,6 @@ export default function LandingPage() {
               <Link href="/app" className="inline-flex items-center gap-2 rounded-full bg-[#6FB4EB] px-8 py-4 text-base font-black text-[#4A051C] shadow-[0_18px_45px_rgba(9,69,134,0.2)] transition hover:bg-[#D0FEF5]">
                 Play <ArrowRight size={18} />
               </Link>
-              <a href="#verification" className="inline-flex items-center gap-2 rounded-full border border-[#D0FEF5]/25 bg-[#D0FEF5]/10 px-7 py-4 text-base font-black text-[#D0FEF5] backdrop-blur transition hover:bg-[#D0FEF5]/20">
-                See How Verification Works <ChevronDown size={18} />
-              </a>
             </div>
           </div>
           <br />

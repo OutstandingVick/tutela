@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "@/providers/providers";
-import { PrototypeBanner } from "@/components/layout/prototype-banner";
 
 export const metadata: Metadata = {
   title: "Tutela",
@@ -13,7 +12,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body>
         <Providers>
-          <PrototypeBanner />
           {children}
         </Providers>
       </body>
