@@ -3,12 +3,29 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useTutelaAuth } from "@/providers/tutela-auth-provider";
 
 export default function AppWelcomePage() {
   const router = useRouter();
+  const { authenticated, enabled, login, ready } = useTutelaAuth();
+  const [continueAfterLogin, setContinueAfterLogin] = useState(false);
+
+  useEffect(() => {
+    if (continueAfterLogin && authenticated) {
+      router.push("/matches");
+    }
+  }, [authenticated, continueAfterLogin, router]);
 
   function enterApp() {
-    router.push("/matches");
+    if (!ready || !enabled) return;
+    if (authenticated) {
+      router.push("/matches");
+      return;
+    }
+
+    setContinueAfterLogin(true);
+    login();
   }
 
   return (
@@ -37,9 +54,10 @@ export default function AppWelcomePage() {
           <button
             type="button"
             onClick={enterApp}
+            disabled={!ready || !enabled}
             className="focus-ring flex min-h-[56px] w-full items-center justify-center gap-3 rounded-[1.25rem] bg-[#6FB4EB] px-6 py-4 text-base font-black text-[#041827] transition hover:bg-[#D0FEF5] active:scale-[0.99] sm:min-h-[60px]"
           >
-            <span>Explore matches</span>
+            <span>{authenticated ? "Explore matches" : "Sign up to play"}</span>
             <ArrowRight size={19} aria-hidden="true" />
           </button>
 
