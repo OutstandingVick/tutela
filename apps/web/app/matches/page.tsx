@@ -48,7 +48,6 @@ export default async function MatchesPage() {
         <div className="mb-3 flex items-end justify-between">
           <div>
             <h2 className="text-sm font-black uppercase tracking-[0.18em] text-[#D0FEF5]">Live stat markets</h2>
-            <p className="mt-1 text-sm text-[#D0FEF5]">Proof-ready cards and corners. Feed-derived markets are labelled before use.</p>
           </div>
           <Flame size={18} className="text-[#6FB4EB]" />
         </div>

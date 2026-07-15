@@ -8,6 +8,9 @@
   color: #D0FEF5;
   --tutela-primary: #6FB4EB;
   --tutela-secondary: #094586;
+  --tutela-main: var(--tutela-secondary);
+  --tutela-second: var(--tutela-primary);
+  --tutela-third: #D0FEF5;
   --app-content-max-width: 32.3rem;
   --app-frame-radius: 2rem;
   --app-frame-border: rgba(111, 180, 235, 0.35);
@@ -129,6 +132,32 @@ a {
   display: grid;
   background:
     linear-gradient(150deg, rgba(6, 50, 97, 0.96) 0%, rgba(9, 69, 134, 0.96) 52%, rgba(57, 126, 184, 0.96) 100%);
+}
+
+.landing-continuous-gradient {
+  display: flow-root;
+  background:
+    radial-gradient(
+      circle at 15% 20%,
+      color-mix(in srgb, var(--tutela-main) 28%, transparent),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at 85% 48%,
+      color-mix(in srgb, var(--tutela-second) 24%, transparent),
+      transparent 42%
+    ),
+    radial-gradient(
+      circle at 45% 85%,
+      color-mix(in srgb, var(--tutela-third) 22%, transparent),
+      transparent 46%
+    ),
+    linear-gradient(
+      180deg,
+      var(--tutela-main) 0%,
+      var(--tutela-second) 48%,
+      var(--tutela-third) 100%
+    );
 }
 
 .bg-\[\#D0FEF5\] .text-\[\#D0FEF5\] {

@@ -254,7 +254,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <div className="relative px-4 pb-14 md:px-6 md:pb-20 lg:px-8">
+      <div className="landing-continuous-gradient relative px-4 pb-14 md:px-6 md:pb-20 lg:px-8">
         <div className="mx-auto max-w-[90rem]">
           <section id="infrastructure" className="mx-auto mt-10 max-w-7xl overflow-hidden rounded-[1.75rem] border border-[#D0FEF5]/18 bg-[#F4FAFA] text-[#111827] shadow-[0_28px_90px_rgba(2,11,18,0.28)]">
             <div className="grid grid-cols-2 border-b border-[#094586]/12 md:grid-cols-3 xl:grid-cols-6">
