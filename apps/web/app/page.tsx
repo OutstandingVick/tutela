@@ -186,7 +186,7 @@ export default function LandingPage() {
               <Link href="/matches" className="rounded-full border border-[#D0FEF5]/20 px-5 py-3 text-sm font-black text-[#D0FEF5] transition hover:bg-[#D0FEF5]/10">
                 View Demo
               </Link>
-              <Link href="/matches" className="rounded-full bg-[#6FB4EB] px-6 py-3 text-sm font-black text-[#4A051C] shadow-[0_12px_35px_rgba(9,69,134,0.18)] transition hover:bg-[#D0FEF5]">
+              <Link href="/app" className="rounded-full bg-[#6FB4EB] px-6 py-3 text-sm font-black text-[#4A051C] shadow-[0_12px_35px_rgba(9,69,134,0.18)] transition hover:bg-[#D0FEF5]">
                 Play
               </Link>
             </div>
@@ -208,7 +208,7 @@ export default function LandingPage() {
                   {item.label}
                 </a>
               ))}
-              <Link href="/matches" className="mt-1 rounded-full bg-[#6FB4EB] px-5 py-3 text-center text-sm font-black text-[#4A051C]">
+              <Link href="/app" className="mt-1 rounded-full bg-[#6FB4EB] px-5 py-3 text-center text-sm font-black text-[#4A051C]">
                 Play
               </Link>
             </div>
@@ -242,7 +242,7 @@ export default function LandingPage() {
               Construct multi-condition football markets using results, goals, corners, cards and player events. Tutela resolves every outcome through verifiable match data and deterministic Solana programs.
             </p>
             <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-              <Link href="/matches" className="inline-flex items-center gap-2 rounded-full bg-[#6FB4EB] px-8 py-4 text-base font-black text-[#4A051C] shadow-[0_18px_45px_rgba(9,69,134,0.2)] transition hover:bg-[#D0FEF5]">
+              <Link href="/app" className="inline-flex items-center gap-2 rounded-full bg-[#6FB4EB] px-8 py-4 text-base font-black text-[#4A051C] shadow-[0_18px_45px_rgba(9,69,134,0.2)] transition hover:bg-[#D0FEF5]">
                 Play <ArrowRight size={18} />
               </Link>
               <a href="#verification" className="inline-flex items-center gap-2 rounded-full border border-[#D0FEF5]/25 bg-[#D0FEF5]/10 px-7 py-4 text-base font-black text-[#D0FEF5] backdrop-blur transition hover:bg-[#D0FEF5]/20">

@@ -1,25 +1,61 @@
+"use client";
+
 import Link from "next/link";
-import { Camera, ChevronRight, Coins, FileText, ShieldCheck, Sparkles, Wallet } from "lucide-react";
+import { Camera, ChevronRight, Coins, FileText, LogOut, ShieldCheck, Sparkles, Wallet } from "lucide-react";
 import { AppShell } from "@/components/layout/app-shell";
-import { coinBalance, demoActivity, formatCoins } from "@/lib/demo";
+import { demoActivity } from "@/lib/demo";
+import { useTutelaAuth } from "@/providers/tutela-auth-provider";
 
 export default function ProfilePage() {
+  const { authenticated, demoPoints, displayName, email, enabled, login, logout, ready, userId, walletAddress } = useTutelaAuth();
+  const initials = displayName.slice(0, 1).toUpperCase();
+
   return (
     <AppShell>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-3xl font-black">Profile</h1>
-        <div className="rounded-full bg-[#094586] px-3 py-2 text-sm font-black text-[#6FB4EB]">{formatCoins(coinBalance)}</div>
+        <div className="rounded-full bg-[#094586] px-3 py-2 text-sm font-black text-[#6FB4EB]">{demoPoints.toLocaleString()} coins</div>
       </div>
 
       <section className="flex items-center gap-4">
         <div className="relative grid h-20 w-20 place-items-center rounded-full bg-[#094586] text-3xl font-black text-[#6FB4EB]">
-          T
+          {authenticated ? initials : "T"}
           <span className="absolute bottom-0 right-0 grid h-7 w-7 place-items-center rounded-full bg-[#6FB4EB] text-[#4A051C]"><Camera size={15} /></span>
         </div>
         <div>
-          <h2 className="text-2xl font-black">Testnet Keeper</h2>
-          <p className="text-sm font-semibold text-[#D0FEF5]">@tutela-user · joined Jul 2026</p>
-          <p className="mt-2 flex items-center gap-2 text-sm font-semibold text-[#D0FEF5]"><Wallet size={15} /> 52uL...hCZV</p>
+          <h2 className="text-2xl font-black">{authenticated ? displayName : "Testnet Player"}</h2>
+          <p className="text-sm font-semibold text-[#D0FEF5]">
+            {authenticated ? email ?? "Signed in with Privy" : "Sign in to claim 1,000 demo coins"}
+          </p>
+          <p className="mt-2 flex items-center gap-2 text-sm font-semibold text-[#D0FEF5]">
+            <Wallet size={15} /> {walletAddress ? truncate(walletAddress) : userId ? truncate(userId) : "No wallet linked yet"}
+          </p>
+        </div>
+      </section>
+
+      <section className="mt-5 rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] p-4 text-[#4A051C]">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="font-black">{authenticated ? "Signed in for testnet play" : "Create your Tutela account"}</p>
+            <p className="mt-1 text-sm font-semibold">
+              {authenticated
+                ? "Your 1,000 free demo coins are tied to this Privy account in this browser. They cannot be bought, transferred, cashed out or redeemed."
+                : "Use email or Google through Privy. New users receive 1,000 free demo coins for devnet forecasting only."}
+            </p>
+          </div>
+          {authenticated ? (
+            <button onClick={logout} className="focus-ring rounded-lg bg-[#094586] px-4 py-3 text-sm font-black text-[#D0FEF5]">
+              <LogOut size={16} />
+            </button>
+          ) : (
+            <button
+              onClick={login}
+              disabled={!ready || !enabled}
+              className="focus-ring rounded-lg bg-[#094586] px-4 py-3 text-sm font-black text-[#D0FEF5] disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {enabled ? "Sign up" : "Auth off"}
+            </button>
+          )}
         </div>
       </section>
 
@@ -38,9 +74,9 @@ export default function ProfilePage() {
         <h2 className="mb-3 text-sm font-black uppercase tracking-[0.18em] text-[#D0FEF5]">Coins</h2>
         <div className="rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] text-[#4A051C] p-5 text-center">
           <Coins className="mx-auto text-[#6FB4EB]" size={30} />
-          <p className="mt-2 text-5xl font-black">{coinBalance.toLocaleString()}</p>
+          <p className="mt-2 text-5xl font-black">{demoPoints.toLocaleString()}</p>
           <p className="mt-2 text-sm font-semibold text-[#D0FEF5]">testnet coins · never cashable · no monetary value</p>
-          <button className="mt-5 rounded-lg bg-[#6FB4EB] px-5 py-3 text-sm font-black text-[#4A051C]">Top up test coins</button>
+          <button disabled className="mt-5 cursor-not-allowed rounded-lg bg-[#6FB4EB]/70 px-5 py-3 text-sm font-black text-[#4A051C]">No purchases or cash-out</button>
         </div>
       </section>
 
@@ -86,6 +122,10 @@ export default function ProfilePage() {
       </section>
     </AppShell>
   );
+}
+
+function truncate(value: string) {
+  return value.length > 14 ? `${value.slice(0, 6)}...${value.slice(-4)}` : value;
 }
 
 function Tile({ value, label, accent = false, good = false }: { value: string; label: string; accent?: boolean; good?: boolean }) {

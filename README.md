@@ -29,6 +29,16 @@ pnpm dev
 
 If `pnpm` is unavailable, install it through Corepack first. Do not connect mainnet wallets or real USDC.
 
+## Privy Sign-In For Testers
+
+Tutela uses Privy for email and Google sign-in. Create a Privy app, enable **Email** and **Google** login methods, then set this variable locally and in Vercel:
+
+```bash
+NEXT_PUBLIC_PRIVY_APP_ID=your_privy_app_id
+```
+
+`NEXT_PUBLIC_PRIVY_CLIENT_ID` is optional if your Privy dashboard provides one. New signed-in users receive 1,000 free demo coins for the browser/account session. Demo coins are non-transferable, cannot be purchased, cannot be withdrawn and have no monetary value.
+
 ## Safety Notices
 
 - Devnet test-USDC has no monetary value.
