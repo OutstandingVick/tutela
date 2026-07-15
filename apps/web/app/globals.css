@@ -9,6 +9,12 @@
   --tutela-primary: #6FB4EB;
   --tutela-secondary: #094586;
   --app-content-max-width: 32.3rem;
+  --app-frame-radius: 2rem;
+  --app-frame-border: rgba(111, 180, 235, 0.35);
+  --app-frame-background:
+    radial-gradient(circle at 50% 38%, rgba(111, 180, 235, 0.17), transparent 18rem),
+    linear-gradient(180deg, #03111B 0%, #020B12 48%, #03111B 100%);
+  --app-frame-shadow: 0 28px 90px rgba(0, 0, 0, 0.44);
 }
 
 * {
@@ -46,8 +52,23 @@ a {
   scrollbar-width: none;
 }
 
+.tutela-frame-page,
 .tutela-shell-page {
-  height: calc(100vh - 33px);
+  min-height: 100dvh;
+  padding:
+    max(0.75rem, env(safe-area-inset-top))
+    max(0.75rem, env(safe-area-inset-right))
+    max(0.75rem, env(safe-area-inset-bottom))
+    max(0.75rem, env(safe-area-inset-left));
+  background: #020B12;
+}
+
+.tutela-frame-page {
+  overflow-x: hidden;
+}
+
+.tutela-shell-page {
+  height: 100dvh;
   overflow: hidden;
 }
 
@@ -56,19 +77,46 @@ a {
   max-width: var(--app-content-max-width);
 }
 
+.tutela-app-frame {
+  overflow: hidden;
+  border: 1px solid var(--app-frame-border);
+  border-radius: var(--app-frame-radius);
+  background: var(--app-frame-background);
+  box-shadow: var(--app-frame-shadow);
+}
+
+.tutela-welcome-frame {
+  min-height: calc(100dvh - 1.5rem);
+}
+
 .tutela-phone-frame {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 65px);
-  background:
-    radial-gradient(circle at 50% 0%, rgba(208, 254, 245, 0.22), transparent 18rem),
-    radial-gradient(circle at 12% 18%, rgba(111, 180, 235, 0.35), transparent 24rem),
-    linear-gradient(150deg, #063261 0%, #094586 46%, #397EB8 100%);
+  height: 100%;
 }
 
 .tutela-shell-header,
 .tutela-bottom-nav {
   flex: 0 0 auto;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --app-frame-radius: 2.6rem;
+  }
+
+  .tutela-frame-page,
+  .tutela-shell-page {
+    padding:
+      max(1.25rem, env(safe-area-inset-top))
+      max(1.25rem, env(safe-area-inset-right))
+      max(1.25rem, env(safe-area-inset-bottom))
+      max(1.25rem, env(safe-area-inset-left));
+  }
+
+  .tutela-welcome-frame {
+    min-height: calc(100dvh - 2.5rem);
+  }
 }
 
 .tutela-shell-main {

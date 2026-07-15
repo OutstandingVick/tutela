@@ -12,9 +12,9 @@ export default function AppWelcomePage() {
   }
 
   return (
-    <main className="min-h-dvh overflow-x-hidden bg-[#020B12] px-3 py-3 text-[#D0FEF5] sm:px-5 sm:py-5">
+    <main className="tutela-frame-page text-[#D0FEF5]">
       <section
-        className="tutela-app-content mx-auto flex min-h-[calc(100dvh-1.5rem)] flex-col overflow-hidden rounded-[2rem] border border-[#6FB4EB]/35 bg-[radial-gradient(circle_at_50%_38%,rgba(111,180,235,0.17),transparent_18rem),linear-gradient(180deg,#03111B_0%,#020B12_48%,#03111B_100%)] px-6 pb-[calc(1.25rem+env(safe-area-inset-bottom))] pt-[calc(2.5rem+env(safe-area-inset-top))] shadow-[0_28px_90px_rgba(0,0,0,0.44)] sm:min-h-[calc(100dvh-2.5rem)] sm:rounded-[2.6rem] sm:px-10"
+        className="tutela-welcome-frame tutela-app-frame tutela-app-content mx-auto flex flex-col px-6 pb-[calc(1.25rem+env(safe-area-inset-bottom))] pt-[calc(2.5rem+env(safe-area-inset-top))] sm:px-10"
         aria-labelledby="welcome-title"
       >
         <div className="flex flex-1 flex-col items-center justify-center text-center">
@@ -22,21 +22,18 @@ export default function AppWelcomePage() {
             <Image src="/tutela-logo.png" alt="Tutela logo" fill priority sizes="96px" className="object-contain" />
           </div>
 
-          <div className="welcome-copy-motion mt-8">
+          <div className="welcome-copy-motion mt-2">
             <h1 id="welcome-title" className="text-5xl font-black leading-none tracking-normal text-[#D0FEF5] sm:text-6xl">
               Tutela
             </h1>
-            <div className="mx-auto mt-5 h-1 w-20 rounded-full bg-[#6FB4EB]" />
-            <p className="mt-8 text-2xl font-black leading-tight text-white sm:text-3xl">
-               Watch the game. Predict every match moment.
+            <p className="mt-4 text-xl font-black leading-tight text-white">
+               Watch the game. Predict every moment.
             </p>
-            <p className="mx-auto mt-4 max-w-[24rem] text-base font-semibold leading-7 text-[#D0FEF5]/72 sm:text-lg">
-              Predict goals, cards, corners, and outcomes.
-            </p>
+            
           </div>
         </div>
 
-        <div className="welcome-cta-motion mt-10">
+        <div className="welcome-cta-motion mt-5">
           <button
             type="button"
             onClick={enterApp}
@@ -45,10 +42,6 @@ export default function AppWelcomePage() {
             <span>Explore matches</span>
             <ArrowRight size={19} aria-hidden="true" />
           </button>
-
-          <p className="mt-5 text-center text-sm font-semibold text-[#D0FEF5]/68">
-            Solana Devnet · Test credits have no monetary value
-          </p>
 
           <div className="mt-7 flex items-center justify-center gap-2 text-sm font-semibold text-[#D0FEF5]/58">
             <span className="h-2 w-2 rounded-full bg-[#6FB4EB]" aria-hidden="true" />
