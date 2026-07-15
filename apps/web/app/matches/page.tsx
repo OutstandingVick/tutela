@@ -59,7 +59,6 @@ export default async function MatchesPage() {
                 <div>
                   <p className="text-lg font-black">{market.label}</p>
                   <p className="mt-1 text-sm font-semibold text-[#4A051C]">{market.line} · {market.volume} coins matched</p>
-                  <p className="mt-1 text-[11px] font-black uppercase tracking-[0.12em] text-[#094586]">{market.coverage}</p>
                 </div>
                 <div className="rounded-full bg-[#094586] px-3 py-1 text-xs font-black text-[#6FB4EB]">{market.status}</div>
               </div>

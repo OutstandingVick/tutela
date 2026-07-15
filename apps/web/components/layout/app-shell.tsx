@@ -18,7 +18,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="tutela-shell-page px-3 py-4 md:px-6">
-      <div className="tutela-phone-frame relative mx-auto w-full max-w-[var(--app-content-max-width)] overflow-hidden rounded-lg border border-[#6FB4EB] shadow-[0_24px_90px_rgba(0,0,0,0.45)]">
+      <div className="tutela-phone-frame tutela-app-content relative mx-auto overflow-hidden rounded-lg border border-[#6FB4EB] shadow-[0_24px_90px_rgba(0,0,0,0.45)]">
         <header className="tutela-shell-header px-5 pb-3 pt-5">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-2">
@@ -55,19 +55,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               )}
             </div>
           </div>
-          {!authenticated ? (
-            <button
-              onClick={login}
-              disabled={!ready || !enabled}
-              className="focus-ring mt-4 w-full rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] px-3 py-2 text-center text-xs font-black text-[#4A051C] disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {enabled ? "Sign in with email or Google to claim 1,000 free demo coins" : "Add NEXT_PUBLIC_PRIVY_APP_ID in Vercel to enable sign up"}
-            </button>
-          ) : (
+          {authenticated ? (
             <p className="mt-3 text-xs font-semibold text-[#D0FEF5]">
               {displayName} · demo coins only · no monetary value
             </p>
-          )}
+          ) : null}
         </header>
         <main className="tutela-shell-main px-5 pb-5 no-scrollbar">{children}</main>
         <nav className="tutela-bottom-nav z-40 grid-cols-4 border-t border-[#094586] px-2 py-2 backdrop-blur">

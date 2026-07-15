@@ -23,7 +23,7 @@ export default function AppWelcomePage() {
   return (
     <main className="min-h-dvh overflow-x-hidden bg-[#020B12] px-3 py-3 text-[#D0FEF5] sm:px-5 sm:py-5">
       <section
-        className="mx-auto flex min-h-[calc(100dvh-1.5rem)] w-full max-w-[var(--app-content-max-width)] flex-col overflow-hidden rounded-[2rem] border border-[#6FB4EB]/35 bg-[radial-gradient(circle_at_50%_38%,rgba(111,180,235,0.17),transparent_18rem),linear-gradient(180deg,#03111B_0%,#020B12_48%,#03111B_100%)] px-6 pb-[calc(1.25rem+env(safe-area-inset-bottom))] pt-[calc(2.5rem+env(safe-area-inset-top))] shadow-[0_28px_90px_rgba(0,0,0,0.44)] sm:min-h-[calc(100dvh-2.5rem)] sm:rounded-[2.6rem] sm:px-10"
+        className="tutela-app-content mx-auto flex min-h-[calc(100dvh-1.5rem)] flex-col overflow-hidden rounded-[2rem] border border-[#6FB4EB]/35 bg-[radial-gradient(circle_at_50%_38%,rgba(111,180,235,0.17),transparent_18rem),linear-gradient(180deg,#03111B_0%,#020B12_48%,#03111B_100%)] px-6 pb-[calc(1.25rem+env(safe-area-inset-bottom))] pt-[calc(2.5rem+env(safe-area-inset-top))] shadow-[0_28px_90px_rgba(0,0,0,0.44)] sm:min-h-[calc(100dvh-2.5rem)] sm:rounded-[2.6rem] sm:px-10"
         aria-labelledby="welcome-title"
       >
         <div className="flex flex-1 flex-col items-center justify-center text-center">

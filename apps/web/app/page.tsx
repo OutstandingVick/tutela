@@ -215,6 +215,8 @@ export default function LandingPage() {
           )}
         </nav>
       </div>
+      <br />
+      <br />
       <section
         id="product"
         className="relative overflow-hidden px-4 pb-0 pt-14 md:px-6 md:pt-20 lg:px-8"
@@ -231,9 +233,6 @@ export default function LandingPage() {
         <div className="absolute inset-x-0 top-24 z-0 mx-auto h-[420px] max-w-5xl rounded-[50%] bg-[#6FB4EB]/16 blur-3xl" />
         <div className="relative z-10 mx-auto max-w-[90rem]">
           <div className="mx-auto max-w-5xl text-center">
-            <p className="mx-auto mb-5 inline-flex items-center gap-2 rounded-full border border-[#D0FEF5]/20 bg-[#D0FEF5]/10 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-[#D0FEF5] backdrop-blur">
-              <Radio size={14} /> Verifiable sports infrastructure on Solana
-            </p>
             <h1 className="mx-auto max-w-6xl text-3xl font-black leading-[0.95] tracking-normal text-white md:text-7xl">
               Every football statistical 
               <span className="block text-[#D0FEF5]">outcome verified On-chain</span>
@@ -250,7 +249,10 @@ export default function LandingPage() {
               </a>
             </div>
           </div>
-
+          <br />
+          <br />
+          <br />
+          <br />
           <ProductShowcase />
         </div>
       </section>

@@ -51,6 +51,11 @@ a {
   overflow: hidden;
 }
 
+.tutela-app-content {
+  width: 100%;
+  max-width: var(--app-content-max-width);
+}
+
 .tutela-phone-frame {
   display: flex;
   flex-direction: column;
