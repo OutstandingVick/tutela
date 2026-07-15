@@ -8,6 +8,7 @@
   color: #D0FEF5;
   --tutela-primary: #6FB4EB;
   --tutela-secondary: #094586;
+  --app-content-max-width: 32.3rem;
 }
 
 * {
