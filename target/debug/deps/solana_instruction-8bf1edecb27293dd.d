@@ -1,0 +1,10 @@
+/Users/macbook/Documents/tutela/target/debug/deps/solana_instruction-8bf1edecb27293dd.d: /Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/solana-instruction-2.3.3/src/lib.rs /Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/solana-instruction-2.3.3/src/account_meta.rs /Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/solana-instruction-2.3.3/src/error.rs /Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/solana-instruction-2.3.3/src/syscalls.rs
+
+/Users/macbook/Documents/tutela/target/debug/deps/libsolana_instruction-8bf1edecb27293dd.rlib: /Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/solana-instruction-2.3.3/src/lib.rs /Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/solana-instruction-2.3.3/src/account_meta.rs /Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/solana-instruction-2.3.3/src/error.rs /Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/solana-instruction-2.3.3/src/syscalls.rs
+
+/Users/macbook/Documents/tutela/target/debug/deps/libsolana_instruction-8bf1edecb27293dd.rmeta: /Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/solana-instruction-2.3.3/src/lib.rs /Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/solana-instruction-2.3.3/src/account_meta.rs /Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/solana-instruction-2.3.3/src/error.rs /Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/solana-instruction-2.3.3/src/syscalls.rs
+
+/Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/solana-instruction-2.3.3/src/lib.rs:
+/Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/solana-instruction-2.3.3/src/account_meta.rs:
+/Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/solana-instruction-2.3.3/src/error.rs:
+/Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/solana-instruction-2.3.3/src/syscalls.rs:

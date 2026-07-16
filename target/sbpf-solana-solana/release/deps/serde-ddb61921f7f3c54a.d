@@ -1,0 +1,14 @@
+/Users/macbook/Documents/tutela/target/sbpf-solana-solana/release/deps/serde-ddb61921f7f3c54a.d: /Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /Users/macbook/Documents/tutela/target/sbpf-solana-solana/release/build/serde-6ddbdd9e1a4b0a5c/out/private.rs
+
+/Users/macbook/Documents/tutela/target/sbpf-solana-solana/release/deps/libserde-ddb61921f7f3c54a.rlib: /Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /Users/macbook/Documents/tutela/target/sbpf-solana-solana/release/build/serde-6ddbdd9e1a4b0a5c/out/private.rs
+
+/Users/macbook/Documents/tutela/target/sbpf-solana-solana/release/deps/libserde-ddb61921f7f3c54a.rmeta: /Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /Users/macbook/Documents/tutela/target/sbpf-solana-solana/release/build/serde-6ddbdd9e1a4b0a5c/out/private.rs
+
+/Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs:
+/Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs:
+/Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs:
+/Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs:
+/Users/macbook/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs:
+/Users/macbook/Documents/tutela/target/sbpf-solana-solana/release/build/serde-6ddbdd9e1a4b0a5c/out/private.rs:
+
+# env-dep:OUT_DIR=/Users/macbook/Documents/tutela/target/sbpf-solana-solana/release/build/serde-6ddbdd9e1a4b0a5c/out

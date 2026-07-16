@@ -1,6 +1,10 @@
 use anchor_lang::prelude::*;
-use anchor_lang::solana_program::hash::hash;
+use anchor_lang::solana_program::{
+    instruction::{AccountMeta, Instruction},
+    program::{get_return_data, invoke},
+};
 use anchor_spl::token::{self, Mint, Token, TokenAccount, Transfer};
+use sha2::{Digest, Sha256};
 
 declare_id!("GPhEqiNUU86oYW53NGUcS4DfZNCcYimiZuM5jaXwf1rG");
 
@@ -9,6 +13,10 @@ const BPS_DENOMINATOR: u128 = 10_000;
 const MAX_CONDITIONS: u8 = 5;
 const MARKET_TITLE_BYTES: usize = 96;
 const MAX_CONDITION_BYTES: usize = 512;
+const MAX_TXLINE_STATS: usize = 16;
+const FINAL_PERIOD: i32 = 100;
+const TXLINE_VALIDATE_STAT_V2_DISCRIMINATOR: [u8; 8] = [208, 215, 194, 214, 241, 71, 246, 178];
+const TXLINE_DEVNET_PROGRAM_ID: Pubkey = pubkey!("6pW64gN1s2uqjHkn1unFeEjAwJkPGHoppGvS715wyP2J");
 
 #[program]
 pub mod tutela {
@@ -23,6 +31,11 @@ pub mod tutela {
         maximum_market_capacity: u32,
         verification_program_id: Pubkey,
     ) -> Result<()> {
+        require_keys_eq!(
+            verification_program_id,
+            TXLINE_DEVNET_PROGRAM_ID,
+            TutelaError::InvalidVerifier
+        );
         require!(
             max_creator_fee_bps <= CREATOR_FEE_CAP_BPS,
             TutelaError::CreatorFeeTooHigh
@@ -60,6 +73,11 @@ pub mod tutela {
         maximum_market_capacity: u32,
         verification_program_id: Pubkey,
     ) -> Result<()> {
+        require_keys_eq!(
+            verification_program_id,
+            TXLINE_DEVNET_PROGRAM_ID,
+            TutelaError::InvalidVerifier
+        );
         require!(
             max_creator_fee_bps <= CREATOR_FEE_CAP_BPS,
             TutelaError::CreatorFeeTooHigh
@@ -143,7 +161,7 @@ pub mod tutela {
         market.boolean_operator = args.boolean_operator;
         market.condition_count = args.condition_count;
         market.condition_payload = args.condition_payload.clone();
-        market.condition_hash = hash(&args.condition_payload).to_bytes();
+        market.condition_hash = sha256(&args.condition_payload);
         market.collateral_mint = ctx.accounts.collateral_mint.key();
         market.vault = ctx.accounts.vault.key();
         market.yes_pool = 0;
@@ -165,6 +183,8 @@ pub mod tutela {
         market.creator_bond = 0;
         market.bump = ctx.bumps.market;
         market.vault_authority_bump = ctx.bumps.vault_authority;
+        market.txline_fixture_id = args.txline_fixture_id;
+        market.validated_stat_hash = [0; 32];
 
         let profile = &mut ctx.accounts.creator_profile;
         if profile.creator == Pubkey::default() {
@@ -188,7 +208,7 @@ pub mod tutela {
     pub fn join_market(ctx: Context<JoinMarket>, side: Side, amount: u64) -> Result<()> {
         let config = &ctx.accounts.protocol_config;
         require!(!config.paused, TutelaError::ProtocolPaused);
-        let market = &mut ctx.accounts.market;
+        let market = &ctx.accounts.market;
         require!(market.state == MarketState::Open, TutelaError::InvalidState);
         require!(
             Clock::get()?.unix_timestamp < market.participation_deadline,
@@ -204,6 +224,7 @@ pub mod tutela {
         );
 
         token::transfer(ctx.accounts.deposit_ctx(), amount)?;
+        let market = &mut ctx.accounts.market;
         let position = &mut ctx.accounts.position;
         if position.owner == Pubkey::default() {
             position.market = market.key();
@@ -303,8 +324,7 @@ pub mod tutela {
 
     pub fn validate_outcome(
         ctx: Context<ValidateOutcome>,
-        winning_side: Side,
-        stat_payload_hash: [u8; 32],
+        payload: StatValidationInput,
     ) -> Result<()> {
         let config = &ctx.accounts.protocol_config;
         let market = &mut ctx.accounts.market;
@@ -313,16 +333,57 @@ pub mod tutela {
             market.state == MarketState::ProofSubmitted,
             TutelaError::InvalidState
         );
-        require!(
-            ctx.accounts.verifier.key() == config.verification_program_id,
+        require_keys_eq!(
+            config.verification_program_id,
+            TXLINE_DEVNET_PROGRAM_ID,
+            TutelaError::InvalidVerifier
+        );
+        require_keys_eq!(
+            ctx.accounts.txline_program.key(),
+            config.verification_program_id,
             TutelaError::InvalidVerifier
         );
         require!(
-            proof.stat_payload_hash == stat_payload_hash,
-            TutelaError::ProofPayloadMismatch
+            ctx.accounts.txline_program.executable,
+            TutelaError::VerifierNotExecutable
         );
+        ensure_proof_submitted(proof.verification_status)?;
+        let payload_hash = validate_payload_binding(
+            market.txline_fixture_id,
+            market.expected_match_end_timestamp,
+            proof.stat_payload_hash,
+            &payload,
+        )?;
+
+        let epoch_day = epoch_day(payload.fixture_summary.update_stats.min_timestamp)?;
+        let (expected_daily_root, _) = Pubkey::find_program_address(
+            &[b"daily_scores_roots", &epoch_day.to_le_bytes()],
+            &TXLINE_DEVNET_PROGRAM_ID,
+        );
+        require_keys_eq!(
+            ctx.accounts.daily_scores_merkle_roots.key(),
+            expected_daily_root,
+            TutelaError::InvalidDailyRoot
+        );
+
+        let strategy = exact_stat_strategy(&payload.stats)?;
+        invoke_txline_validate_stat_v2(
+            &ctx.accounts.txline_program,
+            &ctx.accounts.daily_scores_merkle_roots,
+            &payload,
+            &strategy,
+        )?;
+
+        let group_result = evaluate_condition_payload(
+            &market.condition_payload,
+            market.boolean_operator,
+            market.condition_count,
+            &payload.stats,
+        )?;
+        let winning_side = if group_result { Side::Yes } else { Side::No };
         proof.verification_status = VerificationStatus::Verified;
         market.verified_result = Some(winning_side);
+        market.validated_stat_hash = payload_hash;
         market.state = MarketState::Verified;
         emit!(OutcomeVerified {
             market: market.key(),
@@ -494,6 +555,7 @@ pub mod tutela {
 pub struct CreateMarketArgs {
     pub market_nonce: [u8; 8],
     pub match_id: [u8; 32],
+    pub txline_fixture_id: i64,
     pub title: String,
     pub boolean_operator: BooleanOperator,
     pub condition_count: u8,
@@ -611,8 +673,10 @@ pub struct ValidateOutcome<'info> {
     pub market: Account<'info, Market>,
     #[account(mut, seeds = [b"proof", market.key().as_ref()], bump = proof.bump)]
     pub proof: Account<'info, ProofSubmissionRecord>,
-    /// CHECK: This account is compared against configured verifier program id.
-    pub verifier: UncheckedAccount<'info>,
+    /// CHECK: Constrained to the configured executable TxLINE program in the handler.
+    pub txline_program: UncheckedAccount<'info>,
+    /// CHECK: TxLINE-owned daily root PDA; address is derived and checked in the handler.
+    pub daily_scores_merkle_roots: UncheckedAccount<'info>,
 }
 
 #[derive(Accounts)]
@@ -756,6 +820,8 @@ pub struct Market {
     pub creator_fee_amount: u64,
     pub bump: u8,
     pub vault_authority_bump: u8,
+    pub txline_fixture_id: i64,
+    pub validated_stat_hash: [u8; 32],
 }
 
 impl Market {
@@ -792,7 +858,98 @@ impl Market {
         + 8
         + 8
         + 1
-        + 1;
+        + 1
+        + 8
+        + 32;
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug, PartialEq, Eq)]
+pub struct ProofNode {
+    pub hash: [u8; 32],
+    pub is_right_sibling: bool,
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug, PartialEq, Eq)]
+pub struct ScoreStat {
+    pub key: u32,
+    pub value: i32,
+    pub period: i32,
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug, PartialEq, Eq)]
+pub struct ScoresUpdateStats {
+    pub update_count: i32,
+    pub min_timestamp: i64,
+    pub max_timestamp: i64,
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug, PartialEq, Eq)]
+pub struct ScoresBatchSummary {
+    pub fixture_id: i64,
+    pub update_stats: ScoresUpdateStats,
+    pub events_sub_tree_root: [u8; 32],
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug, PartialEq, Eq)]
+pub struct StatLeaf {
+    pub stat: ScoreStat,
+    pub stat_proof: Vec<ProofNode>,
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug, PartialEq, Eq)]
+pub struct StatValidationInput {
+    pub ts: i64,
+    pub fixture_summary: ScoresBatchSummary,
+    pub fixture_proof: Vec<ProofNode>,
+    pub main_tree_proof: Vec<ProofNode>,
+    pub event_stat_root: [u8; 32],
+    pub stats: Vec<StatLeaf>,
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Comparison {
+    GreaterThan,
+    LessThan,
+    EqualTo,
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug, PartialEq, Eq)]
+pub struct TraderPredicate {
+    pub threshold: i32,
+    pub comparison: Comparison,
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug, PartialEq, Eq)]
+pub struct GeometricTarget {
+    pub stat_index: u8,
+    pub prediction: i32,
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, Debug, PartialEq, Eq)]
+pub enum BinaryExpression {
+    Add,
+    Subtract,
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug, PartialEq, Eq)]
+pub enum StatPredicate {
+    Single {
+        index: u8,
+        predicate: TraderPredicate,
+    },
+    Binary {
+        index_a: u8,
+        index_b: u8,
+        op: BinaryExpression,
+        predicate: TraderPredicate,
+    },
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug, PartialEq, Eq)]
+pub struct NDimensionalStrategy {
+    pub geometric_targets: Vec<GeometricTarget>,
+    pub distance_predicate: Option<TraderPredicate>,
+    pub discrete_predicates: Vec<StatPredicate>,
 }
 
 #[account]
@@ -997,6 +1154,20 @@ pub enum TutelaError {
     RefundPathAlreadyAvailable,
     #[msg("Verifier identity does not match protocol config.")]
     InvalidVerifier,
+    #[msg("Configured verifier account is not executable.")]
+    VerifierNotExecutable,
+    #[msg("TxLINE daily scores root PDA is invalid.")]
+    InvalidDailyRoot,
+    #[msg("TxLINE stat payload is malformed or unsupported.")]
+    InvalidStatPayload,
+    #[msg("Settlement requires TxLINE final-period statistics.")]
+    NonFinalStatistics,
+    #[msg("TxLINE CPI did not authenticate the supplied statistics.")]
+    StatValidationFailed,
+    #[msg("Stored condition bytes are malformed or unsupported on-chain.")]
+    InvalidConditionPayload,
+    #[msg("A statistic required by the market conditions is missing.")]
+    RequiredStatMissing,
     #[msg("Proof payload hash mismatch.")]
     ProofPayloadMismatch,
     #[msg("Verified result is missing.")]
@@ -1011,12 +1182,334 @@ pub enum TutelaError {
     MathOverflow,
 }
 
+fn invoke_txline_validate_stat_v2<'info>(
+    txline_program: &UncheckedAccount<'info>,
+    daily_scores_merkle_roots: &UncheckedAccount<'info>,
+    payload: &StatValidationInput,
+    strategy: &NDimensionalStrategy,
+) -> Result<()> {
+    let mut data = TXLINE_VALIDATE_STAT_V2_DISCRIMINATOR.to_vec();
+    payload
+        .serialize(&mut data)
+        .map_err(|_| error!(TutelaError::InvalidStatPayload))?;
+    strategy
+        .serialize(&mut data)
+        .map_err(|_| error!(TutelaError::InvalidStatPayload))?;
+
+    let instruction = Instruction {
+        program_id: txline_program.key(),
+        accounts: vec![AccountMeta::new_readonly(
+            daily_scores_merkle_roots.key(),
+            false,
+        )],
+        data,
+    };
+    invoke(
+        &instruction,
+        &[
+            daily_scores_merkle_roots.to_account_info(),
+            txline_program.to_account_info(),
+        ],
+    )?;
+
+    let (returning_program, return_data) =
+        get_return_data().ok_or(error!(TutelaError::StatValidationFailed))?;
+    require_keys_eq!(
+        returning_program,
+        txline_program.key(),
+        TutelaError::InvalidVerifier
+    );
+    require!(
+        return_data.as_slice() == [1u8],
+        TutelaError::StatValidationFailed
+    );
+    Ok(())
+}
+
+fn exact_stat_strategy(stats: &[StatLeaf]) -> Result<NDimensionalStrategy> {
+    let discrete_predicates = stats
+        .iter()
+        .enumerate()
+        .map(|(index, leaf)| {
+            let index = u8::try_from(index).map_err(|_| error!(TutelaError::InvalidStatPayload))?;
+            Ok(StatPredicate::Single {
+                index,
+                predicate: TraderPredicate {
+                    threshold: leaf.stat.value,
+                    comparison: Comparison::EqualTo,
+                },
+            })
+        })
+        .collect::<Result<Vec<_>>>()?;
+    Ok(NDimensionalStrategy {
+        geometric_targets: vec![],
+        distance_predicate: None,
+        discrete_predicates,
+    })
+}
+
+fn validate_unique_stats(stats: &[StatLeaf]) -> Result<()> {
+    for (index, leaf) in stats.iter().enumerate() {
+        require!(
+            !stats[..index]
+                .iter()
+                .any(|previous| previous.stat.key == leaf.stat.key),
+            TutelaError::InvalidStatPayload
+        );
+    }
+    Ok(())
+}
+
+fn ensure_proof_submitted(status: VerificationStatus) -> Result<()> {
+    require!(
+        status == VerificationStatus::Submitted,
+        TutelaError::DuplicateProof
+    );
+    Ok(())
+}
+
+fn validate_payload_binding(
+    fixture_id: i64,
+    expected_match_end_timestamp: i64,
+    expected_payload_hash: [u8; 32],
+    payload: &StatValidationInput,
+) -> Result<[u8; 32]> {
+    require!(
+        payload.fixture_summary.fixture_id == fixture_id,
+        TutelaError::MatchMismatch
+    );
+    require!(
+        !payload.stats.is_empty() && payload.stats.len() <= MAX_TXLINE_STATS,
+        TutelaError::InvalidStatPayload
+    );
+    require!(
+        payload
+            .stats
+            .iter()
+            .all(|leaf| leaf.stat.period == FINAL_PERIOD),
+        TutelaError::NonFinalStatistics
+    );
+    validate_unique_stats(&payload.stats)?;
+
+    let payload_bytes = payload
+        .try_to_vec()
+        .map_err(|_| error!(TutelaError::InvalidStatPayload))?;
+    let payload_hash = sha256(&payload_bytes);
+    require!(
+        expected_payload_hash == payload_hash,
+        TutelaError::ProofPayloadMismatch
+    );
+
+    let min_timestamp = unix_seconds(payload.fixture_summary.update_stats.min_timestamp)?;
+    let max_timestamp = unix_seconds(payload.fixture_summary.update_stats.max_timestamp)?;
+    require!(
+        min_timestamp >= expected_match_end_timestamp,
+        TutelaError::InvalidProofTimestamp
+    );
+    require!(
+        max_timestamp >= min_timestamp,
+        TutelaError::InvalidProofTimestamp
+    );
+    Ok(payload_hash)
+}
+
+fn unix_seconds(timestamp: i64) -> Result<i64> {
+    require!(timestamp > 0, TutelaError::InvalidProofTimestamp);
+    Ok(if timestamp > 10_000_000_000 {
+        timestamp
+            .checked_div(1_000)
+            .ok_or(error!(TutelaError::MathOverflow))?
+    } else {
+        timestamp
+    })
+}
+
+fn epoch_day(timestamp: i64) -> Result<u16> {
+    let day = unix_seconds(timestamp)?
+        .checked_div(86_400)
+        .ok_or(error!(TutelaError::MathOverflow))?;
+    u16::try_from(day).map_err(|_| error!(TutelaError::InvalidProofTimestamp))
+}
+
+fn evaluate_condition_payload(
+    bytes: &[u8],
+    market_operator: BooleanOperator,
+    condition_count: u8,
+    stats: &[StatLeaf],
+) -> Result<bool> {
+    let mut cursor = ConditionCursor::new(bytes);
+    let encoded_operator = cursor.u8()?;
+    let encoded_count = cursor.u8()?;
+    require!(
+        encoded_count == condition_count,
+        TutelaError::InvalidConditionPayload
+    );
+    require!(
+        encoded_operator
+            == match market_operator {
+                BooleanOperator::And => 0,
+                BooleanOperator::Or => 1,
+            },
+        TutelaError::InvalidConditionPayload
+    );
+
+    let mut aggregate = market_operator == BooleanOperator::And;
+    for _ in 0..encoded_count {
+        let result = evaluate_encoded_condition(&mut cursor, stats)?;
+        aggregate = match market_operator {
+            BooleanOperator::And => aggregate && result,
+            BooleanOperator::Or => aggregate || result,
+        };
+    }
+    require!(cursor.finished(), TutelaError::InvalidConditionPayload);
+    Ok(aggregate)
+}
+
+fn evaluate_encoded_condition(
+    cursor: &mut ConditionCursor<'_>,
+    stats: &[StatLeaf],
+) -> Result<bool> {
+    let field = cursor.u8()?;
+    let operator = cursor.u8()?;
+    let scope = cursor.u8()?;
+    let _team_id = cursor.string()?;
+    let _player_id = cursor.string()?;
+    require!(
+        scope == 0 || scope == 4,
+        TutelaError::InvalidConditionPayload
+    );
+
+    let value_kind = cursor.u8()?;
+    match field {
+        0 => {
+            require!(
+                operator == 0 && value_kind == 2,
+                TutelaError::InvalidConditionPayload
+            );
+            let expected = cursor.string()?.to_ascii_uppercase();
+            let home = stat_value(stats, 1)?;
+            let away = stat_value(stats, 2)?;
+            let actual = if home > away {
+                "HOME"
+            } else if away > home {
+                "AWAY"
+            } else {
+                "DRAW"
+            };
+            Ok(actual == expected)
+        }
+        1 | 4 | 6 => {
+            require!(value_kind == 1, TutelaError::InvalidConditionPayload);
+            let expected = i32::from(cursor.u16()?);
+            let actual = match field {
+                1 => checked_stat_sum(stats, &[1, 2])?,
+                4 => checked_stat_sum(stats, &[7, 8])?,
+                6 => checked_stat_sum(stats, &[3, 4, 5, 6])?,
+                _ => unreachable!(),
+            };
+            compare_i32(actual, expected, operator)
+        }
+        8 => {
+            require!(value_kind == 0, TutelaError::InvalidConditionPayload);
+            let expected = cursor.u8()? != 0;
+            let actual = stat_value(stats, 1)? > 0 && stat_value(stats, 2)? > 0;
+            compare_bool(actual, expected, operator)
+        }
+        _ => err!(TutelaError::InvalidConditionPayload),
+    }
+}
+
+fn stat_value(stats: &[StatLeaf], key: u32) -> Result<i32> {
+    stats
+        .iter()
+        .find(|leaf| leaf.stat.key == key)
+        .map(|leaf| leaf.stat.value)
+        .ok_or(error!(TutelaError::RequiredStatMissing))
+}
+
+fn checked_stat_sum(stats: &[StatLeaf], keys: &[u32]) -> Result<i32> {
+    keys.iter().try_fold(0i32, |sum, key| {
+        sum.checked_add(stat_value(stats, *key)?)
+            .ok_or(error!(TutelaError::MathOverflow))
+    })
+}
+
+fn compare_i32(actual: i32, expected: i32, operator: u8) -> Result<bool> {
+    match operator {
+        0 => Ok(actual == expected),
+        1 => Ok(actual != expected),
+        2 => Ok(actual > expected),
+        3 => Ok(actual >= expected),
+        4 => Ok(actual < expected),
+        5 => Ok(actual <= expected),
+        _ => err!(TutelaError::InvalidConditionPayload),
+    }
+}
+
+fn compare_bool(actual: bool, expected: bool, operator: u8) -> Result<bool> {
+    match operator {
+        0 => Ok(actual == expected),
+        1 => Ok(actual != expected),
+        6 => Ok(actual),
+        7 => Ok(!actual),
+        _ => err!(TutelaError::InvalidConditionPayload),
+    }
+}
+
+struct ConditionCursor<'a> {
+    bytes: &'a [u8],
+    offset: usize,
+}
+
+impl<'a> ConditionCursor<'a> {
+    fn new(bytes: &'a [u8]) -> Self {
+        Self { bytes, offset: 0 }
+    }
+
+    fn u8(&mut self) -> Result<u8> {
+        let value = *self
+            .bytes
+            .get(self.offset)
+            .ok_or(error!(TutelaError::InvalidConditionPayload))?;
+        self.offset += 1;
+        Ok(value)
+    }
+
+    fn u16(&mut self) -> Result<u16> {
+        let low = self.u8()?;
+        let high = self.u8()?;
+        Ok(u16::from_le_bytes([low, high]))
+    }
+
+    fn string(&mut self) -> Result<String> {
+        let length = usize::from(self.u16()?);
+        let end = self
+            .offset
+            .checked_add(length)
+            .ok_or(error!(TutelaError::InvalidConditionPayload))?;
+        let slice = self
+            .bytes
+            .get(self.offset..end)
+            .ok_or(error!(TutelaError::InvalidConditionPayload))?;
+        self.offset = end;
+        String::from_utf8(slice.to_vec()).map_err(|_| error!(TutelaError::InvalidConditionPayload))
+    }
+
+    fn finished(&self) -> bool {
+        self.offset == self.bytes.len()
+    }
+}
+
 fn fixed_title(title: String) -> [u8; MARKET_TITLE_BYTES] {
     let mut out = [0u8; MARKET_TITLE_BYTES];
     let bytes = title.as_bytes();
     let len = bytes.len().min(MARKET_TITLE_BYTES);
     out[..len].copy_from_slice(&bytes[..len]);
     out
+}
+
+fn sha256(bytes: &[u8]) -> [u8; 32] {
+    Sha256::digest(bytes).into()
 }
 
 fn checked_add_u64(a: u64, b: u64) -> Result<u64> {
@@ -1033,4 +1526,120 @@ fn fee(total: u64, bps: u16) -> Result<u64> {
         .ok_or(error!(TutelaError::MathOverflow))?
         .checked_div(BPS_DENOMINATOR)
         .ok_or(error!(TutelaError::MathOverflow))?) as u64)
+}
+
+#[cfg(test)]
+mod security_tests {
+    use super::*;
+
+    const FIXTURE_ID: i64 = 18_257_865;
+    const FINAL_TS: i64 = 1_784_415_600_000;
+
+    fn final_payload(values: &[(u32, i32)]) -> StatValidationInput {
+        StatValidationInput {
+            ts: FINAL_TS,
+            fixture_summary: ScoresBatchSummary {
+                fixture_id: FIXTURE_ID,
+                update_stats: ScoresUpdateStats {
+                    update_count: 1,
+                    min_timestamp: FINAL_TS,
+                    max_timestamp: FINAL_TS,
+                },
+                events_sub_tree_root: [7; 32],
+            },
+            fixture_proof: vec![],
+            main_tree_proof: vec![],
+            event_stat_root: [8; 32],
+            stats: values
+                .iter()
+                .map(|(key, value)| StatLeaf {
+                    stat: ScoreStat {
+                        key: *key,
+                        value: *value,
+                        period: FINAL_PERIOD,
+                    },
+                    stat_proof: vec![],
+                })
+                .collect(),
+        }
+    }
+
+    fn numeric_condition(field: u8, operator: u8, value: u16) -> Vec<u8> {
+        let mut bytes = vec![field, operator, 0, 0, 0, 0, 0, 1];
+        bytes.extend_from_slice(&value.to_le_bytes());
+        bytes
+    }
+
+    #[test]
+    fn evaluates_stored_and_or_conditions_from_authenticated_stats() {
+        let stats = final_payload(&[
+            (1, 2),
+            (2, 1),
+            (3, 1),
+            (4, 1),
+            (5, 0),
+            (6, 0),
+            (7, 6),
+            (8, 4),
+        ]);
+        let mut and_bytes = vec![0, 2];
+        and_bytes.extend(numeric_condition(1, 3, 3));
+        and_bytes.extend(numeric_condition(4, 4, 12));
+        assert!(evaluate_condition_payload(
+            &and_bytes,
+            BooleanOperator::And,
+            2,
+            &stats.stats
+        )
+        .unwrap());
+
+        let mut or_bytes = vec![1, 2];
+        or_bytes.extend(numeric_condition(1, 2, 10));
+        or_bytes.extend(numeric_condition(4, 0, 10));
+        assert!(evaluate_condition_payload(
+            &or_bytes,
+            BooleanOperator::Or,
+            2,
+            &stats.stats
+        )
+        .unwrap());
+    }
+
+    #[test]
+    fn rejects_wrong_fixture() {
+        let payload = final_payload(&[(1, 2), (2, 1)]);
+        let hash = sha256(&payload.try_to_vec().unwrap());
+        assert!(validate_payload_binding(FIXTURE_ID + 1, 0, hash, &payload).is_err());
+    }
+
+    #[test]
+    fn rejects_altered_statistics_after_submission() {
+        let original = final_payload(&[(1, 2), (2, 1)]);
+        let submitted_hash = sha256(&original.try_to_vec().unwrap());
+        let altered = final_payload(&[(1, 9), (2, 1)]);
+        assert!(validate_payload_binding(FIXTURE_ID, 0, submitted_hash, &altered).is_err());
+    }
+
+    #[test]
+    fn rejects_replayed_validation() {
+        assert!(ensure_proof_submitted(VerificationStatus::Submitted).is_ok());
+        assert!(ensure_proof_submitted(VerificationStatus::Verified).is_err());
+    }
+
+    #[test]
+    fn strategy_authenticates_every_stat_exactly_once() {
+        let payload = final_payload(&[(1, 2), (2, 1), (7, 6)]);
+        let strategy = exact_stat_strategy(&payload.stats).unwrap();
+        assert_eq!(strategy.discrete_predicates.len(), payload.stats.len());
+        for (index, predicate) in strategy.discrete_predicates.iter().enumerate() {
+            match predicate {
+                StatPredicate::Single { index: actual, predicate } => {
+                    assert_eq!(usize::from(*actual), index);
+                    assert_eq!(predicate.threshold, payload.stats[index].stat.value);
+                    assert_eq!(predicate.comparison, Comparison::EqualTo);
+                }
+                _ => panic!("exact strategy must use single-stat predicates"),
+            }
+        }
+    }
 }

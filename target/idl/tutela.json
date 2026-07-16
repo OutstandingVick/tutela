@@ -1,0 +1,2235 @@
+{
+  "address": "GPhEqiNUU86oYW53NGUcS4DfZNCcYimiZuM5jaXwf1rG",
+  "metadata": {
+    "name": "tutela",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Tutela devnet parametric football markets"
+  },
+  "instructions": [
+    {
+      "name": "cancel_market",
+      "discriminator": [
+        205,
+        121,
+        84,
+        210,
+        222,
+        71,
+        150,
+        11
+      ],
+      "accounts": [
+        {
+          "name": "creator",
+          "signer": true
+        },
+        {
+          "name": "market",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "claim_payout",
+      "discriminator": [
+        127,
+        240,
+        132,
+        62,
+        227,
+        198,
+        146,
+        133
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market",
+          "writable": true
+        },
+        {
+          "name": "position",
+          "writable": true
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "vault_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner_token",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "claim_refund",
+      "discriminator": [
+        15,
+        16,
+        30,
+        161,
+        255,
+        228,
+        97,
+        60
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market",
+          "writable": true
+        },
+        {
+          "name": "position",
+          "writable": true
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "vault_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner_token",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "close_market_accounts",
+      "discriminator": [
+        139,
+        214,
+        115,
+        217,
+        119,
+        119,
+        157,
+        18
+      ],
+      "accounts": [
+        {
+          "name": "market",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "create_market",
+      "discriminator": [
+        103,
+        226,
+        97,
+        235,
+        200,
+        188,
+        251,
+        254
+      ],
+      "accounts": [
+        {
+          "name": "creator",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "protocol_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  116,
+                  111,
+                  99,
+                  111,
+                  108
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "creator_profile",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  114,
+                  101,
+                  97,
+                  116,
+                  111,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "creator"
+              }
+            ]
+          }
+        },
+        {
+          "name": "market",
+          "writable": true
+        },
+        {
+          "name": "vault_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "collateral_mint"
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "rent",
+          "address": "SysvarRent111111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "CreateMarketArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "initialize_protocol",
+      "discriminator": [
+        188,
+        233,
+        252,
+        106,
+        134,
+        146,
+        202,
+        91
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "protocol_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  116,
+                  111,
+                  99,
+                  111,
+                  108
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "collateral_mint"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "protocol_fee_bps",
+          "type": "u16"
+        },
+        {
+          "name": "max_creator_fee_bps",
+          "type": "u16"
+        },
+        {
+          "name": "minimum_deposit",
+          "type": "u64"
+        },
+        {
+          "name": "maximum_deposit",
+          "type": "u64"
+        },
+        {
+          "name": "maximum_market_capacity",
+          "type": "u32"
+        },
+        {
+          "name": "verification_program_id",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "join_market",
+      "discriminator": [
+        141,
+        113,
+        87,
+        152,
+        182,
+        213,
+        41,
+        202
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "protocol_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  116,
+                  111,
+                  99,
+                  111,
+                  108
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "market",
+          "writable": true
+        },
+        {
+          "name": "user_token",
+          "writable": true
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "position",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "side",
+          "type": {
+            "defined": {
+              "name": "Side"
+            }
+          }
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "lock_market",
+      "discriminator": [
+        107,
+        8,
+        184,
+        91,
+        223,
+        13,
+        180,
+        38
+      ],
+      "accounts": [
+        {
+          "name": "market",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "pause_protocol",
+      "discriminator": [
+        144,
+        95,
+        0,
+        107,
+        119,
+        39,
+        248,
+        141
+      ],
+      "accounts": [
+        {
+          "name": "protocol_config",
+          "writable": true
+        },
+        {
+          "name": "admin",
+          "signer": true,
+          "relations": [
+            "protocol_config"
+          ]
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "settle_market",
+      "discriminator": [
+        193,
+        153,
+        95,
+        216,
+        166,
+        6,
+        144,
+        217
+      ],
+      "accounts": [
+        {
+          "name": "market",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "submit_proof",
+      "discriminator": [
+        54,
+        241,
+        46,
+        84,
+        4,
+        212,
+        46,
+        94
+      ],
+      "accounts": [
+        {
+          "name": "submitter",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market",
+          "writable": true
+        },
+        {
+          "name": "proof",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  111,
+                  102
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "ProofArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "trigger_refund_eligibility",
+      "discriminator": [
+        85,
+        51,
+        84,
+        125,
+        166,
+        201,
+        168,
+        202
+      ],
+      "accounts": [
+        {
+          "name": "market",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "unpause_protocol",
+      "discriminator": [
+        183,
+        154,
+        5,
+        183,
+        105,
+        76,
+        87,
+        18
+      ],
+      "accounts": [
+        {
+          "name": "protocol_config",
+          "writable": true
+        },
+        {
+          "name": "admin",
+          "signer": true,
+          "relations": [
+            "protocol_config"
+          ]
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "update_protocol_config",
+      "discriminator": [
+        197,
+        97,
+        123,
+        54,
+        221,
+        168,
+        11,
+        135
+      ],
+      "accounts": [
+        {
+          "name": "protocol_config",
+          "writable": true
+        },
+        {
+          "name": "admin",
+          "signer": true,
+          "relations": [
+            "protocol_config"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "protocol_fee_bps",
+          "type": "u16"
+        },
+        {
+          "name": "max_creator_fee_bps",
+          "type": "u16"
+        },
+        {
+          "name": "minimum_deposit",
+          "type": "u64"
+        },
+        {
+          "name": "maximum_deposit",
+          "type": "u64"
+        },
+        {
+          "name": "maximum_market_capacity",
+          "type": "u32"
+        },
+        {
+          "name": "verification_program_id",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "validate_outcome",
+      "discriminator": [
+        29,
+        203,
+        125,
+        138,
+        197,
+        125,
+        152,
+        60
+      ],
+      "accounts": [
+        {
+          "name": "protocol_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  116,
+                  111,
+                  99,
+                  111,
+                  108
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "market",
+          "writable": true
+        },
+        {
+          "name": "proof",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  111,
+                  102
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "txline_program"
+        },
+        {
+          "name": "daily_scores_merkle_roots"
+        }
+      ],
+      "args": [
+        {
+          "name": "payload",
+          "type": {
+            "defined": {
+              "name": "StatValidationInput"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "CreatorProfile",
+      "discriminator": [
+        251,
+        250,
+        184,
+        111,
+        214,
+        178,
+        32,
+        221
+      ]
+    },
+    {
+      "name": "Market",
+      "discriminator": [
+        219,
+        190,
+        213,
+        55,
+        0,
+        227,
+        198,
+        154
+      ]
+    },
+    {
+      "name": "Position",
+      "discriminator": [
+        170,
+        188,
+        143,
+        228,
+        122,
+        64,
+        247,
+        208
+      ]
+    },
+    {
+      "name": "ProofSubmissionRecord",
+      "discriminator": [
+        207,
+        228,
+        54,
+        145,
+        30,
+        215,
+        119,
+        163
+      ]
+    },
+    {
+      "name": "ProtocolConfig",
+      "discriminator": [
+        207,
+        91,
+        250,
+        28,
+        152,
+        179,
+        215,
+        209
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "MarketCancelled",
+      "discriminator": [
+        139,
+        163,
+        33,
+        168,
+        19,
+        180,
+        81,
+        170
+      ]
+    },
+    {
+      "name": "MarketClosed",
+      "discriminator": [
+        86,
+        91,
+        119,
+        43,
+        94,
+        0,
+        217,
+        113
+      ]
+    },
+    {
+      "name": "MarketCreated",
+      "discriminator": [
+        88,
+        184,
+        130,
+        231,
+        226,
+        84,
+        6,
+        58
+      ]
+    },
+    {
+      "name": "MarketInvalidated",
+      "discriminator": [
+        205,
+        44,
+        245,
+        81,
+        61,
+        249,
+        192,
+        85
+      ]
+    },
+    {
+      "name": "MarketLocked",
+      "discriminator": [
+        57,
+        30,
+        242,
+        116,
+        238,
+        156,
+        185,
+        189
+      ]
+    },
+    {
+      "name": "MarketSettled",
+      "discriminator": [
+        237,
+        212,
+        22,
+        175,
+        201,
+        117,
+        215,
+        99
+      ]
+    },
+    {
+      "name": "OutcomeVerified",
+      "discriminator": [
+        31,
+        35,
+        69,
+        128,
+        109,
+        233,
+        26,
+        228
+      ]
+    },
+    {
+      "name": "PayoutClaimed",
+      "discriminator": [
+        200,
+        39,
+        105,
+        112,
+        116,
+        63,
+        58,
+        149
+      ]
+    },
+    {
+      "name": "ProofRejected",
+      "discriminator": [
+        119,
+        113,
+        245,
+        78,
+        164,
+        67,
+        8,
+        62
+      ]
+    },
+    {
+      "name": "ProofSubmitted",
+      "discriminator": [
+        160,
+        51,
+        85,
+        70,
+        249,
+        89,
+        5,
+        139
+      ]
+    },
+    {
+      "name": "ProtocolConfigUpdated",
+      "discriminator": [
+        20,
+        99,
+        32,
+        237,
+        111,
+        86,
+        195,
+        199
+      ]
+    },
+    {
+      "name": "ProtocolInitialized",
+      "discriminator": [
+        173,
+        122,
+        168,
+        254,
+        9,
+        118,
+        76,
+        132
+      ]
+    },
+    {
+      "name": "ProtocolPaused",
+      "discriminator": [
+        35,
+        111,
+        245,
+        138,
+        237,
+        199,
+        79,
+        223
+      ]
+    },
+    {
+      "name": "ProtocolUnpaused",
+      "discriminator": [
+        248,
+        204,
+        112,
+        239,
+        72,
+        67,
+        127,
+        216
+      ]
+    },
+    {
+      "name": "RefundClaimed",
+      "discriminator": [
+        136,
+        64,
+        242,
+        99,
+        4,
+        244,
+        208,
+        130
+      ]
+    },
+    {
+      "name": "RefundEligible",
+      "discriminator": [
+        223,
+        56,
+        203,
+        9,
+        49,
+        176,
+        169,
+        15
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "ProtocolPaused",
+      "msg": "Protocol is paused for creation and deposits."
+    },
+    {
+      "code": 6001,
+      "name": "CreatorFeeTooHigh",
+      "msg": "Creator fee exceeds the hard cap."
+    },
+    {
+      "code": 6002,
+      "name": "InvalidDepositBounds",
+      "msg": "Deposit bounds are invalid."
+    },
+    {
+      "code": 6003,
+      "name": "InvalidConditionCount",
+      "msg": "Condition count is invalid."
+    },
+    {
+      "code": 6004,
+      "name": "ConditionPayloadTooLarge",
+      "msg": "Condition payload is too large."
+    },
+    {
+      "code": 6005,
+      "name": "InvalidDeadline",
+      "msg": "Deadline is invalid."
+    },
+    {
+      "code": 6006,
+      "name": "InvalidState",
+      "msg": "Market is in the wrong state."
+    },
+    {
+      "code": 6007,
+      "name": "DeadlinePassed",
+      "msg": "Participation deadline has passed."
+    },
+    {
+      "code": 6008,
+      "name": "DeadlineNotReached",
+      "msg": "Deadline has not been reached."
+    },
+    {
+      "code": 6009,
+      "name": "InvalidDepositAmount",
+      "msg": "Deposit amount is invalid."
+    },
+    {
+      "code": 6010,
+      "name": "MarketCapacityReached",
+      "msg": "Market capacity reached."
+    },
+    {
+      "code": 6011,
+      "name": "SideCannotChange",
+      "msg": "A wallet cannot change side after depositing."
+    },
+    {
+      "code": 6012,
+      "name": "AlreadyClaimed",
+      "msg": "Position has already claimed."
+    },
+    {
+      "code": 6013,
+      "name": "MatchMismatch",
+      "msg": "Proof match id does not match market."
+    },
+    {
+      "code": 6014,
+      "name": "InvalidProofTimestamp",
+      "msg": "Proof timestamp is invalid."
+    },
+    {
+      "code": 6015,
+      "name": "DuplicateProof",
+      "msg": "A proof was already submitted."
+    },
+    {
+      "code": 6016,
+      "name": "RefundPathAlreadyAvailable",
+      "msg": "Refund path is already available."
+    },
+    {
+      "code": 6017,
+      "name": "InvalidVerifier",
+      "msg": "Verifier identity does not match protocol config."
+    },
+    {
+      "code": 6018,
+      "name": "VerifierNotExecutable",
+      "msg": "Configured verifier account is not executable."
+    },
+    {
+      "code": 6019,
+      "name": "InvalidDailyRoot",
+      "msg": "TxLINE daily scores root PDA is invalid."
+    },
+    {
+      "code": 6020,
+      "name": "InvalidStatPayload",
+      "msg": "TxLINE stat payload is malformed or unsupported."
+    },
+    {
+      "code": 6021,
+      "name": "NonFinalStatistics",
+      "msg": "Settlement requires TxLINE final-period statistics."
+    },
+    {
+      "code": 6022,
+      "name": "StatValidationFailed",
+      "msg": "TxLINE CPI did not authenticate the supplied statistics."
+    },
+    {
+      "code": 6023,
+      "name": "InvalidConditionPayload",
+      "msg": "Stored condition bytes are malformed or unsupported on-chain."
+    },
+    {
+      "code": 6024,
+      "name": "RequiredStatMissing",
+      "msg": "A statistic required by the market conditions is missing."
+    },
+    {
+      "code": 6025,
+      "name": "ProofPayloadMismatch",
+      "msg": "Proof payload hash mismatch."
+    },
+    {
+      "code": 6026,
+      "name": "MissingResult",
+      "msg": "Verified result is missing."
+    },
+    {
+      "code": 6027,
+      "name": "InvalidWinningPool",
+      "msg": "Winning pool is invalid."
+    },
+    {
+      "code": 6028,
+      "name": "NotWinningPosition",
+      "msg": "Position is not on the winning side."
+    },
+    {
+      "code": 6029,
+      "name": "Unauthorized",
+      "msg": "Unauthorized."
+    },
+    {
+      "code": 6030,
+      "name": "MathOverflow",
+      "msg": "Math overflow."
+    }
+  ],
+  "types": [
+    {
+      "name": "BooleanOperator",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "And"
+          },
+          {
+            "name": "Or"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CreateMarketArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market_nonce",
+            "type": {
+              "array": [
+                "u8",
+                8
+              ]
+            }
+          },
+          {
+            "name": "match_id",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "txline_fixture_id",
+            "type": "i64"
+          },
+          {
+            "name": "title",
+            "type": "string"
+          },
+          {
+            "name": "boolean_operator",
+            "type": {
+              "defined": {
+                "name": "BooleanOperator"
+              }
+            }
+          },
+          {
+            "name": "condition_count",
+            "type": "u8"
+          },
+          {
+            "name": "condition_payload",
+            "type": "bytes"
+          },
+          {
+            "name": "minimum_deposit",
+            "type": "u64"
+          },
+          {
+            "name": "maximum_deposit",
+            "type": "u64"
+          },
+          {
+            "name": "creator_fee_bps",
+            "type": "u16"
+          },
+          {
+            "name": "participation_deadline",
+            "type": "i64"
+          },
+          {
+            "name": "expected_match_end_timestamp",
+            "type": "i64"
+          },
+          {
+            "name": "refund_eligibility_timestamp",
+            "type": "i64"
+          },
+          {
+            "name": "claim_deadline",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CreatorProfile",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "creator",
+            "type": "pubkey"
+          },
+          {
+            "name": "markets_created",
+            "type": "u64"
+          },
+          {
+            "name": "valid_settlements",
+            "type": "u64"
+          },
+          {
+            "name": "cancelled_markets",
+            "type": "u64"
+          },
+          {
+            "name": "cumulative_creator_fees",
+            "type": "u64"
+          },
+          {
+            "name": "rate_limit_window",
+            "type": "i64"
+          },
+          {
+            "name": "rate_limit_count",
+            "type": "u16"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Market",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "version",
+            "type": "u8"
+          },
+          {
+            "name": "creator",
+            "type": "pubkey"
+          },
+          {
+            "name": "match_id",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "title",
+            "type": {
+              "array": [
+                "u8",
+                96
+              ]
+            }
+          },
+          {
+            "name": "boolean_operator",
+            "type": {
+              "defined": {
+                "name": "BooleanOperator"
+              }
+            }
+          },
+          {
+            "name": "condition_count",
+            "type": "u8"
+          },
+          {
+            "name": "condition_payload",
+            "type": "bytes"
+          },
+          {
+            "name": "condition_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "collateral_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "vault",
+            "type": "pubkey"
+          },
+          {
+            "name": "yes_pool",
+            "type": "u64"
+          },
+          {
+            "name": "no_pool",
+            "type": "u64"
+          },
+          {
+            "name": "participant_count",
+            "type": "u32"
+          },
+          {
+            "name": "minimum_deposit",
+            "type": "u64"
+          },
+          {
+            "name": "maximum_deposit",
+            "type": "u64"
+          },
+          {
+            "name": "maximum_capacity",
+            "type": "u32"
+          },
+          {
+            "name": "creator_fee_bps",
+            "type": "u16"
+          },
+          {
+            "name": "protocol_fee_bps_snapshot",
+            "type": "u16"
+          },
+          {
+            "name": "participation_deadline",
+            "type": "i64"
+          },
+          {
+            "name": "expected_match_end_timestamp",
+            "type": "i64"
+          },
+          {
+            "name": "refund_eligibility_timestamp",
+            "type": "i64"
+          },
+          {
+            "name": "claim_deadline",
+            "type": "i64"
+          },
+          {
+            "name": "state",
+            "type": {
+              "defined": {
+                "name": "MarketState"
+              }
+            }
+          },
+          {
+            "name": "verified_result",
+            "type": {
+              "option": {
+                "defined": {
+                  "name": "Side"
+                }
+              }
+            }
+          },
+          {
+            "name": "created_timestamp",
+            "type": "i64"
+          },
+          {
+            "name": "settled_timestamp",
+            "type": "i64"
+          },
+          {
+            "name": "creator_bond",
+            "type": "u64"
+          },
+          {
+            "name": "net_pool",
+            "type": "u64"
+          },
+          {
+            "name": "protocol_fee_amount",
+            "type": "u64"
+          },
+          {
+            "name": "creator_fee_amount",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "vault_authority_bump",
+            "type": "u8"
+          },
+          {
+            "name": "txline_fixture_id",
+            "type": "i64"
+          },
+          {
+            "name": "validated_stat_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "MarketCancelled",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MarketClosed",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MarketCreated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "creator",
+            "type": "pubkey"
+          },
+          {
+            "name": "match_id",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "condition_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "MarketInvalidated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MarketLocked",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MarketSettled",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "winning_side",
+            "type": {
+              "defined": {
+                "name": "Side"
+              }
+            }
+          },
+          {
+            "name": "net_pool",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MarketState",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Draft"
+          },
+          {
+            "name": "Open"
+          },
+          {
+            "name": "Locked"
+          },
+          {
+            "name": "AwaitingResult"
+          },
+          {
+            "name": "ProofSubmitted"
+          },
+          {
+            "name": "Verified"
+          },
+          {
+            "name": "Settled"
+          },
+          {
+            "name": "RefundEligible"
+          },
+          {
+            "name": "Refunded"
+          },
+          {
+            "name": "Cancelled"
+          },
+          {
+            "name": "Invalid"
+          },
+          {
+            "name": "Closed"
+          }
+        ]
+      }
+    },
+    {
+      "name": "OutcomeVerified",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "winning_side",
+            "type": {
+              "defined": {
+                "name": "Side"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "PayoutClaimed",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Position",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "side",
+            "type": {
+              "defined": {
+                "name": "Side"
+              }
+            }
+          },
+          {
+            "name": "deposited_amount",
+            "type": "u64"
+          },
+          {
+            "name": "claimed",
+            "type": "bool"
+          },
+          {
+            "name": "creator_position",
+            "type": "bool"
+          },
+          {
+            "name": "deposited_timestamp",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProofArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "proof_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "match_id",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "finalization_timestamp",
+            "type": "i64"
+          },
+          {
+            "name": "stat_payload_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProofNode",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "is_right_sibling",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProofRejected",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProofSubmissionRecord",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "submitted_by",
+            "type": "pubkey"
+          },
+          {
+            "name": "submitted_timestamp",
+            "type": "i64"
+          },
+          {
+            "name": "proof_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "match_id",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "finalization_timestamp",
+            "type": "i64"
+          },
+          {
+            "name": "verification_status",
+            "type": {
+              "defined": {
+                "name": "VerificationStatus"
+              }
+            }
+          },
+          {
+            "name": "stat_payload_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProofSubmitted",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "submitted_by",
+            "type": "pubkey"
+          },
+          {
+            "name": "proof_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProtocolConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "admin",
+            "type": "pubkey"
+          },
+          {
+            "name": "paused",
+            "type": "bool"
+          },
+          {
+            "name": "protocol_fee_bps",
+            "type": "u16"
+          },
+          {
+            "name": "max_creator_fee_bps",
+            "type": "u16"
+          },
+          {
+            "name": "max_conditions",
+            "type": "u8"
+          },
+          {
+            "name": "minimum_deposit",
+            "type": "u64"
+          },
+          {
+            "name": "maximum_deposit",
+            "type": "u64"
+          },
+          {
+            "name": "maximum_market_capacity",
+            "type": "u32"
+          },
+          {
+            "name": "allowed_collateral_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "verification_program_id",
+            "type": "pubkey"
+          },
+          {
+            "name": "version",
+            "type": "u8"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProtocolConfigUpdated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "admin",
+            "type": "pubkey"
+          },
+          {
+            "name": "protocol_fee_bps",
+            "type": "u16"
+          },
+          {
+            "name": "max_creator_fee_bps",
+            "type": "u16"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProtocolInitialized",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "admin",
+            "type": "pubkey"
+          },
+          {
+            "name": "collateral_mint",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProtocolPaused",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "admin",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProtocolUnpaused",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "admin",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RefundClaimed",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RefundEligible",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ScoreStat",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "key",
+            "type": "u32"
+          },
+          {
+            "name": "value",
+            "type": "i32"
+          },
+          {
+            "name": "period",
+            "type": "i32"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ScoresBatchSummary",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "fixture_id",
+            "type": "i64"
+          },
+          {
+            "name": "update_stats",
+            "type": {
+              "defined": {
+                "name": "ScoresUpdateStats"
+              }
+            }
+          },
+          {
+            "name": "events_sub_tree_root",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "ScoresUpdateStats",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "update_count",
+            "type": "i32"
+          },
+          {
+            "name": "min_timestamp",
+            "type": "i64"
+          },
+          {
+            "name": "max_timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Side",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Yes"
+          },
+          {
+            "name": "No"
+          }
+        ]
+      }
+    },
+    {
+      "name": "StatLeaf",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "stat",
+            "type": {
+              "defined": {
+                "name": "ScoreStat"
+              }
+            }
+          },
+          {
+            "name": "stat_proof",
+            "type": {
+              "vec": {
+                "defined": {
+                  "name": "ProofNode"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "StatValidationInput",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "ts",
+            "type": "i64"
+          },
+          {
+            "name": "fixture_summary",
+            "type": {
+              "defined": {
+                "name": "ScoresBatchSummary"
+              }
+            }
+          },
+          {
+            "name": "fixture_proof",
+            "type": {
+              "vec": {
+                "defined": {
+                  "name": "ProofNode"
+                }
+              }
+            }
+          },
+          {
+            "name": "main_tree_proof",
+            "type": {
+              "vec": {
+                "defined": {
+                  "name": "ProofNode"
+                }
+              }
+            }
+          },
+          {
+            "name": "event_stat_root",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "stats",
+            "type": {
+              "vec": {
+                "defined": {
+                  "name": "StatLeaf"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "VerificationStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Submitted"
+          },
+          {
+            "name": "Verified"
+          },
+          {
+            "name": "Rejected"
+          }
+        ]
+      }
+    }
+  ]
+}

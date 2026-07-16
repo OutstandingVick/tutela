@@ -1,0 +1,79 @@
+{
+  "address": "8fRo2KWuFW4r9EBKVNKBN6AvzszFMU7hd6p9EXcCEGxv",
+  "metadata": {
+    "name": "mock_verifier",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Labelled mock verifier for Tutela devnet demos"
+  },
+  "instructions": [
+    {
+      "name": "attest_mock_proof",
+      "discriminator": [
+        220,
+        49,
+        179,
+        216,
+        89,
+        30,
+        161,
+        192
+      ],
+      "accounts": [
+        {
+          "name": "attester",
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "proof_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "MockProofAttested",
+      "discriminator": [
+        121,
+        218,
+        254,
+        193,
+        242,
+        137,
+        110,
+        56
+      ]
+    }
+  ],
+  "types": [
+    {
+      "name": "MockProofAttested",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "attester",
+            "type": "pubkey"
+          },
+          {
+            "name": "proof_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
