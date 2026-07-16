@@ -14,33 +14,38 @@ export const liveStatMarkets = [
   { id: "stat-sot", label: "Shots on target", line: "Both teams 4+", yes: 36, no: 64, volume: 190, status: "Adapter pending", minute: "61'" }
 ];
 
+export const forecastStatMarkets = [
+  { id: "match-winner", label: "Match winner", description: "Choose a team or draw", field: "MatchWinner" },
+  { id: "total-goals", label: "Total goals", description: "Set the full-time goal threshold", field: "TotalGoals" },
+  { id: "total-corners", label: "Total corners", description: "Set the full-time corner threshold", field: "TotalCorners" },
+  { id: "total-cards", label: "Total cards", description: "Set the full-time card threshold", field: "TotalCards" },
+  { id: "both-teams-score", label: "Both teams to score", description: "Forecast whether both teams score", field: "BothTeamsScore" }
+] as const;
+
 export const upcomingMatchMarkets = [
-  {
-    id: "worldcup-sf-france-spain-2026-07-14",
-    time: "20:00",
-    date: "Tue 14 Jul 2026",
-    home: "France",
-    away: "Spain",
-    markets: 18,
-    liquidity: 1240
-  },
-  {
-    id: "worldcup-sf-england-argentina-2026-07-15",
-    time: "20:00",
-    date: "Wed 15 Jul 2026",
-    home: "England",
-    away: "Argentina",
-    markets: 16,
-    liquidity: 980
-  },
   {
     id: "friendly-vietnam-myanmar-2026-07-18",
     time: "13:00",
     date: "Sat 18 Jul 2026",
     home: "Vietnam",
     away: "Myanmar",
-    markets: 10,
-    liquidity: 420
+    markets: 5
+  },
+  {
+    id: "worldcup-france-england-2026-07-18",
+    time: "22:00",
+    date: "Sat 18 Jul 2026",
+    home: "France",
+    away: "England",
+    markets: 5
+  },
+  {
+    id: "worldcup-spain-argentina-2026-07-19",
+    time: "20:00",
+    date: "Sun 19 Jul 2026",
+    home: "Spain",
+    away: "Argentina",
+    markets: 5
   },
   {
     id: "friendly-australia-brazil-2026-09-25",
@@ -48,8 +53,7 @@ export const upcomingMatchMarkets = [
     date: "Fri 25 Sep 2026",
     home: "Australia",
     away: "Brazil",
-    markets: 12,
-    liquidity: 760
+    markets: 5
   },
   {
     id: "friendly-australia-brazil-2026-09-29",
@@ -57,8 +61,7 @@ export const upcomingMatchMarkets = [
     date: "Tue 29 Sep 2026",
     home: "Australia",
     away: "Brazil",
-    markets: 12,
-    liquidity: 720
+    markets: 5
   },
   {
     id: "friendly-new-zealand-india-2026-11-12",
@@ -66,8 +69,7 @@ export const upcomingMatchMarkets = [
     date: "Thu 12 Nov 2026",
     home: "New Zealand",
     away: "India",
-    markets: 9,
-    liquidity: 380
+    markets: 5
   },
   {
     id: "friendly-new-zealand-india-2026-11-15",
@@ -75,8 +77,7 @@ export const upcomingMatchMarkets = [
     date: "Sun 15 Nov 2026",
     home: "New Zealand",
     away: "India",
-    markets: 9,
-    liquidity: 360
+    markets: 5
   }
 ];
 

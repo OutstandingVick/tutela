@@ -53,6 +53,8 @@ export const TXLINE_FIXTURE_MAP: Record<string, number> = {
   "worldcup-sf-france-spain-2026-07-14": 18237038,
   "worldcup-sf-england-argentina-2026-07-15": 18241006,
   "friendly-vietnam-myanmar-2026-07-18": 18143850,
+  "worldcup-france-england-2026-07-18": 18257865,
+  "worldcup-spain-argentina-2026-07-19": 18257739,
   "friendly-australia-brazil-2026-09-25": 18182808,
   "friendly-australia-brazil-2026-09-29": 18182864,
   "friendly-new-zealand-india-2026-11-12": 18242838,
@@ -312,7 +314,9 @@ export class TxLineSportsDataAdapter implements SportsDataAdapter {
         return details;
       })
     );
-    return summaries.filter((match) => !filters?.status || match.status === filters.status);
+    return summaries
+      .filter((match) => !filters?.status || match.status === filters.status)
+      .sort((left, right) => Date.parse(left.startsAt) - Date.parse(right.startsAt));
   }
 
   async getMatch(matchId: string): Promise<MatchDetails> {
@@ -457,6 +461,28 @@ const STATIC_FIXTURE_METADATA: Record<string, MatchDetails> = {
     venue: "International Friendly Venue",
     simulated: false
   },
+  "worldcup-france-england-2026-07-18": {
+    id: "worldcup-france-england-2026-07-18",
+    homeTeam: "France",
+    awayTeam: "England",
+    competition: "FIFA World Cup 2026",
+    startsAt: "2026-07-18T21:00:00.000Z",
+    expectedEndAt: "2026-07-18T23:00:00.000Z",
+    status: "upcoming",
+    venue: "Venue unavailable",
+    simulated: false
+  },
+  "worldcup-spain-argentina-2026-07-19": {
+    id: "worldcup-spain-argentina-2026-07-19",
+    homeTeam: "Spain",
+    awayTeam: "Argentina",
+    competition: "FIFA World Cup 2026",
+    startsAt: "2026-07-19T19:00:00.000Z",
+    expectedEndAt: "2026-07-19T21:00:00.000Z",
+    status: "upcoming",
+    venue: "Venue unavailable",
+    simulated: false
+  },
   "friendly-australia-brazil-2026-09-25": {
     id: "friendly-australia-brazil-2026-09-25",
     homeTeam: "Australia",
@@ -503,13 +529,15 @@ const STATIC_FIXTURE_METADATA: Record<string, MatchDetails> = {
   }
 };
 
-export const demoMatches: MatchDetails[] = Object.values(STATIC_FIXTURE_METADATA);
+export const demoMatches: MatchDetails[] = Object.values(STATIC_FIXTURE_METADATA)
+  .sort((left, right) => Date.parse(left.startsAt) - Date.parse(right.startsAt));
 
 export class MockSportsDataAdapter implements SportsDataAdapter {
   async listMatches(filters?: MatchFilters) {
     return demoMatches
       .filter((match) => !filters?.status || match.status === filters.status)
-      .map(({ stats: _stats, venue: _venue, expectedEndAt: _end, score, ...summary }) => ({ ...summary, score }));
+      .map(({ stats: _stats, venue: _venue, expectedEndAt: _end, score, ...summary }) => ({ ...summary, score }))
+      .sort((left, right) => Date.parse(left.startsAt) - Date.parse(right.startsAt));
   }
 
   async getMatch(matchId: string) {

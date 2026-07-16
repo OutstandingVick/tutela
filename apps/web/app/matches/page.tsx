@@ -1,18 +1,31 @@
 import Link from "next/link";
 import { ChevronRight, Clock, Flame, ShieldCheck } from "lucide-react";
 import { AppShell } from "@/components/layout/app-shell";
-import { liveStatMarkets, upcomingMatchMarkets } from "@/lib/demo";
+import { forecastStatMarkets, upcomingMatchMarkets } from "@/lib/demo";
 import { formatMatchClock, formatScoreline, getLiveMatchOrFallback, listLiveMatchesOrFallback } from "@/lib/live";
-
-const TONIGHT_MATCH_ID = "worldcup-sf-england-argentina-2026-07-15";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function MatchesPage() {
-  const featuredLiveMarkets = liveStatMarkets.slice(0, 2);
   const { matches, live: listIsLive } = await listLiveMatchesOrFallback();
-  const currentMatch = matches.find((match) => match.id === TONIGHT_MATCH_ID) ?? matches[0];
+  const playableIds = new Set(upcomingMatchMarkets.map((match) => match.id));
+  const availableMatches = matches
+    .filter((match) => playableIds.has(match.id) && match.status !== "completed")
+    .sort((left, right) => Date.parse(left.startsAt) - Date.parse(right.startsAt));
+  const currentMatch = availableMatches[0];
+
+  if (!currentMatch) {
+    return (
+      <AppShell>
+        <h1 className="text-3xl font-black text-[#D0FEF5]">Match markets</h1>
+        <p className="mt-4 rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] p-4 text-sm font-bold text-[#4A051C]">
+          No playable fixtures are currently available from the configured TxLINE bundle.
+        </p>
+      </AppShell>
+    );
+  }
+
   const { match: liveMatch, live: detailIsLive } = await getLiveMatchOrFallback(currentMatch.id);
   const live = listIsLive || detailIsLive;
 
@@ -24,7 +37,7 @@ export default async function MatchesPage() {
             <h1 className="text-3xl font-black tracking-normal text-[#D0FEF5]">Match markets</h1>
             <p className="mt-1 text-sm font-semibold text-[#D0FEF5]">Trade live football stats with testnet coins.</p>
           </div>
-          <div className="rounded-full bg-[#094586] px-3 py-2 text-sm font-black text-[#6FB4EB]">{live ? "TxLINE · Live" : "TxLINE"}</div>
+          <div className="rounded-full bg-[#094586] px-3 py-2 text-sm font-black text-[#6FB4EB]">{live ? "TxLINE · Connected" : "TxLINE"}</div>
         </div>
       </div>
 
@@ -43,7 +56,7 @@ export default async function MatchesPage() {
           </div>
         </div>
         <div className="mt-4 flex items-center justify-end text-xs font-black text-[#094586]">
-          <span className="inline-flex items-center gap-1">View all live markets <ChevronRight size={14} /></span>
+          <span className="inline-flex items-center gap-1">View match markets <ChevronRight size={14} /></span>
         </div>
       </Link>
 
@@ -55,14 +68,14 @@ export default async function MatchesPage() {
           <Flame size={18} className="text-[#6FB4EB]" />
         </div>
         <div className="grid gap-3">
-          {featuredLiveMarkets.map((market) => (
-            <Link key={market.id} href={`/markets/${market.id}`} className="rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] text-[#4A051C] p-4 transition hover:border-[#6FB4EB]">
+          {forecastStatMarkets.slice(2, 4).map((market) => (
+            <Link key={market.id} href={`/markets?match=${currentMatch.id}&field=${market.field}`} className="rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] text-[#4A051C] p-4 transition hover:border-[#6FB4EB]">
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="text-lg font-black">{market.label}</p>
-                  <p className="mt-1 text-sm font-semibold text-[#4A051C]">{market.line} · build a community forecast</p>
+                  <p className="mt-1 text-sm font-semibold text-[#4A051C]">{market.description}</p>
                 </div>
-                <div className="rounded-full bg-[#094586] px-3 py-1 text-xs font-black text-[#6FB4EB]">{market.status}</div>
+                <div className="rounded-full bg-[#094586] px-3 py-1 text-xs font-black text-[#6FB4EB]">Open</div>
               </div>
               <div className="mt-4 rounded-lg bg-[#094586] px-3 py-3 text-sm font-black text-[#D0FEF5]">
                 Pool totals appear after authenticated users submit demo-point forecasts.
@@ -74,17 +87,16 @@ export default async function MatchesPage() {
 
       <section className="mt-7">
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-sm font-black uppercase tracking-[0.18em] text-[#D0FEF5]">Upcoming matches</h2>
+          <h2 className="text-sm font-black uppercase tracking-[0.18em] text-[#D0FEF5]">Available matches</h2>
         </div>
         <div className="max-h-[390px] overflow-y-auto pr-1 no-scrollbar">
           <div className="grid gap-3">
-            {matches.map((match) => {
+            {availableMatches.map((match) => {
               const meta = upcomingMatchMarkets.find((item) => item.id === match.id);
               const kickoff = new Date(match.startsAt);
               const time = formatKickoffTime(kickoff);
               const date = formatKickoffDate(kickoff);
               const marketCount = meta?.markets ?? (match.competition.includes("World Cup") ? 16 : 9);
-              const liquidity = meta?.liquidity ?? (match.competition.includes("World Cup") ? 980 : 360);
 
               return (
               <Link key={match.id} href={`/matches/${match.id}`} className="grid grid-cols-[64px_1fr_auto] items-center gap-3 rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] text-[#4A051C] p-4">
@@ -96,7 +108,7 @@ export default async function MatchesPage() {
                   <p className="mt-1 text-[11px] font-black uppercase tracking-[0.12em] text-[#094586]">{match.competition}</p>
                 </div>
                 <div className="flex items-center gap-1 text-[#094586]">
-                  <span className="text-xs font-bold">{liquidity}</span>
+                  <span className="text-[10px] font-black uppercase tracking-[0.1em]">{match.status}</span>
                   <ChevronRight size={18} />
                 </div>
               </Link>
