@@ -7,6 +7,7 @@ import { discoverWallets, type WalletProvider as BrowserWallet } from "@tutela/s
 type WalletState = {
   publicKey: PublicKey | null;
   walletName: string | null;
+  provider: BrowserWallet | null;
   wallets: ReturnType<typeof discoverWallets>;
   connect: (id: "phantom" | "solflare") => Promise<void>;
   disconnect: () => Promise<void>;
@@ -43,7 +44,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <WalletContext.Provider value={{ publicKey, walletName, wallets, connect, disconnect }}>
+    <WalletContext.Provider value={{ publicKey, walletName, provider, wallets, connect, disconnect }}>
       {children}
     </WalletContext.Provider>
   );

@@ -8,7 +8,7 @@
     "dev": "corepack pnpm --filter @tutela/web dev",
     "build": "corepack pnpm -r build",
     "typecheck": "corepack pnpm -r typecheck",
-    "test": "corepack pnpm -r test && vitest run tests/integration",
+    "test": "corepack pnpm -r test && vitest run tests/integration && cargo test -p tutela --lib",
     "test:anchor": "NO_DNA=1 anchor test",
     "seed": "tsx scripts/seed-demo.ts",
     "demo:settle": "tsx scripts/run-demo-settlement.ts",

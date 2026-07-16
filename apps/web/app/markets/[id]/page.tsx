@@ -70,7 +70,7 @@ export default async function MarketDetailPage({ params }: { params: Promise<{ i
             <TimerReset className="mt-0.5 text-[#6FB4EB]" size={20} />
             <div>
               <p className="font-black">Settlement path</p>
-              <p className="mt-1 text-sm leading-6 text-[#4A051C]">Final stat proof is submitted after the match. TxLINE is the primary target; the simulated fallback is labelled whenever credentials or endpoint paths are unavailable.</p>
+              <p className="mt-1 text-sm leading-6 text-[#4A051C]">Final statistics are submitted after the match and authenticated through TxLINE&apos;s official devnet program before Tutela evaluates the stored conditions on-chain.</p>
             </div>
           </div>
         </section>

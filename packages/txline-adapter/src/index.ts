@@ -406,10 +406,9 @@ export class TxLineSportsDataAdapter implements SportsDataAdapter {
 
     // statKeys 1,2,3,4,5,6,7,8 == full-game goals/cards/corners for both sides,
     // matching STAT_KEY above. This fetches the real validation payload TxLINE
-    // would use for on-chain validateStatV2; Tutela's own Anchor program does not
-    // yet CPI into it (see docs/txline-integration.md), so this proof is surfaced
-    // to the verification UI as real TxLINE data but settlement still runs through
-    // the labelled mock-verifier program until that CPI is wired.
+    // uses for on-chain validateStatV2. Tutela submits this exact payload to its
+    // Anchor program, which CPI-authenticates every included statistic through
+    // the official TxLINE devnet verifier before evaluating market conditions.
     const validation = await this.client.getJson<Record<string, unknown>>("/scores/stat-validation", {
       fixtureId,
       seq,
@@ -425,10 +424,9 @@ export class TxLineSportsDataAdapter implements SportsDataAdapter {
       verifierLabel: "txline",
       stats,
       simulated: false,
-      // Raw validation payload retained for the verification page (Section 23 of
-      // the PRD); not part of the ProofPackage type contract, so cast is local.
+      // Raw payload retained for the permissionless on-chain settlement client.
       ...(validation ? { raw: validation } : {})
-    } as ProofPackage;
+    };
   }
 
   /** Exposes the underlying jwt/apiToken pair, e.g. for a debug/status endpoint. */

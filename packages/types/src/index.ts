@@ -106,6 +106,7 @@ export interface ProofPackage {
   verifierLabel: "mock-dev" | "txline";
   stats: MatchStats;
   simulated: boolean;
+  raw?: unknown;
 }
 
 export interface TutelaMarket {

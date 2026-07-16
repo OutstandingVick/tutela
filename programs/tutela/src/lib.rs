@@ -1214,15 +1214,20 @@ fn invoke_txline_validate_stat_v2<'info>(
 
     let (returning_program, return_data) =
         get_return_data().ok_or(error!(TutelaError::StatValidationFailed))?;
+    validate_txline_return(returning_program, txline_program.key(), &return_data)
+}
+
+fn validate_txline_return(
+    returning_program: Pubkey,
+    expected_program: Pubkey,
+    data: &[u8],
+) -> Result<()> {
     require_keys_eq!(
         returning_program,
-        txline_program.key(),
+        expected_program,
         TutelaError::InvalidVerifier
     );
-    require!(
-        return_data.as_slice() == [1u8],
-        TutelaError::StatValidationFailed
-    );
+    require!(data == [1u8], TutelaError::StatValidationFailed);
     Ok(())
 }
 
@@ -1585,24 +1590,16 @@ mod security_tests {
         let mut and_bytes = vec![0, 2];
         and_bytes.extend(numeric_condition(1, 3, 3));
         and_bytes.extend(numeric_condition(4, 4, 12));
-        assert!(evaluate_condition_payload(
-            &and_bytes,
-            BooleanOperator::And,
-            2,
-            &stats.stats
-        )
-        .unwrap());
+        assert!(
+            evaluate_condition_payload(&and_bytes, BooleanOperator::And, 2, &stats.stats).unwrap()
+        );
 
         let mut or_bytes = vec![1, 2];
         or_bytes.extend(numeric_condition(1, 2, 10));
         or_bytes.extend(numeric_condition(4, 0, 10));
-        assert!(evaluate_condition_payload(
-            &or_bytes,
-            BooleanOperator::Or,
-            2,
-            &stats.stats
-        )
-        .unwrap());
+        assert!(
+            evaluate_condition_payload(&or_bytes, BooleanOperator::Or, 2, &stats.stats).unwrap()
+        );
     }
 
     #[test]
@@ -1633,7 +1630,10 @@ mod security_tests {
         assert_eq!(strategy.discrete_predicates.len(), payload.stats.len());
         for (index, predicate) in strategy.discrete_predicates.iter().enumerate() {
             match predicate {
-                StatPredicate::Single { index: actual, predicate } => {
+                StatPredicate::Single {
+                    index: actual,
+                    predicate,
+                } => {
                     assert_eq!(usize::from(*actual), index);
                     assert_eq!(predicate.threshold, payload.stats[index].stat.value);
                     assert_eq!(predicate.comparison, Comparison::EqualTo);
@@ -1641,5 +1641,13 @@ mod security_tests {
                 _ => panic!("exact strategy must use single-stat predicates"),
             }
         }
+    }
+
+    #[test]
+    fn rejects_forged_or_wrong_program_validation_returns() {
+        let verifier = TXLINE_DEVNET_PROGRAM_ID;
+        assert!(validate_txline_return(verifier, verifier, &[0]).is_err());
+        assert!(validate_txline_return(Pubkey::new_unique(), verifier, &[1]).is_err());
+        assert!(validate_txline_return(verifier, verifier, &[1]).is_ok());
     }
 }

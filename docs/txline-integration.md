@@ -24,7 +24,7 @@ Free tier access does not require a TxL purchase, but the subscribing wallet sti
 - `getFieldAvailability`
 - `getFinalProof`
 
-The TxLINE implementation requires exact endpoint paths to be supplied through configuration. It intentionally does not hardcode undocumented paths. The mock implementation remains available for offline development and must always be labelled as simulated/replayed data.
+The TxLINE implementation uses the documented score and validation endpoints. The mock implementation remains available only for offline UI development and is never accepted by the settlement endpoint.
 
 ## Confirmed 2026-07-13 Against TxLINE's Public Docs
 
@@ -44,20 +44,21 @@ Source pages: `/documentation/quickstart`, `/documentation/worldcup`, `/document
   environment could not reach `txline-dev.txodds.com` to capture one live response body. Run
   `scripts/txline/activate.ts` and compare its printed sample response against
   `normalizeScoreRecord` in that file before relying on it for the live demo.
-- The **CPI into TxLINE's own `validate_stat`/`validate_stat_v2`** (i.e. Tutela's Anchor program
-  verifying a TxLINE proof on-chain, per Section 20/30 of the PRD) is **not yet wired** — that
-  requires a Rust change to `programs/tutela` plus an `anchor build`/`anchor deploy`, which needs the
-  Solana/Anchor toolchain this environment does not have. Settlement still runs through the
-  already-tested `mock-verifier` program. `getFinalProof` in the adapter does fetch a **real** TxLINE
-  validation payload (`/scores/stat-validation`) for display on the verification page, so the data is
-  real even though on-chain verification of it is not yet CPI'd.
+- `programs/tutela` CPIs directly into TxLINE's official devnet `validate_stat_v2` instruction.
+  Protocol initialization rejects any other verifier address, and validation also requires the
+  configured program account to be executable.
+- Tutela submits an equality predicate for every supplied final-period statistic. This prevents a
+  caller from changing a value while retaining a valid proof for the original data.
+- The proof payload is committed at submission, bound to the market's immutable TxLINE fixture ID,
+  protected from replay, and evaluated against the stored canonical AND/OR conditions on-chain.
+- `settle_market` accepts only the `Verified` state produced by that authenticated evaluation. There
+  is no caller-supplied winning side.
 
-## Still To Wire Before Submission
+## Deployment Gate
 
-- CPI account layout and proof payload mapping so `programs/tutela`'s `validate_outcome` instruction
-  actually calls TxLINE's `validate_stat_v2` instead of the mock verifier.
-- Verify `normalizeScoreRecord`'s field-name assumptions against one real `/scores/snapshot/{fixtureId}`
-  response (see `scripts/txline/activate.ts` output) and adjust if the live shape differs.
+The source, generated IDL, client transaction builders and adversarial tests are complete. A devnet
+upgrade must not be represented as deployed until the upgrade transaction has been simulated,
+approved by the upgrade authority and confirmed. The frontend must use that confirmed program ID.
 
 ## Submission Endpoint List
 
