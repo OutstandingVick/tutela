@@ -1,15 +1,39 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { ChevronRight, MapPin, Swords, Trophy, UsersRound } from "lucide-react";
+import { demoMatches } from "@tutela/txline-adapter";
+import type { MarketCondition } from "@tutela/types";
 import { AppShell } from "@/components/layout/app-shell";
-import { ConditionBuilder } from "@/features/conditions/condition-builder";
-import { contests, formatCoins } from "@/lib/demo";
+import { ConditionBuilder, type ForecastMatchOption } from "@/features/conditions/condition-builder";
+import { contests, formatCoins, upcomingMatchMarkets } from "@/lib/demo";
 import { listForecastMarkets, type ForecastMarket } from "@/lib/server/forecast-store";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export default async function MarketsPage() {
+const supportedInitialFields: MarketCondition["field"][] = ["MatchWinner", "TotalGoals", "TotalCorners", "TotalCards", "BothTeamsScore"];
+
+export default async function MarketsPage({ searchParams }: { searchParams: Promise<{ match?: string; field?: string }> }) {
+  const query = await searchParams;
+  const playableIds = new Set(upcomingMatchMarkets.map((match) => match.id));
+  const matchOptions: ForecastMatchOption[] = demoMatches
+    .filter((match) => playableIds.has(match.id))
+    .map((match) => ({
+      id: match.id,
+      title: `${match.homeTeam} vs ${match.awayTeam}`,
+      homeTeam: match.homeTeam,
+      awayTeam: match.awayTeam,
+      kickoffAt: match.startsAt,
+      competition: match.competition
+    }))
+    .sort((left, right) => Date.parse(left.kickoffAt) - Date.parse(right.kickoffAt));
+  const initialMatch = matchOptions.find((match) => match.id === query.match) ?? matchOptions[0];
+  const initialField = supportedInitialFields.includes(query.field as MarketCondition["field"])
+    ? query.field as MarketCondition["field"]
+    : "TotalGoals";
+
+  if (!initialMatch) throw new Error("No playable matches are configured.");
+
   let forecastMarkets: ForecastMarket[] = [];
   try {
     forecastMarkets = await listForecastMarkets();
@@ -42,7 +66,7 @@ export default async function MarketsPage() {
           <h2 className="text-sm font-black uppercase tracking-[0.18em] text-[#D0FEF5]">Create a market</h2>
           <Swords size={18} className="text-[#6FB4EB]" />
         </div>
-        <ConditionBuilder />
+        <ConditionBuilder matches={matchOptions} initialMatch={initialMatch} initialField={initialField} />
       </section>
 
       <section className="mt-7">

@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { conditionHash } from "@tutela/condition-engine";
+import { demoMatches, PLAYABLE_MATCH_IDS } from "@tutela/txline-adapter";
 import { validateConditionGroup } from "@tutela/validation";
 import type { ConditionGroup } from "@tutela/types";
 import { isAuthError, requireAuthenticatedUser } from "@/lib/server/auth";
@@ -16,8 +17,6 @@ const valueSchema = z.discriminatedUnion("kind", [
 const bodySchema = z.object({
   idempotencyKey: z.string().uuid(),
   matchId: z.string().min(1).max(160),
-  matchTitle: z.string().min(1).max(180),
-  kickoffAt: z.string().datetime(),
   side: z.enum(["YES", "NO"]),
   points: z.number().int().min(1).max(100),
   group: z.object({
@@ -40,10 +39,14 @@ export async function POST(request: NextRequest) {
     const group = body.group as ConditionGroup;
     const errors = validateConditionGroup(group);
     if (errors.length > 0) return NextResponse.json({ error: errors[0], errors }, { status: 400 });
+    const match = demoMatches.find((item) => item.id === body.matchId && PLAYABLE_MATCH_IDS.includes(item.id as typeof PLAYABLE_MATCH_IDS[number]));
+    if (!match) return NextResponse.json({ error: "This match is not available for forecasting." }, { status: 400 });
 
     const result = await createParticipation({
       ...body,
       userId: user.id,
+      matchTitle: `${match.homeTeam} vs ${match.awayTeam}`,
+      kickoffAt: match.startsAt,
       group,
       conditionHash: conditionHash(group)
     });

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { normalizeScoreRecord } from "./index";
+import { demoMatches, MockSportsDataAdapter, normalizeScoreRecord, PLAYABLE_MATCH_IDS, TXLINE_FIXTURE_MAP } from "./index";
 
 describe("normalizeScoreRecord", () => {
   it("maps documented stat-array shape (statKey/value) into MatchStats", () => {
@@ -53,5 +53,31 @@ describe("normalizeScoreRecord", () => {
     expect(stats.awayGoals).toBe(0);
     expect(stats.totalGoals).toBe(0);
     expect(stats.bothTeamsScore).toBe(false);
+  });
+});
+
+describe("playable TxLINE fixtures", () => {
+  it("maps every requested fixture ID", () => {
+    expect(PLAYABLE_MATCH_IDS.map((matchId) => TXLINE_FIXTURE_MAP[matchId])).toEqual([
+      18143850,
+      18257865,
+      18257739,
+      18182808,
+      18182864,
+      18242838,
+      18242839
+    ]);
+  });
+
+  it("keeps fixture metadata in chronological order", async () => {
+    const adapter = new MockSportsDataAdapter();
+    const matches = await adapter.listMatches();
+    const startsAt = matches.map((match) => Date.parse(match.startsAt));
+
+    expect(startsAt).toEqual([...startsAt].sort((left, right) => left - right));
+    expect(demoMatches.find((match) => match.id === "worldcup-france-england-2026-07-18")?.startsAt)
+      .toBe("2026-07-18T21:00:00.000Z");
+    expect(demoMatches.find((match) => match.id === "worldcup-spain-argentina-2026-07-19")?.startsAt)
+      .toBe("2026-07-19T19:00:00.000Z");
   });
 });

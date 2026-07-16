@@ -61,6 +61,16 @@ export const TXLINE_FIXTURE_MAP: Record<string, number> = {
   "friendly-new-zealand-india-2026-11-15": 18242839
 };
 
+export const PLAYABLE_MATCH_IDS = [
+  "friendly-vietnam-myanmar-2026-07-18",
+  "worldcup-france-england-2026-07-18",
+  "worldcup-spain-argentina-2026-07-19",
+  "friendly-australia-brazil-2026-09-25",
+  "friendly-australia-brazil-2026-09-29",
+  "friendly-new-zealand-india-2026-11-12",
+  "friendly-new-zealand-india-2026-11-15"
+] as const;
+
 const FIXTURE_ID_TO_MATCH_ID = Object.fromEntries(
   Object.entries(TXLINE_FIXTURE_MAP).map(([matchId, fixtureId]) => [fixtureId, matchId])
 ) as Record<number, string>;

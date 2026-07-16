@@ -1,16 +1,19 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { conditionHash } from "@tutela/condition-engine";
 import { validateConditionGroup } from "@tutela/validation";
 import type { BooleanOperator, ConditionGroup, MarketCondition } from "@tutela/types";
 import { AlertCircle, CheckCircle2, Copy, Plus, Trash2 } from "lucide-react";
 import { useTutelaAuth } from "@/providers/tutela-auth-provider";
 
-const demoMatch = {
-  id: "worldcup-sf-england-argentina-2026-07-15",
-  title: "England vs Argentina",
-  kickoffAt: "2026-07-15T19:00:00.000Z"
+export type ForecastMatchOption = {
+  id: string;
+  title: string;
+  homeTeam: string;
+  awayTeam: string;
+  kickoffAt: string;
+  competition: string;
 };
 
 const defaultCondition: MarketCondition = {
@@ -69,12 +72,22 @@ const scopeLabel: Record<MarketCondition["scope"], string> = {
   Player: "Player"
 };
 
-export function ConditionBuilder() {
+export function ConditionBuilder({
+  matches,
+  initialMatch,
+  initialField = "TotalGoals"
+}: {
+  matches: ForecastMatchOption[];
+  initialMatch: ForecastMatchOption;
+  initialField?: MarketCondition["field"];
+}) {
   const { authenticated, authenticatedFetch, demoPoints, enabled, login, refreshProfile } = useTutelaAuth();
+  const [selectedMatchId, setSelectedMatchId] = useState(initialMatch.id);
   const [operator, setOperator] = useState<BooleanOperator>("AND");
-  const [conditions, setConditions] = useState<MarketCondition[]>([defaultCondition]);
+  const [conditions, setConditions] = useState<MarketCondition[]>([conditionForField(initialField, initialMatch)]);
   const [side, setSide] = useState<"YES" | "NO">("YES");
   const [points, setPoints] = useState(25);
+  const [closed, setClosed] = useState(false);
   const [submission, setSubmission] = useState<{ state: "idle" | "pending" | "success" | "error"; message?: string }>({ state: "idle" });
   const requestKey = useRef<string | null>(null);
   const group: ConditionGroup = { operator, conditions };
@@ -82,7 +95,14 @@ export function ConditionBuilder() {
   const hash = useMemo(() => conditionHash(group), [group]);
   const prediction = useMemo(() => describePrediction(group), [group]);
   const remainingConditions = 5 - conditions.length;
-  const closed = Date.now() >= new Date(demoMatch.kickoffAt).getTime();
+  const selectedMatch = matches.find((match) => match.id === selectedMatchId) ?? initialMatch;
+
+  useEffect(() => {
+    const updateClosed = () => setClosed(Date.now() >= Date.parse(selectedMatch.kickoffAt));
+    updateClosed();
+    const timer = window.setInterval(updateClosed, 30_000);
+    return () => window.clearInterval(timer);
+  }, [selectedMatch.kickoffAt]);
 
   return (
     <div className="rounded-lg border border-[#6FB4EB]/70 bg-[#D0FEF5] p-4 text-[#4A051C] shadow-[0_12px_30px_rgba(9,69,134,0.18)]">
@@ -97,6 +117,19 @@ export function ConditionBuilder() {
       </div>
 
       <div className="mt-4">
+        <label className="mb-4 grid gap-1">
+          <span className="text-[11px] font-black uppercase tracking-[0.12em] text-[#094586]">Match</span>
+          <select
+            value={selectedMatch.id}
+            onChange={(event) => selectMatch(event.target.value)}
+            className="min-h-11 w-full rounded-lg border border-[#6FB4EB]/70 bg-[#D0FEF5] px-3 py-2 text-sm font-black text-[#4A051C] outline-none focus:border-[#094586] focus:ring-2 focus:ring-[#6FB4EB]"
+          >
+            {matches.map((match) => (
+              <option key={match.id} value={match.id}>{match.title} · {formatKickoff(match.kickoffAt)}</option>
+            ))}
+          </select>
+          <span className="text-xs font-semibold text-[#4A051C]/75">{selectedMatch.competition}</span>
+        </label>
         <div className="inline-grid grid-cols-2 rounded-lg border border-[#6FB4EB]/80 bg-white/30 p-1">
           {(["AND", "OR"] as const).map((value) => (
             <button
@@ -141,8 +174,8 @@ export function ConditionBuilder() {
                     onChange={(event) => update(index, { ...condition, operator: "Eq", value: { kind: "team", value: event.target.value } })}
                     className="min-h-11 w-full rounded-lg border border-[#6FB4EB]/70 bg-[#D0FEF5] px-3 py-2 text-sm font-black text-[#4A051C] outline-none focus:border-[#094586] focus:ring-2 focus:ring-[#6FB4EB]"
                   >
-                    <option value="England">England</option>
-                    <option value="Argentina">Argentina</option>
+                    <option value={selectedMatch.homeTeam}>{selectedMatch.homeTeam}</option>
+                    <option value={selectedMatch.awayTeam}>{selectedMatch.awayTeam}</option>
                     <option value="Draw">Draw</option>
                   </select>
                 ) : condition.field === "BothTeamsScore" ? (
@@ -199,7 +232,7 @@ export function ConditionBuilder() {
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.14em] text-[#094586]">Participate with demo points</p>
-            <p className="mt-1 text-sm font-bold">{demoMatch.title} · maximum 100 points</p>
+            <p className="mt-1 text-sm font-bold">{selectedMatch.title} · maximum 100 points</p>
           </div>
           <p className="text-sm font-black text-[#094586]">{demoPoints.toLocaleString()} available</p>
         </div>
@@ -280,7 +313,7 @@ export function ConditionBuilder() {
   function updateField(index: number, field: MarketCondition["field"]) {
     setConditions((items) => items.map((item, i) => {
       if (i !== index) return item;
-      if (field === "MatchWinner") return { ...item, field, operator: "Eq", scope: "FullTime", value: { kind: "team", value: "England" } };
+      if (field === "MatchWinner") return { ...item, field, operator: "Eq", scope: "FullTime", value: { kind: "team", value: selectedMatch.homeTeam } };
       if (field === "BothTeamsScore") return { ...item, field, operator: "Eq", scope: "FullTime", value: { kind: "bool", value: true } };
       return { ...item, field, value: { kind: "u16", value: 1 } };
     }));
@@ -301,9 +334,7 @@ export function ConditionBuilder() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           idempotencyKey: requestKey.current,
-          matchId: demoMatch.id,
-          matchTitle: demoMatch.title,
-          kickoffAt: demoMatch.kickoffAt,
+          matchId: selectedMatch.id,
           side,
           points,
           group
@@ -331,6 +362,39 @@ export function ConditionBuilder() {
   function remove(index: number) {
     setConditions((items) => items.filter((_, i) => i !== index));
   }
+
+  function selectMatch(matchId: string) {
+    const nextMatch = matches.find((match) => match.id === matchId);
+    if (!nextMatch) return;
+    setSelectedMatchId(nextMatch.id);
+    setConditions((items) => items.map((item) => item.field === "MatchWinner"
+      ? { ...item, value: { kind: "team", value: nextMatch.homeTeam } }
+      : item));
+    requestKey.current = null;
+    setSubmission({ state: "idle" });
+  }
+}
+
+function conditionForField(field: MarketCondition["field"], match: ForecastMatchOption): MarketCondition {
+  if (field === "MatchWinner") {
+    return { field, operator: "Eq", scope: "FullTime", value: { kind: "team", value: match.homeTeam } };
+  }
+  if (field === "BothTeamsScore") {
+    return { field, operator: "Eq", scope: "FullTime", value: { kind: "bool", value: true } };
+  }
+  return { ...defaultCondition, field };
+}
+
+function formatKickoff(value: string) {
+  return new Intl.DateTimeFormat("en-NG", {
+    weekday: "short",
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "Africa/Lagos"
+  }).format(new Date(value));
 }
 
 function Field({ label, className = "", children }: { label: string; className?: string; children: React.ReactNode }) {
