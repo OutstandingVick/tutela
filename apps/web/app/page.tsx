@@ -158,7 +158,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-[#020B12] text-[#D0FEF5]">
+    <main className="min-h-screen bg-[#020B12] text-[#D0FEF5] overflow-hidden">
       <div className="text-[#4A051C] top-0 z-50">
         <nav
           className={`bg-transparent border-b px-4 md:px-6 lg:px-8 transition ${scrolled ? "border-[#D0FEF5]/12 shadow-sm backdrop-blur" : "border-transparent backdrop-blur"}`}
