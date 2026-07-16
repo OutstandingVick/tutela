@@ -2,7 +2,43 @@
 
 **Guardianship Through Verifiable Truth**
 
-Tutela is a hackathon MVP for verifiable parametric football markets on Solana devnet. It uses devnet test tokens only; they have no monetary value. The prototype is not licensed for real-money wagering, not audited, not production ready, and must not be deployed to mainnet.
+Tutela is programmable football-market infrastructure built on Solana and TxLINE-compatible match data.
+
+**TxLINE provides the match data. Tutela turns that data into programmable, verifiable football markets.**
+
+The protocol and SDK let prediction-market applications reuse football condition logic, data normalization, canonical serialization and hashing, market creation, deterministic outcome evaluation, settlement receipts and Safety Circuit refunds. The bundled consumer app is a reference implementation of that infrastructure.
+
+This hackathon deployment runs on Solana devnet and uses test assets only; they have no monetary value. It is not licensed for real-money wagering, not audited, not production ready and must not be deployed to mainnet.
+
+## Product Layers
+
+### Tutela Protocol
+
+`programs/tutela` is the on-chain source of truth for immutable market terms, condition hashes, lifecycle transitions, TxLINE proof validation, deterministic condition evaluation, settlement records, claims and permissionless refunds.
+
+### Tutela SDK
+
+`@tutela/sdk` is the reusable TypeScript entry point for integrators. It exposes typed football conditions, validation, canonical bytes and hashes, TxLINE-compatible normalization, proof parsing, Protocol PDA derivation and settlement instruction builders.
+
+```ts
+import {
+  TutelaSdk,
+  conditionHash,
+  validateConditionGroup,
+  type ConditionGroup
+} from "@tutela/sdk";
+
+const sdk = new TutelaSdk({ programId: process.env.NEXT_PUBLIC_TUTELA_PROGRAM_ID! });
+const errors = validateConditionGroup(conditionGroup satisfies ConditionGroup);
+const hash = conditionHash(conditionGroup);
+const [protocolAddress] = sdk.protocolAddress();
+```
+
+The SDK never treats live UI data as settlement authority. Applications submit supported final proof packages to the Protocol, which validates them through the configured TxLINE program before evaluating stored conditions.
+
+### Tutela Reference App
+
+`apps/web` demonstrates match discovery, market construction, demo participation, verification receipts and activity views. It is a consumer surface built on the same Protocol and SDK boundaries available to third-party applications.
 
 ## What Works In P0
 
@@ -12,7 +48,7 @@ Tutela is a hackathon MVP for verifiable parametric football markets on Solana d
 - Match browser, match detail, market discovery, market detail and activity views
 - Flat AND/OR condition builder with shared TypeScript validation
 - Anchor program source for PDA markets, SPL-token escrow, settlement, refunds and claims
-- TxLINE-primary adapter boundary with clearly labelled simulated fallback
+- TxLINE-compatible adapter boundary with clearly labelled simulated fallback
 - Keeper and indexer stubs with health checks and deterministic demo data
 - Seed, settlement and refund demo scripts
 

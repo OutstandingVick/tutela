@@ -1,12 +1,28 @@
 # Architecture
 
-Tutela separates on-chain source of truth, off-chain read models, proof adapters and UI.
+Tutela is a programmable football-market infrastructure layer. TxLINE-compatible providers supply match data; Tutela normalizes that data, commits immutable football conditions and turns authenticated final statistics into deterministic market outcomes.
 
-## On-Chain
+The system separates the Protocol, SDK, data adapters, automation and reference UI so another prediction application can integrate Tutela without adopting the Tutela consumer experience.
+
+## Tutela Protocol
 
 The `programs/tutela` Anchor program owns protocol config, market, position, proof, creator profile and fee vault PDAs. Escrow collateral is held in SPL Token accounts controlled by a vault-authority PDA, never by an external wallet.
 
-Core state transitions are emitted as events. Settlement math uses integer token base units only and checked arithmetic.
+Market conditions and their canonical hash become immutable when a market opens. The Protocol validates final-stat proofs through CPI into the exact configured executable TxLINE program, evaluates the stored flat AND/OR condition group on-chain and permits settlement only after that evaluation succeeds.
+
+Core state transitions are emitted as events. Settlement math uses integer token base units and checked arithmetic. The Safety Circuit provides permissionless, fee-free principal refunds when valid final data is unavailable by the immutable deadline.
+
+## Tutela SDK
+
+`packages/sdk` exposes the supported integration surface as `@tutela/sdk`. It composes existing modules rather than implementing a second condition engine:
+
+- Typed football conditions and market models from `@tutela/types`
+- Validation rules from `@tutela/validation`
+- Canonical serialization, SHA-256 hashes and deterministic preview evaluation from `@tutela/condition-engine`
+- TxLINE-compatible data normalization and adapter contracts from `@tutela/txline-adapter`
+- Protocol PDAs, proof parsing and transaction instruction builders from `@tutela/solana-client`
+
+Browser-side evaluation is a preview only. Settlement authority remains with the Protocol.
 
 ## Off-Chain
 
@@ -16,13 +32,13 @@ Core state transitions are emitted as events. Settlement math uses integer token
 
 ## Proof Boundary
 
-`packages/txline-adapter` defines a `SportsDataAdapter`. The TxLINE adapter is the primary production path and requires configured guest JWT, activated API token and explicit endpoint paths for fixtures, match details, score streams and validation proofs. The fallback implementation returns simulated/replayed football data and mock proof packages. It is labelled in the app and docs and does not claim to be TxLINE.
+`packages/txline-adapter` defines a provider-neutral `SportsDataAdapter`. The TxLINE adapter requires configured guest JWT, activated API token and explicit endpoint paths for fixtures, match details, score streams and validation proofs. The fallback implementation returns simulated/replayed football data and mock proof packages. It is labelled in the app and docs and does not claim to be TxLINE.
 
-The on-chain verifier boundary is designed for a future CPI into TxLINE's `validate_stat` instruction after the matching devnet IDL, proof account layout and CPI accounts are wired. Proof submission remains separate from settlement, and the keeper has no authority over user collateral.
+The Protocol CPI invokes TxLINE's official devnet `validate_stat_v2` instruction, requires the configured verifier account to be executable at the exact allowlisted address and consumes the authenticated validated-stat output. A caller cannot supply the winning side. Proof submission remains separate from validation and settlement, and the keeper has no authority over market outcomes or user collateral.
 
 ## Frontend
 
-`apps/web` is a Next.js App Router app. It uses strict TypeScript, Tailwind, accessible local UI primitives, wallet-provider detection for Phantom/Solflare, shared validation and deterministic condition hashing.
+`apps/web` is the reference consumer implementation. It uses the same shared validation, deterministic condition hashing, adapter contracts and Solana instruction builders exposed through the SDK architecture.
 
 ## Deployment
 
