@@ -4,7 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import {
+  Anchor,
   AlertTriangle,
+  ArrowDown,
   ArrowRight,
   BadgeCheck,
   Blocks,
@@ -12,11 +14,9 @@ import {
   DatabaseZap,
   EyeOff,
   Hourglass,
-  LockKeyhole,
   Menu,
   Radio,
   ReceiptText,
-  ScanSearch,
   ShieldCheck,
   Split,
   UsersRound,
@@ -31,12 +31,11 @@ const navItems = [
 ];
 
 const infrastructureLabels = [
-  { label: "Built on Solana", Icon: Blocks },
-  { label: "TxLINE-compatible data architecture", Icon: DatabaseZap },
-  { label: "Anchor smart contracts", Icon: Code2 },
-  { label: "PDA-controlled test collateral", Icon: LockKeyhole },
-  { label: "Permissionless verification", Icon: ScanSearch },
-  { label: "Public transaction receipts", Icon: ReceiptText }
+  { label: "Solana", Icon: Blocks },
+  { label: "Anchor", Icon: Anchor },
+  { label: "TypeScript SDK", Icon: Code2 },
+  { label: "TxLINE-compatible", Icon: DatabaseZap },
+  { label: "Public receipts", Icon: ReceiptText }
 ];
 
 const infrastructurePillars = [
@@ -55,6 +54,24 @@ const infrastructurePillars = [
     body: "PDA-controlled devnet escrow, public receipts and permissionless refund activation keep test assets from relying on operator discretion.",
     Icon: ShieldCheck
   }
+];
+
+const manualInfrastructureSteps = [
+  "Normalize football data",
+  "Build condition logic",
+  "Generate condition hashes",
+  "Develop market contracts",
+  "Verify final results",
+  "Implement settlement",
+  "Create refund handling",
+  "Maintain keeper infrastructure"
+];
+
+const tutelaIntegrationFlow = [
+  { label: "TxLINE-compatible data", Icon: DatabaseZap },
+  { label: "@tutela/sdk", Icon: Code2 },
+  { label: "Tutela Protocol", Icon: Blocks },
+  { label: "Verified settlement receipt", Icon: BadgeCheck }
 ];
 
 const trustMetrics = [
@@ -253,17 +270,85 @@ export default function LandingPage() {
         </div>
       </section>
 
+      <section
+        aria-label="Infrastructure credibility"
+        className="border-y border-[#D0FEF5]/10 bg-[#020B12] px-4 md:px-6 lg:px-8"
+      >
+        <div className="mx-auto flex max-w-[90rem] flex-wrap items-center justify-center gap-x-8 gap-y-4 py-6 text-[#D0FEF5]/58 sm:gap-x-10 md:flex-nowrap md:justify-between md:gap-x-6 lg:gap-x-12">
+          {infrastructureLabels.map(({ label, Icon }) => (
+            <div key={label} className="flex shrink-0 items-center gap-2.5">
+              <Icon aria-hidden="true" size={18} strokeWidth={1.8} />
+              <span className="whitespace-nowrap text-xs font-bold tracking-normal sm:text-sm">
+                {label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <div className="landing-continuous-gradient relative px-4 pb-14 md:px-6 md:pb-20 lg:px-8">
         <div className="mx-auto max-w-[90rem]">
-          <section id="infrastructure" className="mx-auto mt-10 max-w-7xl overflow-hidden rounded-[1.75rem] border border-[#D0FEF5]/18 bg-[#F4FAFA] text-[#111827] shadow-[0_28px_90px_rgba(2,11,18,0.28)]">
-            <div className="grid grid-cols-2 border-b border-[#094586]/12 md:grid-cols-3 xl:grid-cols-6">
-              {infrastructureLabels.map(({ label, Icon }) => (
-                <div key={label} className="flex min-h-[104px] items-center justify-center gap-3 border-b border-r border-[#094586]/12 px-4 py-5 text-center last:border-r-0 md:border-b-0">
-                  <Icon size={21} className="shrink-0 text-[#094586]" />
-                  <span className="text-sm font-black leading-tight text-[#111827]">{label}</span>
-                </div>
-              ))}
+          <section id="problem" className="mx-auto max-w-7xl py-20 md:py-28">
+            <div className="max-w-5xl">
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-[#D0FEF5]/72">
+                The infrastructure problem
+              </p>
+              <h2 className="mt-5 max-w-5xl text-4xl font-black leading-[1.02] tracking-normal text-white sm:text-5xl md:text-6xl lg:text-7xl">
+                Building deeper football markets requires more than a data feed.
+              </h2>
+              <p className="mt-7 max-w-3xl text-base font-semibold leading-7 text-[#D0FEF5]/78 md:text-lg md:leading-8">
+                Teams still need to normalize match data, encode conditions, verify outcomes, manage settlement, and handle failed-data scenarios. Tutela provides these components as reusable infrastructure.
+              </p>
             </div>
+
+            <div className="mt-14 grid border-y border-[#D0FEF5]/18 lg:grid-cols-2">
+              <div className="py-10 lg:border-r lg:border-[#D0FEF5]/18 lg:pr-10 xl:pr-14">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-[#D0FEF5]/58">
+                  Build everything manually
+                </p>
+                <div className="mt-7 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  {manualInfrastructureSteps.map((step, index) => (
+                    <div
+                      key={step}
+                      className={`flex min-h-20 items-center gap-4 border border-[#D0FEF5]/14 bg-[#020B12]/42 px-4 py-4 ${index % 2 === 1 ? "sm:translate-y-3" : ""}`}
+                    >
+                      <span className="font-mono text-xs font-bold text-[#6FB4EB]/72">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <span className="text-sm font-bold leading-5 text-[#D0FEF5]/78">
+                        {step}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="border-t border-[#D0FEF5]/18 py-10 lg:border-t-0 lg:pl-10 xl:pl-14">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-[#6FB4EB]">
+                  Build with Tutela
+                </p>
+                <div className="mt-7 flex flex-col items-stretch">
+                  {tutelaIntegrationFlow.map(({ label, Icon }, index) => (
+                    <div key={label} className="contents">
+                      <div className="flex min-h-20 items-center gap-4 border border-[#6FB4EB]/30 bg-[#094586]/56 px-5 py-4">
+                        <span className="grid h-10 w-10 shrink-0 place-items-center bg-[#D0FEF5] text-[#094586]">
+                          <Icon aria-hidden="true" size={19} strokeWidth={1.9} />
+                        </span>
+                        <span className="text-base font-black text-[#D0FEF5] sm:text-lg">
+                          {label}
+                        </span>
+                      </div>
+                      {index < tutelaIntegrationFlow.length - 1 && (
+                        <ArrowDown aria-hidden="true" size={19} className="mx-auto my-2 text-[#6FB4EB]" />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="infrastructure" className="mx-auto mt-10 max-w-7xl overflow-hidden rounded-[1.75rem] border border-[#D0FEF5]/18 bg-[#F4FAFA] text-[#111827] shadow-[0_28px_90px_rgba(2,11,18,0.28)]">
             <div className="grid md:grid-cols-3">
               {infrastructurePillars.map(({ title, body, Icon }) => (
                 <div key={title} className="border-b border-r border-[#094586]/12 p-7 last:border-r-0 md:border-b-0 lg:p-10">
@@ -299,7 +384,7 @@ export default function LandingPage() {
             </div>
           </section>
 
-          <section id="problem" className="mx-auto mt-10 max-w-7xl overflow-hidden rounded-[1.75rem] border border-[#D0FEF5]/18 bg-[#F7FBFC] text-[#081629] shadow-[0_28px_90px_rgba(2,11,18,0.2)]">
+          <section id="settlement-problem" className="mx-auto mt-10 max-w-7xl overflow-hidden rounded-[1.75rem] border border-[#D0FEF5]/18 bg-[#F7FBFC] text-[#081629] shadow-[0_28px_90px_rgba(2,11,18,0.2)]">
             <div className="grid gap-12 border-b border-[#094586]/12 px-6 py-14 md:grid-cols-[0.9fr_1.1fr] md:px-10 md:py-20">
               <div>
                 <p className="mb-5 inline-flex rounded-full border border-[#094586]/12 bg-white px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-[#094586]">
