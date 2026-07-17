@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { LandingInfrastructureSections } from "../components/landing-infrastructure-sections";
 import {
   Anchor,
   AlertTriangle,
@@ -335,6 +336,47 @@ const architectureLayers = [
   }
 ] as const;
 
+const sdkCodePanels = {
+  input: `import {
+  conditionHash,
+  validateConditionGroup,
+  type ConditionGroup
+} from "@tutela/sdk";
+
+const group: ConditionGroup = {
+  operator: "AND",
+  conditions: [
+    { field: "MatchWinner", operator: "Eq", scope: "Match", value: { kind: "team", value: "home" } },
+    { field: "TotalGoals", operator: "Gt", scope: "FullTime", value: { kind: "u16", value: 2 } },
+    { field: "TotalCorners", operator: "Gte", scope: "FullTime", value: { kind: "u16", value: 8 } }
+  ]
+};`,
+  payload: `const errors = validateConditionGroup(group);
+
+if (errors.length > 0) {
+  throw new Error(errors.join(", "));
+}
+
+const payload = {
+  operator: group.operator,
+  conditions: group.conditions,
+  conditionHash: conditionHash(group)
+};`,
+  next: `import { TutelaSdk } from "@tutela/sdk";
+
+const tutela = new TutelaSdk({
+  programId,
+  rpcUrl: "https://api.devnet.solana.com"
+});
+
+await tutela.assertVerifierReady();
+
+const [marketPda] = tutela.marketAddress(
+  creator,
+  marketNonce
+);`
+} as const;
+
 function WorkflowVisual({ type }: { type: (typeof developerWorkflow)[number]["id"] }) {
   if (type === "define") {
     return (
@@ -470,6 +512,7 @@ const productPreviews = [
 export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [sdkTab, setSdkTab] = useState<keyof typeof sdkCodePanels>("input");
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -924,101 +967,84 @@ export default function LandingPage() {
             </div>
           </section>
 
-          <section id="infrastructure" className="mx-auto mt-10 max-w-7xl overflow-hidden rounded-[1.75rem] border border-[#D0FEF5]/18 bg-[#F4FAFA] text-[#111827] shadow-[0_28px_90px_rgba(2,11,18,0.28)]">
-            <div className="grid md:grid-cols-3">
-              {infrastructurePillars.map(({ title, body, Icon }) => (
-                <div key={title} className="border-b border-r border-[#094586]/12 p-7 last:border-r-0 md:border-b-0 lg:p-10">
-                  <Icon size={30} className="mb-12 text-[#094586]" />
-                  <h2 className="max-w-sm text-2xl font-black leading-tight text-[#111827]">{title}</h2>
-                  <p className="mt-5 max-w-sm text-base font-semibold leading-7 text-[#5E6673]">{body}</p>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          <section id="trust-metrics" className="mx-auto mt-10 max-w-7xl overflow-hidden rounded-[1.75rem] border border-[#D0FEF5]/18 bg-[#F7FBFC] text-[#081629] shadow-[0_28px_90px_rgba(2,11,18,0.2)]">
-            <div className="border-b border-[#094586]/12 px-6 py-16 text-center md:px-10 md:py-24">
-              <p className="mx-auto mb-5 inline-flex rounded-full border border-[#094586]/12 bg-white px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-[#094586]">
-                Trust metrics
-              </p>
-              <h2 className="mx-auto max-w-4xl text-5xl font-black leading-tight tracking-normal text-[#081629] md:text-7xl">
-                Technical proof before big promises.
-              </h2>
-              <p className="mx-auto mt-5 max-w-2xl text-base font-semibold leading-7 text-[#687487]">
-                Tutela reports measurable settlement evidence as the devnet demo produces it. Unmeasured values stay marked as pending instead of being invented.
-              </p>
-            </div>
-            <div className="grid md:grid-cols-5">
-              {trustMetrics.map((metric, index) => (
-                <div key={metric.label} className={`border-b border-r border-[#094586]/12 px-5 py-10 text-center md:border-b-0 ${index === trustMetrics.length - 1 ? "md:border-r-0" : ""}`}>
-                  <p className={`text-4xl font-black tracking-normal md:text-5xl ${metric.value === "Pending" ? "text-[#8A94A6]" : "text-[#081629]"}`}>
-                    {metric.value}
-                  </p>
-                  <p className="mx-auto mt-4 max-w-[210px] text-sm font-semibold leading-6 text-[#687487]">{metric.label}</p>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          <section id="settlement-problem" className="mx-auto mt-10 max-w-7xl overflow-hidden rounded-[1.75rem] border border-[#D0FEF5]/18 bg-[#F7FBFC] text-[#081629] shadow-[0_28px_90px_rgba(2,11,18,0.2)]">
-            <div className="grid gap-12 border-b border-[#094586]/12 px-6 py-14 md:grid-cols-[0.9fr_1.1fr] md:px-10 md:py-20">
+          <section id="developer-sdk" className="mx-auto max-w-7xl border-t border-[#D0FEF5]/18 py-20 md:py-28">
+            <div className="grid gap-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-end">
               <div>
-                <p className="mb-5 inline-flex rounded-full border border-[#094586]/12 bg-white px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-[#094586]">
-                  The settlement problem
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-[#D0FEF5]/72">
+                  DEVELOPER SDK
                 </p>
-                <h2 className="max-w-xl text-5xl font-black leading-tight tracking-normal text-[#081629] md:text-6xl">
-                  Sports markets become opaque exactly when settlement matters most.
+                <h2 className="mt-5 max-w-4xl text-4xl font-black leading-[1.02] tracking-normal text-white sm:text-5xl md:text-6xl">
+                  Define deeper football markets in a few lines of code.
                 </h2>
               </div>
-              <div className="grid gap-0">
-                {marketProblems.map(({ title, body, Icon }) => (
-                  <div key={title} className="grid gap-4 border-b border-[#094586]/12 py-7 last:border-b-0 md:grid-cols-[42px_1fr]">
-                    <Icon size={27} className="text-[#094586]" />
-                    <div>
-                      <h3 className="text-xl font-black text-[#111827]">{title}</h3>
-                      <p className="mt-3 max-w-2xl text-base font-semibold leading-7 text-[#687487]">{body}</p>
-                    </div>
-                  </div>
-                ))}
+              <div>
+                <p className="max-w-xl text-base font-semibold leading-7 text-[#D0FEF5]/78 md:text-lg md:leading-8">
+                  Use @tutela/sdk to build typed conditions, validate supported statistics, generate deterministic payloads, and prepare Solana Devnet transactions without rebuilding the underlying football-market infrastructure.
+                </p>
+                <div className="mt-7 flex flex-wrap gap-3">
+                  <a href="https://github.com/OutstandingVick/tutela#readme" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 bg-[#6FB4EB] px-5 py-3 text-sm font-black text-[#020B12] transition hover:bg-[#D0FEF5] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#D0FEF5]">
+                    Read the documentation <ArrowRight aria-hidden="true" size={16} />
+                  </a>
+                  <a href="https://github.com/OutstandingVick/tutela/tree/main/packages/sdk" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 border border-[#D0FEF5]/28 px-5 py-3 text-sm font-black text-[#D0FEF5] transition hover:border-[#6FB4EB] hover:text-[#6FB4EB] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6FB4EB]">
+                    View SDK reference <ArrowRight aria-hidden="true" size={16} />
+                  </a>
+                </div>
               </div>
             </div>
 
-            <div className="bg-[#0B111A] px-6 py-12 text-[#D0FEF5] md:px-10 md:py-14">
-              <div className="grid gap-7 lg:grid-cols-[0.55fr_1fr_1fr]">
-                <div className="flex flex-col justify-between gap-8">
-                  <div>
-                    <p className="text-xs font-black uppercase tracking-[0.18em] text-[#6FB4EB]">Settlement path</p>
-                    <h3 className="mt-4 max-w-sm text-3xl font-black leading-tight text-white">
-                      Compare the moment after the final whistle.
-                    </h3>
-                  </div>
-                  <p className="max-w-sm text-sm font-semibold leading-6 text-[#D0FEF5]/70">
-                    Live feeds can improve the experience, but payouts should follow a verifiable final-data path.
-                  </p>
+            <div className="mt-14 grid overflow-hidden border border-[#D0FEF5]/18 lg:grid-cols-[0.78fr_1.22fr]">
+              <div className="bg-[#D0FEF5] p-6 text-[#094586] sm:p-8 lg:p-10">
+                <p className="text-xs font-black uppercase tracking-[0.16em] text-[#094586]/62">Quickstart</p>
+                <div className="mt-7">
+                  {[
+                    { number: "1", title: "Install the SDK", code: "npm install @tutela/sdk" },
+                    { number: "2", title: "Define typed conditions", code: "const group: ConditionGroup = { ... }" },
+                    { number: "3", title: "Validate and connect", code: "await tutela.assertVerifierReady()" }
+                  ].map(({ number, title, code }, index) => (
+                    <div key={number} className={`grid grid-cols-[auto_1fr] gap-4 py-6 ${index > 0 ? "border-t border-[#094586]/16" : "pt-0"}`}>
+                      <span className="grid h-8 w-8 place-items-center bg-[#094586] font-mono text-xs font-black text-[#D0FEF5]">{number}</span>
+                      <div><h3 className="text-lg font-black">{title}</h3><code className="mt-3 block overflow-x-auto border border-[#094586]/16 bg-white/48 px-3 py-2.5 font-mono text-xs font-bold">{code}</code></div>
+                    </div>
+                  ))}
                 </div>
+                <div className="mt-5 border-t border-[#094586]/16 pt-6">
+                  <p className="text-sm font-bold leading-6 text-[#094586]/70">The SDK uses Tutela&apos;s canonical validation and hashing pipeline, keeping browser previews and protocol inputs aligned.</p>
+                </div>
+              </div>
 
-                <ProcessLane
-                  title="Traditional process"
-                  tone="muted"
-                  steps={traditionalSteps}
-                  footer="Outcome depends on an internal review path."
-                />
-                <ProcessLane
-                  title="Tutela process"
-                  tone="accent"
-                  steps={tutelaSteps}
-                  footer="Outcome is backed by proof validation and a Solana receipt."
-                />
+              <div className="min-w-0 bg-[#06141F]">
+                <div className="flex overflow-x-auto border-b border-[#D0FEF5]/18" role="tablist" aria-label="SDK integration example">
+                  {[
+                    { id: "input", number: "01", label: "Developer input" },
+                    { id: "payload", number: "02", label: "Generated payload" },
+                    { id: "next", number: "03", label: "Next step" }
+                  ].map(({ id, number, label }) => {
+                    const selected = sdkTab === id;
+                    return (
+                      <button key={id} type="button" role="tab" aria-selected={selected} onClick={() => setSdkTab(id as keyof typeof sdkCodePanels)} className={`min-w-max border-r border-[#D0FEF5]/18 px-5 py-4 text-left text-xs font-black uppercase tracking-[0.12em] transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-[#6FB4EB] ${selected ? "bg-[#094586]/58 text-[#D0FEF5]" : "text-[#D0FEF5]/48 hover:text-[#D0FEF5]"}`}>
+                        <span className="mr-2 font-mono text-[#6FB4EB]">{number}</span>{label}
+                      </button>
+                    );
+                  })}
+                </div>
+                <div className="relative min-h-[32rem] p-5 sm:p-8 lg:p-10" role="tabpanel">
+                  <div className="flex items-center justify-between border-b border-[#D0FEF5]/14 pb-4">
+                    <div className="flex items-center gap-2 text-xs font-bold text-[#D0FEF5]/54"><span className="h-2.5 w-2.5 rounded-full bg-[#6FB4EB]" /> market.ts</div>
+                    <span className="border border-[#6FB4EB]/24 px-2.5 py-1 font-mono text-[10px] font-bold text-[#6FB4EB]">DEVNET</span>
+                  </div>
+                  <pre className="mt-7 overflow-x-auto whitespace-pre font-mono text-[12px] leading-6 text-[#D0FEF5] sm:text-[13px]"><code>{sdkCodePanels[sdkTab]}</code></pre>
+                  <div className="absolute bottom-5 left-5 right-5 flex items-center justify-between border-t border-[#D0FEF5]/14 pt-4 text-xs font-bold text-[#D0FEF5]/54 sm:bottom-8 sm:left-8 sm:right-8 lg:bottom-10 lg:left-10 lg:right-10">
+                    <span>{sdkTab === "input" ? "Typed market definition" : sdkTab === "payload" ? "Validated canonical payload" : "Verifier and market addresses"}</span>
+                    <BadgeCheck aria-hidden="true" size={17} className="text-[#6FB4EB]" />
+                  </div>
+                </div>
               </div>
             </div>
           </section>
+
+          <LandingInfrastructureSections />
         </div>
       </div>
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
     </main>
   );
 }
