@@ -306,7 +306,7 @@ export default function LandingPage() {
                 <p className="text-xs font-black uppercase tracking-[0.18em] text-[#D0FEF5]/58">
                   Build everything manually
                 </p>
-                <div className="mt-7 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div className="mt-7 grid grid-cols-2 gap-3">
                   {manualInfrastructureSteps.map((step, index) => (
                     <div
                       key={step}
