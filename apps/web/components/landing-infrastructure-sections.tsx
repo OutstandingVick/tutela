@@ -34,6 +34,8 @@ const capabilities = [
   ["Safety Circuit", "A deadline-driven, permissionless recovery path when acceptable final data never arrives.", ShieldCheck]
 ] as const;
 
+const capabilityPhases = ["Define", "Deploy", "Verify", "Resolve", "Inspect", "Recover"] as const;
+
 const metrics = [
   {
     value: "Not measured yet",
@@ -74,6 +76,56 @@ const verificationStages = [
   ["Condition evaluation", "Stored AND/OR conditions run deterministically.", GitMerge],
   ["Settlement receipt", "The reusable result and transaction references are recorded.", ReceiptText]
 ] as const;
+
+const finalMatchFacts = [
+  ["Home goals", "2"],
+  ["Away goals", "1"],
+  ["Total goals", "3"],
+  ["Total corners", "9"],
+  ["Total cards", "4"],
+  ["Match winner", "Home"],
+  ["Match status", "Final"]
+] as const;
+
+const finalMatchMetadata = [
+  ["Match ID", "sample-match-id"],
+  ["Schema version", "1.0"],
+  ["Finalized at", "2026-07-14T21:02:18Z"],
+  ["Data source mode", "TxLINE-compatible final data"]
+] as const;
+
+const solanaValidationChecks = [
+  ["Match identity", "Passed"],
+  ["Final status", "Passed"],
+  ["Schema", "Supported"],
+  ["Data hash", "Matched"]
+] as const;
+
+const conditionEvaluationRows = [
+  ["Home team wins", "Home", "Passed"],
+  ["Total goals > 2", "3", "Passed"],
+  ["Total corners at least 8", "9", "Passed"]
+] as const;
+
+const settlementReceiptFields = [
+  ["Winning side", "YES"],
+  ["Market state", "Settled"],
+  ["Receipt ID", "sample-receipt"],
+  ["Condition hash", "f79d...c19a"],
+  ["Network", "Solana Devnet"],
+  ["Transaction", "Not broadcast - preview"]
+] as const;
+
+const verificationPayload = `{
+  "matchId": "sample-match-id",
+  "schemaVersion": "1.0",
+  "status": "FINAL",
+  "homeGoals": 2,
+  "awayGoals": 1,
+  "totalCorners": 9,
+  "totalCards": 4,
+  "dataHash": "8f21...c94a"
+}`;
 
 const faq = [
   {
@@ -312,6 +364,123 @@ function FlowArrow() {
   return <ArrowDown aria-hidden="true" className="mx-auto my-3 text-[#6FB4EB] lg:my-0 lg:-rotate-90" size={20} />;
 }
 
+function CapabilityVisual({ index }: { index: number }) {
+  if (index === 0) {
+    return (
+      <div className="border border-white/10 bg-[#03101A] p-4 text-sm text-[#D0FEF5]">
+        <div className="mb-3 flex items-center justify-between border-b border-white/10 pb-3">
+          <span className="font-mono text-[0.7rem] uppercase tracking-[0.18em] text-[#6FB4EB]">Condition group</span>
+          <span className="border border-[#6FB4EB]/40 px-2 py-1 text-xs font-semibold">AND</span>
+        </div>
+        {["Home team wins", "Total goals > 2", "Total corners >= 8"].map((condition) => (
+          <div key={condition} className="flex items-center gap-3 border-b border-white/10 py-3 last:border-0">
+            <Check className="h-4 w-4 shrink-0 text-[#6FB4EB]" />
+            <span>{condition}</span>
+          </div>
+        ))}
+        <div className="mt-3 truncate border-t border-white/10 pt-3 font-mono text-xs text-white/45">
+          sha256: 8f21c3...c94a
+        </div>
+      </div>
+    );
+  }
+
+  if (index === 1) {
+    return (
+      <div className="border border-white/10 bg-[#03101A] p-4 text-sm text-[#D0FEF5]">
+        <div className="grid grid-cols-3 border border-white/10 text-center text-xs font-semibold uppercase tracking-[0.12em]">
+          <span className="bg-[#094586] px-2 py-3">Draft</span>
+          <span className="border-x border-white/10 px-2 py-3 text-white/55">Open</span>
+          <span className="px-2 py-3 text-white/55">Locked</span>
+        </div>
+        <div className="mt-4 space-y-3">
+          <div className="flex items-center justify-between border-b border-white/10 pb-3">
+            <span className="text-white/55">Fixture</span><span>18257865</span>
+          </div>
+          <div className="flex items-center justify-between border-b border-white/10 pb-3">
+            <span className="text-white/55">Conditions</span><span>3 / 5</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-white/55">Terms</span><span className="flex items-center gap-2"><LockKeyhole className="h-4 w-4 text-[#6FB4EB]" /> Immutable after open</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (index === 2) {
+    return (
+      <div className="border border-white/10 bg-[#03101A] p-4 text-sm text-[#D0FEF5]">
+        <div className="font-mono text-[0.7rem] uppercase tracking-[0.18em] text-[#6FB4EB]">Verification path</div>
+        <div className="mt-4 flex flex-col gap-2">
+          {["TxLINE-compatible data", "Identity + schema checks", "Verified statistics"].map((step, stepIndex) => (
+            <div key={step}>
+              <div className="flex items-center justify-between border border-white/10 px-3 py-3">
+                <span>{step}</span>
+                {stepIndex === 2 ? <Check className="h-4 w-4 text-[#6FB4EB]" /> : <CircleDot className="h-4 w-4 text-white/35" />}
+              </div>
+              {stepIndex < 2 ? <ArrowDown className="mx-auto my-1 h-4 w-4 text-white/30" /> : null}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (index === 3) {
+    return (
+      <div className="border border-white/10 bg-[#03101A] p-4 text-sm text-[#D0FEF5]">
+        <div className="mb-2 flex items-center justify-between font-mono text-[0.7rem] uppercase tracking-[0.18em] text-[#6FB4EB]">
+          <span>Condition evaluation</span><span>3 / 3 passed</span>
+        </div>
+        {["Winner = Home", "Goals 3 > 2", "Corners 9 >= 8"].map((rule) => (
+          <div key={rule} className="flex items-center justify-between border-b border-white/10 py-3">
+            <span>{rule}</span><Check className="h-4 w-4 text-[#6FB4EB]" />
+          </div>
+        ))}
+        <div className="mt-4 flex items-center justify-between bg-[#094586] px-4 py-3 font-bold">
+          <span>MARKET RESULT</span><span>YES</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (index === 4) {
+    return (
+      <div className="border border-white/10 bg-[#03101A] p-4 text-sm text-[#D0FEF5]">
+        <div className="mb-3 flex items-center gap-2 border-b border-white/10 pb-3 font-semibold">
+          <ReceiptText className="h-4 w-4 text-[#6FB4EB]" /> Settlement receipt
+        </div>
+        <dl className="space-y-3 font-mono text-xs">
+          <div className="flex justify-between gap-4"><dt className="text-white/45">market</dt><dd className="truncate">7Xq2...tutela</dd></div>
+          <div className="flex justify-between gap-4"><dt className="text-white/45">condition_hash</dt><dd className="truncate">8f21...c94a</dd></div>
+          <div className="flex justify-between gap-4"><dt className="text-white/45">settlement_tx</dt><dd className="truncate">4mL9...Qp7a</dd></div>
+          <div className="flex justify-between gap-4"><dt className="text-white/45">slot</dt><dd>348,201,884</dd></div>
+        </dl>
+        <div className="mt-4 flex items-center gap-2 border-t border-white/10 pt-3 text-xs font-bold uppercase tracking-[0.14em] text-[#6FB4EB]">
+          <Check className="h-4 w-4" /> Confirmed on Devnet
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="border border-white/10 bg-[#03101A] p-4 text-sm text-[#D0FEF5]">
+      <div className="font-mono text-[0.7rem] uppercase tracking-[0.18em] text-[#6FB4EB]">Finality timeline</div>
+      <div className="mt-5 grid grid-cols-[auto_1fr_auto] items-center gap-3">
+        <CircleDot className="h-5 w-5 text-white/45" />
+        <div className="h-px bg-white/15" />
+        <ShieldCheck className="h-5 w-5 text-[#6FB4EB]" />
+      </div>
+      <div className="mt-3 flex justify-between text-xs text-white/55"><span>Market closed</span><span>Deadline reached</span></div>
+      <div className="mt-5 border border-[#6FB4EB]/35 p-4">
+        <div className="flex items-center justify-between font-semibold"><span>Refund eligible</span><Check className="h-4 w-4 text-[#6FB4EB]" /></div>
+        <p className="mt-2 text-xs leading-5 text-white/55">Principal becomes claimable without creator or protocol fees.</p>
+      </div>
+    </div>
+  );
+}
+
 export function LandingInfrastructureSections() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [selectedRoadmap, setSelectedRoadmap] = useState(1);
@@ -331,7 +500,24 @@ export function LandingInfrastructureSections() {
       <section id="capabilities" className="mx-auto max-w-7xl border-t border-[#D0FEF5]/18 py-20 md:py-28">
         <SectionHeading eyebrow="PLATFORM CAPABILITIES" title="Everything required to build and resolve programmable football markets." body="Tutela combines market definition, Solana execution, TxLINE-compatible verification, deterministic settlement, public receipts, and bounded recovery in one reusable developer stack." />
         <div className="mt-12 grid border-l border-t border-[#D0FEF5]/18 md:grid-cols-2">
-          {capabilities.map(([title, body, Icon], index) => <article key={title} className="min-h-64 border-b border-r border-[#D0FEF5]/18 bg-[#06141F]/35 p-7 sm:p-9"><span className="font-mono text-xs font-black text-[#6FB4EB]">0{index + 1}</span><Icon className="mt-8 text-[#D0FEF5]" size={28} strokeWidth={1.6} /><h3 className="mt-6 text-2xl font-black text-white">{title}</h3><p className="mt-4 max-w-xl text-sm font-semibold leading-7 text-[#D0FEF5]/65">{body}</p></article>)}
+          {capabilities.map(([title, body, Icon], index) => (
+            <article key={title} className="flex min-h-[30rem] flex-col border-b border-r border-[#D0FEF5]/18 bg-[#06141F]/35 p-7 sm:p-9 lg:p-11">
+              <div className="flex items-center justify-between border-b border-[#D0FEF5]/18 pb-5">
+                <div className="flex items-center gap-3">
+                  <span className="font-mono text-xs font-black text-white/35">0{index + 1}</span>
+                  <span className="font-mono text-[0.7rem] font-black uppercase tracking-[0.18em] text-[#6FB4EB]">{capabilityPhases[index]}</span>
+                </div>
+                <Icon className="text-[#D0FEF5]" size={24} strokeWidth={1.6} aria-hidden="true" />
+              </div>
+              <div className="pt-8">
+                <h3 className="text-2xl font-black text-white sm:text-3xl">{title}</h3>
+                <p className="mt-4 max-w-xl text-sm font-semibold leading-7 text-[#D0FEF5]/65">{body}</p>
+              </div>
+              <div className="mt-auto pt-9">
+                <CapabilityVisual index={index} />
+              </div>
+            </article>
+          ))}
         </div>
       </section>
 
