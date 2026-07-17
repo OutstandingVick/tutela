@@ -76,14 +76,96 @@ const verificationStages = [
 ] as const;
 
 const faq = [
-  ["What is Tutela?", "Tutela is programmable football-market infrastructure on Solana. It provides typed conditions, market lifecycle logic, verification adapters, deterministic evaluation, receipts and recovery primitives."],
-  ["Does Tutela provide football match data?", "No. TxLINE-compatible providers supply match facts. Tutela turns supported facts into reusable market definitions and verifiable outcomes."],
-  ["Does the live match feed settle a market?", "No. Live data improves the interface only. Settlement must follow the configured final-data verification path."],
-  ["What happens when acceptable final data never arrives?", "After the immutable finality deadline, the Safety Circuit can make the market refund eligible so participants can claim principal without an operator choosing a result."],
-  ["Can an administrator change an outcome?", "Market conditions become immutable after opening, and settlement is constrained to supported verification and evaluation rules. The prototype still has documented administrative and data-provider trust boundaries."],
-  ["Is Tutela live on mainnet?", "No. The current implementation is an experimental Solana Devnet prototype using test assets with no monetary value."],
-  ["Is the protocol audited?", "No completed audit is claimed. Tutela is not production-ready and should be treated as experimental infrastructure."],
-  ["How do developers integrate?", "Use @tutela/sdk for typed condition construction and canonical payloads, then connect to the Tutela Protocol instructions and supported verification adapter." ]
+  {
+    question: "What is Tutela?",
+    paragraphs: ["Tutela is programmable football-market infrastructure built on Solana. It helps applications define football conditions, evaluate them against TxLINE-compatible final data, and produce reusable settlement records."],
+    link: ["Read the Tutela overview", `${GITHUB}#readme`]
+  },
+  {
+    question: "Is Tutela the same as Tutela Markets?",
+    paragraphs: ["No. Tutela is the underlying protocol and developer infrastructure. Tutela Markets is the flagship consumer application built with Tutela Protocol and @tutela/sdk."],
+    link: ["Explore Tutela Markets", "/app"]
+  },
+  {
+    question: "How is Tutela different from TxLINE?",
+    paragraphs: ["TxLINE-compatible infrastructure supplies football match facts. Tutela turns those facts into programmable conditions, evaluates market outcomes, manages settlement states, and records reusable receipts.", "Tutela does not create the underlying football statistics."],
+    link: ["View the verification architecture", "#architecture"]
+  },
+  {
+    question: "What can developers build with Tutela?",
+    paragraphs: ["Developers can build compound football markets, tournament competitions, community forecasting products, analytics games, creator-led challenges, and other applications that need verifiable football outcomes.", "Every product must remain within the statistics supported by the configured data adapter."],
+    link: ["Explore use cases", "#capabilities"]
+  },
+  {
+    question: "Which football statistics are currently supported?",
+    paragraphs: ["The current condition schema covers match winner, team and total goals, both teams to score, yellow and red cards, team and total cards, and team and total corners.", "The reference composer exposes a bounded subset, and actual availability depends on fields supplied through the configured TxLINE-compatible adapter."],
+    link: ["View the condition schema", `${GITHUB}/tree/main/packages/types`]
+  },
+  {
+    question: "Can developers combine multiple conditions?",
+    paragraphs: ["Yes. A market can combine up to five supported conditions using one top-level AND or OR operator.", "For example: Home team wins AND total goals exceed two AND total corners are at least eight. Nested logical condition trees are not part of the current MVP."],
+    link: ["Open the market composer", "#composer"]
+  },
+  {
+    question: "How are conditions stored consistently?",
+    paragraphs: ["Tutela validates each market definition, serializes it in a canonical format, and generates a deterministic condition hash. This helps applications and the protocol reference the same immutable definition."],
+    link: ["Learn about serialization and hashing", `${GITHUB}/tree/main/packages/condition-engine`]
+  },
+  {
+    question: "How are match outcomes verified?",
+    paragraphs: ["After a match is finalized, Tutela receives a TxLINE-compatible data package, checks its match identity and supported schema, extracts the required statistics, and evaluates the stored conditions through Tutela Protocol.", "The exact guarantees depend on the verification mechanism currently implemented in the adapter and deployed protocol."],
+    link: ["See the verification path", "#verification-showcase"]
+  },
+  {
+    question: "Does Tutela manually choose winning outcomes?",
+    paragraphs: ["No. Supported outcomes are evaluated by comparing validated match values with the immutable conditions stored for the market. An administrator should not be able to manually select a different result.", "The current website describes only guarantees enforced by the deployed program and documents remaining trust boundaries."],
+    link: ["Read the trust model", "#security"]
+  },
+  {
+    question: "What is a settlement receipt?",
+    paragraphs: ["A settlement receipt is a reusable record containing the market definition, condition hash, verified values, individual condition results, final result, transaction references, and settlement status.", "Tutela Markets and third-party applications can use the same receipt to display how an outcome was resolved."],
+    link: ["Inspect the shared types", `${GITHUB}/tree/main/packages/types`]
+  },
+  {
+    question: "What happens when final match data is unavailable?",
+    paragraphs: ["If acceptable final data does not arrive before the configured finality deadline, the market may become eligible for Tutela's Safety Circuit refund path.", "Once activated, participants claim their own principal through the supported pull-based claim process; this is not an automatic transfer."],
+    link: ["Learn about the Safety Circuit", "#safety-circuit"]
+  },
+  {
+    question: "Can third-party applications use their own product model?",
+    paragraphs: ["Yes. Tutela is designed to provide programmable conditions and verifiable results without requiring every application to use the same interface, participation model, or community experience.", "The current Tutela Markets reference application uses non-transferable Devnet test credits with no monetary value."],
+    link: ["Read the integration guide", `${GITHUB}/blob/main/docs/product-strategy.md`]
+  },
+  {
+    question: "What is @tutela/sdk?",
+    paragraphs: ["@tutela/sdk is the shared TypeScript workspace package for constructing and validating conditions, generating canonical hashes, deriving protocol addresses, checking the configured verifier, and building supported proof and settlement instructions."],
+    link: ["Open the SDK quickstart", `${GITHUB}/tree/main/packages/sdk`]
+  },
+  {
+    question: "Is Tutela live on Solana mainnet?",
+    paragraphs: ["No. The current implementation is intended for Solana Devnet testing and demonstration.", "Test credits and test assets have no monetary value. Mainnet support should not be implied until the protocol has completed the required testing and security work."],
+    link: ["View the current deployment status", "#roadmap"]
+  },
+  {
+    question: "Is Tutela audited?",
+    paragraphs: ["No. Tutela is currently experimental and unaudited. It should not be treated as production-ready financial infrastructure."],
+    link: ["Read the current security limitations", `${GITHUB}/blob/main/docs/security.md`]
+  },
+  {
+    question: "Does Tutela have an official TxLINE partnership?",
+    paragraphs: ["No official partnership is currently documented. Tutela describes its integration as TxLINE-compatible; this wording refers to the supported data and verification path and does not, by itself, imply an official partnership."],
+    link: ["View integration disclosures", `${GITHUB}/blob/main/docs/txline-integration.md`]
+  },
+  {
+    question: "Can Tutela support more sports or data fields?",
+    paragraphs: ["The architecture may support broader data coverage in the future, but the current implementation focuses on football and fields available through the configured adapter.", "Do not assume support for player events, exact timestamps, possession, shots, substitutions, or additional sports unless they are explicitly implemented."],
+    link: ["View the roadmap", "#roadmap"]
+  },
+  {
+    question: "How can developers start building?",
+    paragraphs: ["Begin with the @tutela/sdk workspace package, construct a supported football condition, validate its generated payload, and test the complete market lifecycle on Solana Devnet."],
+    link: ["Start building", `${GITHUB}#readme`]
+  }
 ] as const;
 
 const roadmapMilestones = [
@@ -389,9 +471,48 @@ export function LandingInfrastructureSections() {
       </section>
 
       <section id="faq" className="mx-auto max-w-7xl border-t border-[#D0FEF5]/18 py-20 md:py-28">
-        <SectionHeading eyebrow="FAQ" title="Questions, answered plainly." body="The current product is experimental Devnet infrastructure. These answers separate implemented behavior from intended architecture and future work." />
+        <SectionHeading
+          eyebrow="FREQUENTLY ASKED QUESTIONS"
+          title="Everything you need to understand Tutela."
+          body="Learn how Tutela turns TxLINE-compatible football data into programmable market conditions, verifiable outcomes, and reusable settlement infrastructure."
+        />
         <div className="mt-12 border-t border-[#D0FEF5]/18">
-          {faq.map(([question, answer], index) => { const open = openFaq === index; return <div key={question} className="border-b border-[#D0FEF5]/18"><button type="button" aria-expanded={open} onClick={() => setOpenFaq(open ? null : index)} className="flex w-full items-center justify-between gap-5 py-6 text-left text-lg font-black text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6FB4EB]"><span>{question}</span><ChevronDown size={22} className={`shrink-0 text-[#6FB4EB] transition ${open ? "rotate-180" : ""}`} /></button>{open && <p className="max-w-4xl pb-7 text-sm font-semibold leading-7 text-[#D0FEF5]/65 md:text-base">{answer}</p>}</div>; })}
+          {faq.map(({ question, paragraphs, link }, index) => {
+            const open = openFaq === index;
+            const panelId = `faq-panel-${index}`;
+            const buttonId = `faq-button-${index}`;
+
+            return (
+              <div key={question} className="border-b border-[#D0FEF5]/18">
+                <button
+                  id={buttonId}
+                  type="button"
+                  aria-expanded={open}
+                  aria-controls={panelId}
+                  onClick={() => setOpenFaq(open ? null : index)}
+                  className="flex min-h-20 w-full items-start justify-between gap-5 py-6 text-left text-lg font-black leading-7 text-white transition-colors hover:text-[#6FB4EB] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6FB4EB] motion-reduce:transition-none sm:items-center sm:py-7 sm:text-xl"
+                >
+                  <span>{question}</span>
+                  <ChevronDown aria-hidden="true" size={22} className={`mt-1 shrink-0 text-[#6FB4EB] transition-transform duration-300 motion-reduce:transition-none sm:mt-0 ${open ? "rotate-180" : ""}`} />
+                </button>
+                <div
+                  id={panelId}
+                  role="region"
+                  aria-labelledby={buttonId}
+                  className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out motion-reduce:transition-none ${open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
+                >
+                  <div className="overflow-hidden">
+                    <div className="max-w-4xl pb-7 text-sm font-semibold leading-7 text-[#D0FEF5]/65 md:text-base">
+                      {paragraphs.map((paragraph) => <p key={paragraph} className="mt-2 first:mt-0">{paragraph}</p>)}
+                      <Link href={link[1]} className="mt-4 inline-flex items-center gap-2 font-black text-[#6FB4EB] transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6FB4EB] motion-reduce:transition-none">
+                        {link[0]} <ArrowRight aria-hidden="true" size={15} />
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </section>
 
