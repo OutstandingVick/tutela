@@ -123,6 +123,314 @@ const marketProblems = [
 const traditionalSteps = ["Match ends", "Operator reviews", "Internal decision", "Delayed result"];
 const tutelaSteps = ["Final data", "Proof validation", "Condition evaluation", "On-chain receipt"];
 
+const developerUseCases = [
+  {
+    id: "compound",
+    label: "Compound football markets",
+    description: "Combine goals, cards, corners, match results, and both-teams-to-score conditions into deeper market outcomes.",
+    Icon: Split
+  },
+  {
+    id: "live",
+    label: "Live-stat experiences",
+    description: "Turn supported live match updates into fast, inspectable prediction surfaces for football audiences.",
+    Icon: Radio
+  },
+  {
+    id: "creator",
+    label: "Creator market builders",
+    description: "Give communities structured tools to publish clear football theses without rebuilding contract logic.",
+    Icon: UsersRound
+  },
+  {
+    id: "verification",
+    label: "Verification explorers",
+    description: "Trace match facts, condition evaluation, and proof-backed receipts in a plain-language result view.",
+    Icon: BadgeCheck
+  },
+  {
+    id: "safety",
+    label: "Safety-first pools",
+    description: "Add deterministic deadlines and permissionless principal refunds when final data cannot be verified.",
+    Icon: ShieldCheck
+  },
+  {
+    id: "embedded",
+    label: "Embedded football infrastructure",
+    description: "Use @tutela/sdk and protocol instructions inside prediction apps, contests, and fan products.",
+    Icon: Code2
+  }
+] as const;
+
+function UseCaseVisual({ type }: { type: (typeof developerUseCases)[number]["id"] }) {
+  if (type === "compound") {
+    return (
+      <div className="space-y-2 font-mono text-xs font-bold text-[#D0FEF5]">
+        {["Home team wins", "Total goals > 2", "Total corners ≥ 8"].map((condition, index) => (
+          <div key={condition}>
+            {index > 0 && <p className="pb-2 pl-3 text-[10px] uppercase tracking-[0.16em] text-[#6FB4EB]">And</p>}
+            <div className="flex items-center justify-between border border-[#6FB4EB]/26 bg-[#094586]/54 px-3 py-2.5">
+              <span>{condition}</span>
+              <BadgeCheck aria-hidden="true" size={15} className="text-[#6FB4EB]" />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (type === "live") {
+    return (
+      <div className="border border-[#6FB4EB]/26 bg-[#094586]/42 p-4">
+        <div className="flex items-center justify-between text-xs font-black uppercase tracking-[0.14em] text-[#6FB4EB]">
+          <span>Live · 67&apos;</span>
+          <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-[#D0FEF5]" /> Fresh</span>
+        </div>
+        <div className="mt-5 flex items-end justify-between gap-4">
+          <div><p className="text-xs text-[#D0FEF5]/60">Corners</p><p className="mt-1 text-2xl font-black text-white">5</p></div>
+          <div className="h-10 w-px bg-[#D0FEF5]/16" />
+          <div><p className="text-xs text-[#D0FEF5]/60">Cards</p><p className="mt-1 text-2xl font-black text-white">3</p></div>
+          <div className="h-10 w-px bg-[#D0FEF5]/16" />
+          <div><p className="text-xs text-[#D0FEF5]/60">Goals</p><p className="mt-1 text-2xl font-black text-white">2</p></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (type === "creator") {
+    return (
+      <div className="border border-[#6FB4EB]/26 bg-[#D0FEF5] p-4 text-[#094586]">
+        <div className="flex items-center justify-between gap-4">
+          <p className="text-xs font-black uppercase tracking-[0.14em]">New market</p>
+          <span className="border border-[#094586]/22 px-2 py-1 text-[10px] font-black">3 / 5</span>
+        </div>
+        <p className="mt-5 text-lg font-black">France wins + match totals</p>
+        <div className="mt-4 flex items-center justify-between border-t border-[#094586]/16 pt-3 font-mono text-[11px] font-bold">
+          <span>hash ready</span><span>AND</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (type === "verification") {
+    return (
+      <div className="space-y-2">
+        {["Match facts received", "Conditions evaluated", "Receipt generated"].map((step, index) => (
+          <div key={step} className="flex items-center gap-3 border-b border-[#D0FEF5]/14 pb-2.5 text-sm font-bold text-[#D0FEF5]">
+            <span className="grid h-7 w-7 shrink-0 place-items-center bg-[#D0FEF5] text-xs font-black text-[#094586]">{index + 1}</span>
+            <span>{step}</span>
+            <BadgeCheck aria-hidden="true" size={16} className="ml-auto text-[#6FB4EB]" />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (type === "safety") {
+    return (
+      <div>
+        <div className="flex items-center justify-between text-xs font-black uppercase tracking-[0.12em] text-[#D0FEF5]/68">
+          <span>Finality window</span><span>00:42:18</span>
+        </div>
+        <div className="mt-4 h-2 bg-[#D0FEF5]/12"><div className="h-full w-2/3 bg-[#6FB4EB]" /></div>
+        <div className="mt-5 flex items-center gap-3 border border-[#6FB4EB]/26 bg-[#094586]/48 p-3">
+          <ShieldCheck aria-hidden="true" size={20} className="text-[#D0FEF5]" />
+          <div><p className="text-sm font-black text-white">Refund path defined</p><p className="mt-0.5 text-xs text-[#D0FEF5]/62">Principal only · permissionless</p></div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="border border-[#6FB4EB]/26 bg-[#071925] p-4 font-mono text-xs leading-6 text-[#D0FEF5]">
+      <p><span className="text-[#6FB4EB]">import</span> {'{ createMarket }'}</p>
+      <p><span className="text-[#6FB4EB]">from</span> &quot;@tutela/sdk&quot;;</p>
+      <p className="mt-3 text-[#D0FEF5]/58">// typed conditions</p>
+      <p>await createMarket(terms);</p>
+    </div>
+  );
+}
+
+const developerWorkflow = [
+  {
+    id: "define",
+    number: "01",
+    label: "Define",
+    heading: "Define the market conditions.",
+    description: "Use Tutela’s typed condition language to combine supported football statistics into one deterministic market definition.",
+    Icon: Split
+  },
+  {
+    id: "deploy",
+    number: "02",
+    label: "Deploy",
+    heading: "Deploy immutable market terms.",
+    description: "Create the market through Tutela Protocol with canonical conditions, a condition hash, and lifecycle deadlines fixed before participation.",
+    Icon: Blocks
+  },
+  {
+    id: "participate",
+    number: "03",
+    label: "Participate",
+    heading: "Receive participation through your app.",
+    description: "Let users inspect the market definition, choose YES or NO, and participate through the experience you control.",
+    Icon: UsersRound
+  },
+  {
+    id: "verify",
+    number: "04",
+    label: "Verify",
+    heading: "Verify the final match facts.",
+    description: "Submit a TxLINE-compatible proof package and validate fixture identity, finalization, and supported match statistics.",
+    Icon: DatabaseZap
+  },
+  {
+    id: "settle",
+    number: "05",
+    label: "Settle",
+    heading: "Settle from deterministic evaluation.",
+    description: "Evaluate the stored AND or OR conditions against validated statistics and record one reproducible market result.",
+    Icon: BadgeCheck
+  },
+  {
+    id: "recover",
+    number: "06",
+    label: "Recover",
+    heading: "Recover when proof never arrives.",
+    description: "After the immutable finality window, activate Tutela’s Safety Circuit so participants can claim principal without operator approval.",
+    Icon: ShieldCheck
+  }
+] as const;
+
+const architectureLayers = [
+  {
+    label: "Prediction app",
+    detail: "Consumer markets, contests, analytics, and creator experiences",
+    meta: "Application layer",
+    Icon: UsersRound
+  },
+  {
+    label: "@tutela/sdk",
+    detail: "Typed conditions, canonical serialization, hashes, and transaction builders",
+    meta: "Developer interface",
+    Icon: Code2
+  },
+  {
+    label: "Tutela Protocol",
+    detail: "Immutable market terms, lifecycle state, condition evaluation, and Safety Circuit",
+    meta: "Solana programs",
+    Icon: Blocks
+  },
+  {
+    label: "TxLINE verification path",
+    detail: "Fixture identity, finalization, proof validation, and authenticated match statistics",
+    meta: "Verification boundary",
+    Icon: DatabaseZap
+  },
+  {
+    label: "Settlement registry",
+    detail: "Reusable market result, verification receipt, settlement status, or refund status",
+    meta: "Public outcome record",
+    Icon: ReceiptText
+  }
+] as const;
+
+function WorkflowVisual({ type }: { type: (typeof developerWorkflow)[number]["id"] }) {
+  if (type === "define") {
+    return (
+      <div className="mx-auto w-full max-w-xl border border-[#6FB4EB]/28 bg-[#06141F] p-5 sm:p-8">
+        <div className="flex items-center justify-between gap-4 border-b border-[#D0FEF5]/14 pb-5">
+          <div><p className="text-xs font-black uppercase tracking-[0.16em] text-[#6FB4EB]">Condition group</p><p className="mt-2 text-xl font-black text-white">Match thesis</p></div>
+          <span className="bg-[#D0FEF5] px-3 py-1.5 text-xs font-black text-[#094586]">AND</span>
+        </div>
+        <div className="mt-6 space-y-3 font-mono text-sm font-bold text-[#D0FEF5]">
+          {["Home team wins", "Total goals > 2", "Total corners ≥ 8"].map((condition, index) => (
+            <div key={condition}>
+              {index > 0 && <p className="pb-2 pl-4 text-[10px] uppercase tracking-[0.18em] text-[#6FB4EB]">And</p>}
+              <div className="flex items-center justify-between border border-[#6FB4EB]/25 bg-[#094586]/46 px-4 py-3.5">
+                <span>{condition}</span><BadgeCheck aria-hidden="true" size={17} className="text-[#6FB4EB]" />
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-6 border-t border-[#D0FEF5]/14 pt-4 font-mono text-xs text-[#D0FEF5]/58">condition_hash: ready</div>
+      </div>
+    );
+  }
+
+  if (type === "deploy") {
+    return (
+      <div className="mx-auto w-full max-w-xl">
+        {["Canonical condition bytes", "Market PDA", "Immutable Open state"].map((item, index) => (
+          <div key={item} className="contents">
+            <div className="flex items-center gap-4 border border-[#6FB4EB]/28 bg-[#06141F] p-5 sm:p-6">
+              <span className="grid h-10 w-10 place-items-center bg-[#D0FEF5] font-mono text-sm font-black text-[#094586]">{index + 1}</span>
+              <div><p className="text-sm font-black text-white">{item}</p><p className="mt-1 font-mono text-xs text-[#D0FEF5]/56">{index === 0 ? "sha256 · canonical" : index === 1 ? "creator · market nonce" : "terms locked"}</p></div>
+              <BadgeCheck aria-hidden="true" size={18} className="ml-auto text-[#6FB4EB]" />
+            </div>
+            {index < 2 && <ArrowDown aria-hidden="true" className="mx-auto my-3 text-[#6FB4EB]" size={20} />}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (type === "participate") {
+    return (
+      <div className="mx-auto grid w-full max-w-xl gap-4 sm:grid-cols-2">
+        {[{side:"YES",pool:"7,420",share:"71%"},{side:"NO",pool:"3,080",share:"29%"}].map(({side,pool,share}) => (
+          <div key={side} className="border border-[#6FB4EB]/28 bg-[#06141F] p-6">
+            <div className="flex items-center justify-between"><p className="text-sm font-black text-[#D0FEF5]">{side} pool</p><p className="font-mono text-xs text-[#6FB4EB]">{share}</p></div>
+            <p className="mt-8 text-4xl font-black text-white">{pool}</p>
+            <div className="mt-6 h-2 bg-[#D0FEF5]/12"><div className="h-full bg-[#6FB4EB]" style={{ width: share }} /></div>
+          </div>
+        ))}
+        <div className="border border-[#6FB4EB]/28 bg-[#D0FEF5] p-5 text-[#094586] sm:col-span-2">
+          <div className="flex items-center justify-between gap-5"><div><p className="text-xs font-black uppercase tracking-[0.14em]">Participation review</p><p className="mt-2 text-lg font-black">Terms verified before entry</p></div><UsersRound aria-hidden="true" size={28} /></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (type === "verify") {
+    return (
+      <div className="mx-auto w-full max-w-xl border border-[#6FB4EB]/28 bg-[#06141F] p-5 sm:p-8">
+        <div className="flex items-center justify-between border-b border-[#D0FEF5]/14 pb-5"><div><p className="text-xs font-black uppercase tracking-[0.16em] text-[#6FB4EB]">Proof package</p><p className="mt-2 text-xl font-black text-white">Final match facts</p></div><DatabaseZap aria-hidden="true" className="text-[#D0FEF5]" size={27} /></div>
+        <dl className="mt-5 divide-y divide-[#D0FEF5]/12 font-mono text-xs">
+          {[["fixture", "matched"],["finalization", "accepted"],["statistics", "authenticated"],["proof status", "validated"]].map(([term,value]) => (
+            <div key={term} className="flex items-center justify-between gap-5 py-4"><dt className="text-[#D0FEF5]/56">{term}</dt><dd className="flex items-center gap-2 font-bold text-[#D0FEF5]"><BadgeCheck aria-hidden="true" size={14} className="text-[#6FB4EB]" />{value}</dd></div>
+          ))}
+        </dl>
+      </div>
+    );
+  }
+
+  if (type === "settle") {
+    return (
+      <div className="mx-auto w-full max-w-xl overflow-hidden border border-[#6FB4EB]/28 bg-[#06141F]">
+        <div className="grid grid-cols-[1fr_auto_auto] gap-4 border-b border-[#D0FEF5]/14 bg-[#094586]/46 px-4 py-3 text-[10px] font-black uppercase tracking-[0.12em] text-[#6FB4EB]"><span>Condition</span><span>Value</span><span>Result</span></div>
+        {[["Home team wins", "Home"],["Total goals > 2", "3"],["Total corners ≥ 8", "9"]].map(([condition,value]) => (
+          <div key={condition} className="grid grid-cols-[1fr_auto_auto] items-center gap-4 border-b border-[#D0FEF5]/12 px-4 py-4 text-sm last:border-b-0"><span className="font-bold text-[#D0FEF5]">{condition}</span><span className="font-mono text-[#D0FEF5]/68">{value}</span><BadgeCheck aria-label="Passed" size={18} className="text-[#6FB4EB]" /></div>
+        ))}
+        <div className="flex items-end justify-between bg-[#D0FEF5] p-5 text-[#094586]"><div><p className="text-xs font-black uppercase tracking-[0.14em]">Market result</p><p className="mt-2 text-4xl font-black">YES</p></div><ReceiptText aria-hidden="true" size={30} /></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mx-auto w-full max-w-xl">
+      <div className="flex items-center justify-between text-xs font-black uppercase tracking-[0.12em] text-[#D0FEF5]/64"><span>Finality window</span><span>Expired</span></div>
+      <div className="mt-4 h-2 bg-[#D0FEF5]/12"><div className="h-full w-full bg-[#6FB4EB]" /></div>
+      <div className="mt-6 border border-[#6FB4EB]/28 bg-[#06141F] p-6 sm:p-8">
+        <ShieldCheck aria-hidden="true" size={30} className="text-[#6FB4EB]" />
+        <p className="mt-6 text-2xl font-black text-white">Refund eligible</p>
+        <p className="mt-2 text-sm font-semibold leading-6 text-[#D0FEF5]/64">No valid proof was accepted before the immutable deadline.</p>
+        <div className="mt-6 flex items-center justify-between border-t border-[#D0FEF5]/14 pt-5"><span className="text-sm font-black text-[#D0FEF5]">Principal claim</span><span className="bg-[#D0FEF5] px-4 py-2 text-xs font-black text-[#094586]">AVAILABLE</span></div>
+      </div>
+    </div>
+  );
+}
+
 /**
  * Real product screenshots. Save the four screenshots at these exact paths in
  * apps/web/public/ (filenames match what's referenced here). `translate` and
@@ -345,6 +653,274 @@ export default function LandingPage() {
                   ))}
                 </div>
               </div>
+            </div>
+          </section>
+
+          <section id="core-proposition" className="mx-auto max-w-7xl border-t border-[#D0FEF5]/18 py-20 md:py-28">
+            <div className="grid gap-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-end">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-[#D0FEF5]/72">
+                  THE TUTELA LAYER
+                </p>
+                <h2 className="mt-5 max-w-4xl text-4xl font-black leading-[1.02] tracking-normal text-white sm:text-5xl md:text-6xl">
+                  Turn verified match data into programmable football markets.
+                </h2>
+              </div>
+              <p className="max-w-xl text-base font-semibold leading-7 text-[#D0FEF5]/78 md:text-lg md:leading-8 lg:pb-1">
+                TxLINE-compatible data provides the match facts. Tutela normalizes those facts, evaluates developer-defined conditions, and produces deterministic results that applications can use for settlement.
+              </p>
+            </div>
+
+            <div className="mt-14 grid border-y border-[#D0FEF5]/18 md:grid-cols-[1fr_auto_1fr_auto_1fr]">
+              <div className="py-9 md:pr-7 lg:pr-10">
+                <div className="flex items-center gap-3">
+                  <span className="grid h-10 w-10 place-items-center bg-[#D0FEF5] text-[#094586]">
+                    <DatabaseZap aria-hidden="true" size={19} strokeWidth={1.9} />
+                  </span>
+                  <p className="text-xs font-black uppercase tracking-[0.16em] text-[#6FB4EB]">Stage 1</p>
+                </div>
+                <h3 className="mt-6 text-2xl font-black text-white">TxLINE-compatible data</h3>
+                <p className="mt-3 text-sm font-semibold leading-6 text-[#D0FEF5]/68">
+                  Final football statistics such as goals, cards, corners, match result, and both teams to score.
+                </p>
+                <dl className="mt-7 divide-y divide-[#D0FEF5]/12 border-y border-[#D0FEF5]/12 text-sm">
+                  {[
+                    ["Home goals", "2"],
+                    ["Away goals", "1"],
+                    ["Total corners", "9"],
+                    ["Total cards", "4"],
+                    ["Match winner", "Home"]
+                  ].map(([term, value]) => (
+                    <div key={term} className="flex items-center justify-between gap-4 py-3">
+                      <dt className="font-semibold text-[#D0FEF5]/62">{term}</dt>
+                      <dd className="font-mono font-bold text-[#D0FEF5]">{value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+
+              <div className="grid place-items-center border-y border-[#D0FEF5]/18 py-3 md:border-x md:border-y-0 md:px-3">
+                <ArrowDown aria-hidden="true" size={20} className="text-[#6FB4EB] md:hidden" />
+                <ArrowRight aria-hidden="true" size={20} className="hidden text-[#6FB4EB] md:block" />
+              </div>
+
+              <div className="py-9 md:px-7 lg:px-10">
+                <div className="flex items-center gap-3">
+                  <span className="grid h-10 w-10 place-items-center bg-[#D0FEF5] text-[#094586]">
+                    <Code2 aria-hidden="true" size={19} strokeWidth={1.9} />
+                  </span>
+                  <p className="text-xs font-black uppercase tracking-[0.16em] text-[#6FB4EB]">Stage 2</p>
+                </div>
+                <h3 className="mt-6 text-2xl font-black text-white">Tutela condition engine</h3>
+                <p className="mt-3 text-sm font-semibold leading-6 text-[#D0FEF5]/68">
+                  Validates, normalizes, combines, and evaluates football conditions using deterministic rules.
+                </p>
+                <div className="mt-7 border-y border-[#6FB4EB]/28 bg-[#094586]/46 py-2">
+                  {["Home team wins", "Total corners > 8", "Total cards ≤ 5"].map((condition, index) => (
+                    <div key={condition}>
+                      {index > 0 && (
+                        <div className="flex items-center gap-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-[#6FB4EB]">
+                          <span className="h-px flex-1 bg-[#6FB4EB]/25" />
+                          And
+                          <span className="h-px flex-1 bg-[#6FB4EB]/25" />
+                        </div>
+                      )}
+                      <p className="px-4 py-3 text-sm font-black text-[#D0FEF5]">{condition}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid place-items-center border-y border-[#D0FEF5]/18 py-3 md:border-x md:border-y-0 md:px-3">
+                <ArrowDown aria-hidden="true" size={20} className="text-[#6FB4EB] md:hidden" />
+                <ArrowRight aria-hidden="true" size={20} className="hidden text-[#6FB4EB] md:block" />
+              </div>
+
+              <div className="py-9 md:pl-7 lg:pl-10">
+                <div className="flex items-center gap-3">
+                  <span className="grid h-10 w-10 place-items-center bg-[#D0FEF5] text-[#094586]">
+                    <BadgeCheck aria-hidden="true" size={19} strokeWidth={1.9} />
+                  </span>
+                  <p className="text-xs font-black uppercase tracking-[0.16em] text-[#6FB4EB]">Stage 3</p>
+                </div>
+                <h3 className="mt-6 text-2xl font-black text-white">Programmable market result</h3>
+                <p className="mt-3 text-sm font-semibold leading-6 text-[#D0FEF5]/68">
+                  A deterministic result and verification receipt that applications can use to continue their settlement flow.
+                </p>
+                <div className="mt-7 border border-[#6FB4EB]/30 bg-[#D0FEF5] p-5 text-[#094586]">
+                  <p className="text-xs font-black uppercase tracking-[0.16em] text-[#094586]/68">Market result</p>
+                  <div className="mt-3 flex items-end justify-between gap-4">
+                    <p className="text-5xl font-black leading-none text-[#094586]">YES</p>
+                    <BadgeCheck aria-hidden="true" size={28} />
+                  </div>
+                  <div className="mt-5 border-t border-[#094586]/16 pt-4 font-mono text-xs font-bold leading-6">
+                    <p>conditions: passed</p>
+                    <p>receipt: proof-backed</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="use-cases" className="mx-auto max-w-7xl border-t border-[#D0FEF5]/18 py-20 md:py-28">
+            <div className="grid gap-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-end">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-[#D0FEF5]/72">
+                  BUILT WITH TUTELA
+                </p>
+                <h2 className="mt-5 max-w-4xl text-4xl font-black leading-[1.02] tracking-normal text-white sm:text-5xl md:text-6xl">
+                  One infrastructure layer. Many football experiences.
+                </h2>
+              </div>
+              <p className="max-w-xl text-base font-semibold leading-7 text-[#D0FEF5]/78 md:text-lg md:leading-8 lg:pb-1">
+                Use Tutela&apos;s programmable conditions, TxLINE-compatible data adapter, deterministic settlement, and verification receipts to build deeper football products without rebuilding the underlying infrastructure.
+              </p>
+            </div>
+
+            <div className="mt-14 grid overflow-hidden border-l border-t border-[#D0FEF5]/18 md:grid-cols-2 lg:grid-cols-3">
+              {developerUseCases.map(({ id, label, description, Icon }) => (
+                <article key={id} className="flex min-h-[30rem] flex-col border-b border-r border-[#D0FEF5]/18 bg-[#06141F]/52 p-6 sm:p-8">
+                  <div className="flex items-center gap-3">
+                    <span className="grid h-10 w-10 place-items-center bg-[#D0FEF5] text-[#094586]">
+                      <Icon aria-hidden="true" size={19} strokeWidth={1.9} />
+                    </span>
+                    <p className="text-xs font-black uppercase tracking-[0.14em] text-[#6FB4EB]">{label}</p>
+                  </div>
+
+                  <div className="mt-8 min-h-[12.5rem] border-y border-[#D0FEF5]/12 bg-[#020B12]/38 p-4 sm:p-5">
+                    <UseCaseVisual type={id} />
+                  </div>
+
+                  <p className="mt-7 text-base font-semibold leading-7 text-[#D0FEF5]/72">{description}</p>
+                  <Link
+                    href="#developers"
+                    className="mt-auto inline-flex items-center gap-2 pt-7 text-sm font-black text-[#D0FEF5] transition hover:text-[#6FB4EB] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6FB4EB]"
+                    aria-label={`Explore ${label.toLowerCase()} use case`}
+                  >
+                    Explore use case
+                    <ArrowRight aria-hidden="true" size={16} />
+                  </Link>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section id="developer-workflow" className="mx-auto max-w-7xl border-t border-[#D0FEF5]/18 py-20 md:py-28">
+            <div className="grid gap-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-end">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-[#D0FEF5]/72">
+                  THE DEVELOPER WORKFLOW
+                </p>
+                <h2 className="mt-5 max-w-4xl text-4xl font-black leading-[1.02] tracking-normal text-white sm:text-5xl md:text-6xl">
+                  From market idea to verifiable outcome.
+                </h2>
+              </div>
+              <p className="max-w-xl text-base font-semibold leading-7 text-[#D0FEF5]/78 md:text-lg md:leading-8 lg:pb-1">
+                Define football conditions, deploy them through Tutela Protocol, receive participation through your application, and resolve every outcome using TxLINE-compatible match data.
+              </p>
+            </div>
+
+            <nav aria-label="Developer workflow stages" className="sticky top-0 z-20 mt-12 overflow-x-auto border-y border-[#D0FEF5]/18 bg-[#020B12]/94 backdrop-blur">
+              <div className="mx-auto flex min-w-max items-center justify-center">
+                {developerWorkflow.map(({ id, number, label }, index) => (
+                  <a key={id} href={`#workflow-${id}`} className="group flex items-center">
+                    <span className="flex items-center gap-2 px-3 py-4 text-xs font-black uppercase tracking-[0.12em] text-[#D0FEF5]/52 transition group-hover:text-[#D0FEF5] sm:px-4">
+                      <span className="font-mono text-[#6FB4EB]">{number}</span>{label}
+                    </span>
+                    {index < developerWorkflow.length - 1 && <span className="h-px w-5 bg-[#D0FEF5]/18 sm:w-8" />}
+                  </a>
+                ))}
+              </div>
+            </nav>
+
+            <div className="relative">
+              <div aria-hidden="true" className="absolute bottom-0 left-[1.1rem] top-0 hidden w-px bg-[#D0FEF5]/14 lg:block" />
+              {developerWorkflow.map(({ id, number, label, heading, description, Icon }, index) => {
+                const visualFirst = index % 2 === 1;
+                return (
+                  <article id={`workflow-${id}`} key={id} className="relative grid scroll-mt-20 items-center gap-10 border-b border-[#D0FEF5]/18 py-20 last:border-b-0 lg:min-h-[86vh] lg:grid-cols-[0.86fr_1.14fr] lg:gap-16 lg:pl-20">
+                    <div className={`${visualFirst ? "lg:order-2" : ""} lg:sticky lg:top-28`}>
+                      <div className="flex items-center gap-4">
+                        <span className="relative z-10 grid h-9 w-9 place-items-center bg-[#6FB4EB] font-mono text-xs font-black text-[#020B12] lg:-ml-[5.05rem]">{number}</span>
+                        <span className="text-xs font-black uppercase tracking-[0.18em] text-[#6FB4EB]">{label}</span>
+                      </div>
+                      <Icon aria-hidden="true" size={30} className="mt-10 text-[#D0FEF5]/70" strokeWidth={1.7} />
+                      <h3 className="mt-6 max-w-xl text-4xl font-black leading-[1.06] text-white sm:text-5xl">{heading}</h3>
+                      <p className="mt-6 max-w-lg text-base font-semibold leading-7 text-[#D0FEF5]/68 md:text-lg md:leading-8">{description}</p>
+                    </div>
+
+                    <div className={`${visualFirst ? "lg:order-1" : ""} flex min-h-[29rem] items-center border-y border-[#D0FEF5]/16 bg-[#071925]/34 px-4 py-10 sm:px-8 lg:px-10`}>
+                      <WorkflowVisual type={id} />
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+
+          <section id="architecture" className="mx-auto max-w-7xl border-t border-[#D0FEF5]/18 py-20 md:py-28">
+            <div className="grid gap-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-end">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-[#D0FEF5]/72">
+                  ARCHITECTURE
+                </p>
+                <h2 className="mt-5 max-w-4xl text-4xl font-black leading-[1.02] tracking-normal text-white sm:text-5xl md:text-6xl">
+                  A layered path from prediction app to reusable outcome.
+                </h2>
+              </div>
+              <p className="max-w-xl text-base font-semibold leading-7 text-[#D0FEF5]/78 md:text-lg md:leading-8 lg:pb-1">
+                Applications compose markets through Tutela&apos;s typed SDK. Tutela Protocol stores the market definition, consumes the supported verification path, and records a deterministic result that other interfaces can inspect.
+              </p>
+            </div>
+
+            <div className="mt-14 grid overflow-hidden border border-[#D0FEF5]/18 lg:grid-cols-[minmax(0,1fr)_20rem]">
+              <div className="bg-[#06141F]/56 p-4 sm:p-8 lg:p-10">
+                <div className="mx-auto max-w-3xl">
+                  {architectureLayers.map(({ label, detail, meta, Icon }, index) => (
+                    <div key={label} className="contents">
+                      <div className="grid gap-4 border border-[#6FB4EB]/28 bg-[#020B12]/64 p-5 sm:grid-cols-[auto_1fr_auto] sm:items-center sm:p-6">
+                        <span className="grid h-11 w-11 place-items-center bg-[#D0FEF5] text-[#094586]">
+                          <Icon aria-hidden="true" size={20} strokeWidth={1.9} />
+                        </span>
+                        <div>
+                          <h3 className="text-lg font-black text-white sm:text-xl">{label}</h3>
+                          <p className="mt-1.5 max-w-xl text-sm font-semibold leading-6 text-[#D0FEF5]/62">{detail}</p>
+                        </div>
+                        <span className="w-fit border border-[#6FB4EB]/26 px-2.5 py-1.5 text-[10px] font-black uppercase tracking-[0.12em] text-[#6FB4EB]">{meta}</span>
+                      </div>
+                      {index < architectureLayers.length - 1 && (
+                        <div className="relative mx-auto flex h-12 w-px items-center justify-center bg-[#6FB4EB]/42">
+                          <ArrowDown aria-hidden="true" size={18} className="absolute top-4 max-w-none bg-[#06141F] text-[#6FB4EB]" />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <aside className="border-t border-[#D0FEF5]/18 bg-[#094586]/42 lg:border-l lg:border-t-0">
+                <div className="border-b border-[#D0FEF5]/18 p-6 sm:p-8">
+                  <p className="text-xs font-black uppercase tracking-[0.16em] text-[#6FB4EB]">Settlement boundary</p>
+                  <h3 className="mt-5 text-2xl font-black leading-tight text-white">Live experience and final resolution stay separate.</h3>
+                  <p className="mt-4 text-sm font-semibold leading-6 text-[#D0FEF5]/66">
+                    Live or cached match data can improve the product experience. It cannot determine payouts. Settlement follows only the supported verified-stat path.
+                  </p>
+                </div>
+                <div className="p-6 sm:p-8">
+                  <p className="text-xs font-black uppercase tracking-[0.16em] text-[#6FB4EB]">Reusable output</p>
+                  <div className="mt-5 border border-[#6FB4EB]/28 bg-[#D0FEF5] p-5 text-[#094586]">
+                    <div className="flex items-center justify-between gap-4">
+                      <div><p className="text-xs font-black uppercase tracking-[0.12em]">Outcome receipt</p><p className="mt-2 text-xl font-black">Market resolved</p></div>
+                      <BadgeCheck aria-hidden="true" size={28} />
+                    </div>
+                    <div className="mt-5 border-t border-[#094586]/16 pt-4 font-mono text-xs font-bold leading-6">
+                      <p>result: deterministic</p>
+                      <p>status: inspectable</p>
+                      <p>source: verified path</p>
+                    </div>
+                  </div>
+                </div>
+              </aside>
             </div>
           </section>
 
