@@ -99,6 +99,8 @@ DATABASE_URL=postgresql://your_durable_database
 
 See [docs/demo-script.md](docs/demo-script.md).
 
+For the researched problem statement, business model, monetization strategy and gated post-hackathon plan, see [docs/product-strategy.md](docs/product-strategy.md).
+
 For production-like tester hosting, follow the [Vercel deployment checklist](docs/vercel-deployment.md).
 
 ## Verification Status
