@@ -360,10 +360,6 @@ function SectionHeading({ eyebrow, title, body }: { eyebrow: string; title: stri
   );
 }
 
-function FlowArrow() {
-  return <ArrowDown aria-hidden="true" className="mx-auto my-3 text-[#6FB4EB] lg:my-0 lg:-rotate-90" size={20} />;
-}
-
 function CapabilityVisual({ index }: { index: number }) {
   if (index === 0) {
     return (
@@ -523,21 +519,144 @@ export function LandingInfrastructureSections() {
 
       <section id="verification-showcase" className="mx-auto max-w-7xl border-t border-[#D0FEF5]/18 py-20 md:py-28">
         <SectionHeading eyebrow="VERIFIABLE OUTCOMES" title="Every result has a traceable verification path." body="Tutela transforms TxLINE-compatible final match data into deterministic market outcomes, validated through Solana and recorded as reusable settlement receipts." />
-        <p className="mt-8 inline-flex items-center gap-2 border border-[#6FB4EB]/35 px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-[#D0FEF5]"><CircleDot size={14} className="text-[#6FB4EB]" /> Sample Solana Devnet walkthrough</p>
-        <div className="mt-10 grid items-stretch lg:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr_auto_1fr]">
-          {verificationStages.map(([title, body, Icon], index) => <div className="contents" key={title}><article className="border border-[#D0FEF5]/18 bg-[#06141F]/48 p-5"><span className="font-mono text-xs font-black text-[#6FB4EB]">0{index + 1}</span><Icon className="mt-7 text-[#D0FEF5]" size={24} /><h3 className="mt-5 text-lg font-black text-white">{title}</h3><p className="mt-3 text-sm font-semibold leading-6 text-[#D0FEF5]/62">{body}</p></article>{index < 4 && <FlowArrow />}</div>)}
+        <div className="mt-8 flex flex-wrap items-center gap-3 text-xs font-black uppercase tracking-[0.12em]">
+          <p className="inline-flex items-center gap-2 border border-[#6FB4EB]/35 px-3 py-2 text-[#D0FEF5]"><CircleDot size={14} className="text-[#6FB4EB]" /> Verifiable on Solana Devnet</p>
+          <p className="border border-[#D0FEF5]/18 px-3 py-2 text-[#D0FEF5]/58">Illustrative walkthrough · no transaction broadcast</p>
+        </div>
+
+        <div className="mt-10 overflow-hidden border border-[#D0FEF5]/18 bg-[#06141F]/58">
+          <div className="overflow-x-auto">
+            <div className="min-w-[1180px]">
+              <div className="grid grid-cols-5 border-b border-[#D0FEF5]/18 bg-[#094586]/18">
+                {verificationStages.map(([title, body, Icon], index) => (
+                  <div className="relative min-h-52 border-r border-[#D0FEF5]/18 p-6 last:border-r-0" key={title}>
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-xs font-black text-[#6FB4EB]">0{index + 1}</span>
+                      <Icon aria-hidden="true" className="text-[#D0FEF5]" size={23} />
+                    </div>
+                    <h3 className="mt-8 text-lg font-black text-white">{title}</h3>
+                    <p className="mt-3 text-sm font-semibold leading-6 text-[#D0FEF5]/62">{body}</p>
+                    {index < verificationStages.length - 1 && (
+                      <span aria-hidden="true" className="absolute -right-3 top-1/2 z-10 grid size-6 -translate-y-1/2 place-items-center border border-[#6FB4EB]/45 bg-[#06141F] text-[#6FB4EB]">
+                        <ArrowRight size={14} />
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-5">
+                <article className="border-r border-[#D0FEF5]/18 p-6">
+                  <p className="text-xs font-black uppercase tracking-[0.14em] text-[#6FB4EB]">TxLINE-compatible final data</p>
+                  <h4 className="mt-3 text-xl font-black text-white">Final match data</h4>
+                  <p className="mt-3 text-sm font-semibold leading-6 text-[#D0FEF5]/64">The completed match produces the statistics required by the market definition.</p>
+                  <dl className="mt-6 divide-y divide-[#D0FEF5]/12 border-y border-[#D0FEF5]/12">
+                    {finalMatchFacts.map(([label, value]) => (
+                      <div className="flex items-center justify-between gap-3 py-2.5 text-sm" key={label}>
+                        <dt className="font-semibold text-[#D0FEF5]/55">{label}</dt>
+                        <dd className="font-black text-white">{value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                  <details className="mt-5 border border-[#D0FEF5]/14 p-3 text-sm">
+                    <summary className="cursor-pointer font-black text-[#D0FEF5]">Technical details</summary>
+                    <dl className="mt-3 space-y-3">
+                      {finalMatchMetadata.map(([label, value]) => (
+                        <div key={label}>
+                          <dt className="text-xs font-bold uppercase tracking-[0.08em] text-[#6FB4EB]">{label}</dt>
+                          <dd className="mt-1 break-words font-mono text-xs text-[#D0FEF5]/66">{value}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </details>
+                </article>
+
+                <article className="border-r border-[#D0FEF5]/18 p-6">
+                  <p className="text-xs font-black uppercase tracking-[0.14em] text-[#6FB4EB]">Integrity payload</p>
+                  <h4 className="mt-3 text-xl font-black text-white">Verification package</h4>
+                  <p className="mt-3 text-sm font-semibold leading-6 text-[#D0FEF5]/64">The required match facts are packaged with the identifiers and integrity data needed for verification.</p>
+                  <pre className="mt-6 overflow-x-auto border border-[#6FB4EB]/28 bg-[#03101A] p-4 font-mono text-[11px] leading-5 text-[#D0FEF5]/78"><code>{verificationPayload}</code></pre>
+                  <p className="mt-4 text-xs font-semibold leading-5 text-[#D0FEF5]/46">The hash binds the packaged values to the submitted match identity.</p>
+                </article>
+
+                <article className="border-r border-[#D0FEF5]/18 p-6">
+                  <p className="text-xs font-black uppercase tracking-[0.14em] text-[#6FB4EB]">Program verification</p>
+                  <h4 className="mt-3 text-xl font-black text-white">Solana validation</h4>
+                  <p className="mt-3 text-sm font-semibold leading-6 text-[#D0FEF5]/64">The configured verification path checks identity, finality, schema support, and payload integrity before statistics are accepted.</p>
+                  <div className="mt-6 space-y-2.5">
+                    {solanaValidationChecks.map(([label, value]) => (
+                      <div className="flex items-center justify-between border border-[#D0FEF5]/14 px-3 py-3" key={label}>
+                        <span className="text-sm font-bold text-[#D0FEF5]/64">{label}</span>
+                        <span className="inline-flex items-center gap-1.5 text-xs font-black text-[#D0FEF5]"><Check size={14} className="text-[#6FB4EB]" /> {value}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-5 border-l-2 border-[#6FB4EB] pl-3 text-xs font-semibold leading-5 text-[#D0FEF5]/52">This preview demonstrates the supported validation sequence; it is not a confirmed transaction receipt.</p>
+                </article>
+
+                <article className="border-r border-[#D0FEF5]/18 p-6">
+                  <p className="text-xs font-black uppercase tracking-[0.14em] text-[#6FB4EB]">Deterministic rules</p>
+                  <h4 className="mt-3 text-xl font-black text-white">Condition evaluation</h4>
+                  <p className="mt-3 text-sm font-semibold leading-6 text-[#D0FEF5]/64">Tutela evaluates the market’s stored conditions against only the accepted statistics.</p>
+                  <div className="mt-6 border-y border-[#D0FEF5]/14">
+                    {conditionEvaluationRows.map(([rule, actual, result]) => (
+                      <div className="grid grid-cols-[1fr_auto] gap-3 border-b border-[#D0FEF5]/12 py-3 last:border-b-0" key={rule}>
+                        <div>
+                          <p className="text-sm font-black text-white">{rule}</p>
+                          <p className="mt-1 text-xs font-semibold text-[#D0FEF5]/48">Verified value: {actual}</p>
+                        </div>
+                        <span className="inline-flex items-center gap-1 self-center text-xs font-black text-[#D0FEF5]"><Check size={14} className="text-[#6FB4EB]" /> {result}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-5 flex items-center justify-between bg-[#094586]/38 px-4 py-3">
+                    <span className="text-xs font-black uppercase tracking-[0.1em] text-[#D0FEF5]/58">AND result</span>
+                    <span className="text-lg font-black text-white">YES</span>
+                  </div>
+                </article>
+
+                <article className="p-6">
+                  <p className="text-xs font-black uppercase tracking-[0.14em] text-[#6FB4EB]">Reusable output</p>
+                  <h4 className="mt-3 text-xl font-black text-white">Settlement receipt</h4>
+                  <p className="mt-3 text-sm font-semibold leading-6 text-[#D0FEF5]/64">The evaluated result is recorded in a consistent receipt that applications can inspect and use for their settlement flow.</p>
+                  <dl className="mt-6 space-y-2.5">
+                    {settlementReceiptFields.map(([label, value]) => (
+                      <div className="border border-[#D0FEF5]/14 px-3 py-3" key={label}>
+                        <dt className="text-[10px] font-black uppercase tracking-[0.1em] text-[#6FB4EB]">{label}</dt>
+                        <dd className="mt-1 break-words font-mono text-xs font-bold text-[#D0FEF5]">{value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </article>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2 border-t border-[#D0FEF5]/18 px-5 py-4 text-xs font-semibold leading-5 text-[#D0FEF5]/52 md:flex-row md:items-center md:justify-between">
+            <p>Match facts remain the responsibility of the configured data provider; Tutela evaluates accepted facts against immutable market conditions.</p>
+            <p className="shrink-0 font-black uppercase tracking-[0.1em] text-[#6FB4EB]">Sample values and identifiers</p>
+          </div>
         </div>
       </section>
 
       <section id="safety-circuit" className="mx-auto max-w-7xl border-t border-[#D0FEF5]/18 py-20 md:py-28">
         <SectionHeading eyebrow="AUTOMATED RECOVERY" title="Every market has a defined path forward." body="When TxLINE-compatible final data arrives on time, Tutela verifies and settles the market. When acceptable data remains unavailable past the finality deadline, the Safety Circuit activates a deterministic refund path." />
-        <div className="mt-12 border border-[#D0FEF5]/18 bg-[#06141F]/45 p-5 sm:p-8">
-          <div className="mx-auto max-w-xl border border-[#6FB4EB]/40 bg-[#094586]/45 p-5 text-center"><p className="text-xs font-black uppercase tracking-[0.14em] text-[#6FB4EB]">Shared state</p><h3 className="mt-2 text-2xl font-black text-white">Market closed</h3><p className="mt-2 text-sm font-semibold text-[#D0FEF5]/65">No manual result selection</p></div>
+        <p className="mt-6 inline-flex border border-[#6FB4EB]/35 bg-[#094586]/35 px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-[#D0FEF5]">No manual result selection</p>
+        <div className="mt-10 border border-[#D0FEF5]/18 bg-[#06141F]/45 p-5 sm:p-8">
+          <div className="grid gap-5 border-b border-[#D0FEF5]/16 pb-8 md:grid-cols-[0.7fr_1.3fr] md:items-start">
+            <p className="text-xs font-black uppercase tracking-[0.14em] text-[#6FB4EB]">Risk scenario</p>
+            <div>
+              <h3 className="text-xl font-black leading-tight text-white">A match has finished, but acceptable final data has not been submitted before the market&apos;s finality deadline.</h3>
+              <p className="mt-3 max-w-3xl text-sm font-semibold leading-6 text-[#D0FEF5]/68">Without a recovery mechanism, participants could remain locked in an unresolved market. Tutela uses an on-chain deadline and explicit market states to prevent indefinite settlement delays.</p>
+            </div>
+          </div>
+          <div className="mx-auto mt-8 max-w-xl border border-[#6FB4EB]/40 bg-[#094586]/45 p-5 text-center"><p className="text-xs font-black uppercase tracking-[0.14em] text-[#6FB4EB]">Shared state</p><h3 className="mt-2 text-2xl font-black text-white">Market closed</h3></div>
           <div className="mx-auto h-10 w-px bg-[#6FB4EB]/45" />
           <div className="grid gap-5 md:grid-cols-2">
-            <article className="border-t-2 border-[#6FB4EB] bg-[#D0FEF5] p-6 text-[#094586]"><p className="text-xs font-black uppercase tracking-[0.12em]">Final data before deadline</p><div className="mt-6 space-y-3">{["Final data received", "Data validated", "Conditions evaluated", "Market settled"].map(x => <p key={x} className="flex items-center gap-3 border-b border-[#094586]/16 pb-3 font-bold"><Check size={17} />{x}</p>)}</div></article>
-            <article className="border-t-2 border-[#D0FEF5]/45 bg-[#071925] p-6 text-[#D0FEF5]"><p className="text-xs font-black uppercase tracking-[0.12em] text-[#6FB4EB]">No acceptable data by deadline</p><div className="mt-6 space-y-3">{["Finality window ends", "Refund eligibility triggered", "Principal claim opened", "No protocol or creator fee"].map(x => <p key={x} className="flex items-center gap-3 border-b border-[#D0FEF5]/14 pb-3 font-bold"><RefreshCcw size={17} />{x}</p>)}</div></article>
+            <article className="border-t-2 border-[#6FB4EB] bg-[#D0FEF5] p-6 text-[#094586]"><p className="text-xs font-black uppercase tracking-[0.12em]">Acceptable final data received before deadline</p><h3 className="mt-3 text-2xl font-black">Normal settlement path</h3><div className="mt-6 space-y-3">{["Final data received", "Data validated", "Conditions evaluated", "Market settled"].map((x, index) => <p key={x} className="flex items-center gap-3 border-b border-[#094586]/16 pb-3 font-bold"><span className="flex size-7 shrink-0 items-center justify-center bg-[#094586] text-xs text-[#D0FEF5]">{index + 1}</span>{x}<Check className="ml-auto" size={17} /></p>)}</div></article>
+            <article className="border-t-2 border-[#D0FEF5]/45 bg-[#071925] p-6 text-[#D0FEF5]"><p className="text-xs font-black uppercase tracking-[0.12em] text-[#6FB4EB]">No acceptable final data by deadline</p><h3 className="mt-3 text-2xl font-black">Safety Circuit recovery path</h3><div className="mt-6 space-y-3">{["Finality window ends", "Refund eligibility triggered", "Principal claim opened", "No protocol or creator fee"].map((x, index) => <p key={x} className="flex items-center gap-3 border-b border-[#D0FEF5]/14 pb-3 font-bold"><span className="flex size-7 shrink-0 items-center justify-center bg-[#D0FEF5] text-xs text-[#094586]">{index + 1}</span>{x}<RefreshCcw className="ml-auto" size={17} /></p>)}</div></article>
           </div>
+          <p className="mt-5 border border-[#6FB4EB]/28 bg-[#094586]/24 p-4 text-sm font-semibold leading-6 text-[#D0FEF5]/75">Once refund eligibility is active, late proofs are rejected. Principal claims remain pull-based and available while new protocol activity is paused.</p>
         </div>
       </section>
 
