@@ -394,10 +394,13 @@ pub mod tutela {
 
     pub fn settle_market(ctx: Context<SettleMarket>) -> Result<()> {
         let market = &mut ctx.accounts.market;
-        require!(
-            market.state == MarketState::Verified,
-            TutelaError::InvalidState
-        );
+        ensure_authenticated_settlement(
+            market.state,
+            market.verified_result,
+            market.validated_stat_hash,
+            ctx.accounts.proof.verification_status,
+            ctx.accounts.proof.stat_payload_hash,
+        )?;
         let total = checked_add_u64(market.yes_pool, market.no_pool)?;
         let protocol_fee = fee(total, market.protocol_fee_bps_snapshot)?;
         let creator_fee = fee(total, market.creator_fee_bps)?;
@@ -673,9 +676,14 @@ pub struct ValidateOutcome<'info> {
     pub market: Account<'info, Market>,
     #[account(mut, seeds = [b"proof", market.key().as_ref()], bump = proof.bump)]
     pub proof: Account<'info, ProofSubmissionRecord>,
-    /// CHECK: Constrained to the configured executable TxLINE program in the handler.
+    /// CHECK: Exact official TxLINE devnet program; Anchor enforces address and executable status.
+    #[account(
+        address = TXLINE_DEVNET_PROGRAM_ID @ TutelaError::InvalidVerifier,
+        executable
+    )]
     pub txline_program: UncheckedAccount<'info>,
-    /// CHECK: TxLINE-owned daily root PDA; address is derived and checked in the handler.
+    /// CHECK: TxLINE-owned daily root PDA; its derived address is also checked in the handler.
+    #[account(owner = TXLINE_DEVNET_PROGRAM_ID @ TutelaError::InvalidDailyRoot)]
     pub daily_scores_merkle_roots: UncheckedAccount<'info>,
 }
 
@@ -683,6 +691,8 @@ pub struct ValidateOutcome<'info> {
 pub struct SettleMarket<'info> {
     #[account(mut)]
     pub market: Account<'info, Market>,
+    #[account(seeds = [b"proof", market.key().as_ref()], bump = proof.bump)]
+    pub proof: Account<'info, ProofSubmissionRecord>,
 }
 
 #[derive(Accounts)]
@@ -1172,6 +1182,8 @@ pub enum TutelaError {
     ProofPayloadMismatch,
     #[msg("Verified result is missing.")]
     MissingResult,
+    #[msg("Settlement requires statistics authenticated by the verified TxLINE proof.")]
+    AuthenticatedStatsMissing,
     #[msg("Winning pool is invalid.")]
     InvalidWinningPool,
     #[msg("Position is not on the winning side.")]
@@ -1269,6 +1281,24 @@ fn ensure_proof_submitted(status: VerificationStatus) -> Result<()> {
     require!(
         status == VerificationStatus::Submitted,
         TutelaError::DuplicateProof
+    );
+    Ok(())
+}
+
+fn ensure_authenticated_settlement(
+    state: MarketState,
+    result: Option<Side>,
+    validated_stat_hash: [u8; 32],
+    proof_status: VerificationStatus,
+    submitted_stat_hash: [u8; 32],
+) -> Result<()> {
+    require!(state == MarketState::Verified, TutelaError::InvalidState);
+    require!(result.is_some(), TutelaError::MissingResult);
+    require!(
+        proof_status == VerificationStatus::Verified
+            && validated_stat_hash != [0; 32]
+            && submitted_stat_hash == validated_stat_hash,
+        TutelaError::AuthenticatedStatsMissing
     );
     Ok(())
 }
@@ -1649,5 +1679,42 @@ mod security_tests {
         assert!(validate_txline_return(verifier, verifier, &[0]).is_err());
         assert!(validate_txline_return(Pubkey::new_unique(), verifier, &[1]).is_err());
         assert!(validate_txline_return(verifier, verifier, &[1]).is_ok());
+    }
+
+    #[test]
+    fn rejects_settlement_before_successful_txline_validation() {
+        let authenticated_hash = [9; 32];
+        assert!(ensure_authenticated_settlement(
+            MarketState::ProofSubmitted,
+            None,
+            [0; 32],
+            VerificationStatus::Submitted,
+            authenticated_hash,
+        )
+        .is_err());
+        assert!(ensure_authenticated_settlement(
+            MarketState::Verified,
+            Some(Side::Yes),
+            authenticated_hash,
+            VerificationStatus::Submitted,
+            authenticated_hash,
+        )
+        .is_err());
+        assert!(ensure_authenticated_settlement(
+            MarketState::Verified,
+            Some(Side::Yes),
+            authenticated_hash,
+            VerificationStatus::Verified,
+            [8; 32],
+        )
+        .is_err());
+        assert!(ensure_authenticated_settlement(
+            MarketState::Verified,
+            Some(Side::Yes),
+            authenticated_hash,
+            VerificationStatus::Verified,
+            authenticated_hash,
+        )
+        .is_ok());
     }
 }

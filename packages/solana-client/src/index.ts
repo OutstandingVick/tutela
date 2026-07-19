@@ -115,6 +115,11 @@ export async function assertOfficialTxLineVerifier(connection: Connection, confi
   if (!account?.executable) throw new Error("The configured TxLINE verifier account is missing or not executable.");
 }
 
+export async function assertTutelaDeployment(connection: Connection, programId: PublicKey) {
+  const account = await connection.getAccountInfo(programId, "confirmed");
+  if (!account?.executable) throw new Error(`Tutela program ${programId.toBase58()} is missing or not executable on devnet.`);
+}
+
 export function txLineDailyScoresRoot(minTimestamp: bigint) {
   const seconds = minTimestamp > 10_000_000_000n ? minTimestamp / 1_000n : minTimestamp;
   const day = seconds / 86_400n;
@@ -202,9 +207,13 @@ export function buildValidateOutcomeInstruction(args: {
 }
 
 export function buildSettleMarketInstruction(programId: PublicKey, market: PublicKey) {
+  const [proof] = proofPda(programId, market);
   return new TransactionInstruction({
     programId,
-    keys: [{ pubkey: market, isSigner: false, isWritable: true }],
+    keys: [
+      { pubkey: market, isSigner: false, isWritable: true },
+      { pubkey: proof, isSigner: false, isWritable: false }
+    ],
     data: Buffer.from(SETTLE_MARKET_DISCRIMINATOR)
   });
 }

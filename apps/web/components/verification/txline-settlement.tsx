@@ -6,6 +6,7 @@ import { PublicKey, Transaction } from "@solana/web3.js";
 import {
   TXLINE_DEVNET_PROGRAM_ID,
   assertOfficialTxLineVerifier,
+  assertTutelaDeployment,
   buildSettleMarketInstruction,
   buildSubmitProofInstruction,
   buildValidateOutcomeInstruction,
@@ -49,6 +50,8 @@ export function TxLineSettlement() {
       if (!config.tutelaProgramId) throw new Error("NEXT_PUBLIC_TUTELA_PROGRAM_ID is not configured.");
       const programId = new PublicKey(config.tutelaProgramId);
       const connection = getConnection();
+      setStatus("Checking the deployed Tutela program...");
+      await assertTutelaDeployment(connection, programId);
       setStatus("Checking the official TxLINE executable program...");
       await assertOfficialTxLineVerifier(connection, new PublicKey(config.txlineProgramId));
 

@@ -137,6 +137,7 @@ export {
   TXLINE_DEVNET_PROGRAM_ID,
   associatedToken,
   assertOfficialTxLineVerifier,
+  assertTutelaDeployment,
   buildSettleMarketInstruction,
   buildSubmitProofInstruction,
   buildValidateOutcomeInstruction,

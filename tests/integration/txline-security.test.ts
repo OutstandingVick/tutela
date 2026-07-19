@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import { PublicKey } from "@solana/web3.js";
 import {
   TXLINE_DEVNET_PROGRAM_ID,
+  assertOfficialTxLineVerifier,
   buildValidateOutcomeInstruction,
+  buildSettleMarketInstruction,
   encodeTxLineStatValidationInput,
   parseTxLineStatValidationInput,
   txLineDailyScoresRoot
@@ -56,5 +58,24 @@ describe("TxLINE settlement binary boundary", () => {
     }).data;
     expect(data.subarray(0, 8)).toEqual(Buffer.from([29, 203, 125, 138, 197, 125, 152, 60]));
     expect(data.length).toBe(8 + encodeTxLineStatValidationInput(parseTxLineStatValidationInput(rawProof)).length);
+  });
+
+  it("rejects any configured TxLINE program other than the official devnet address", async () => {
+    const connection = { getAccountInfo: async () => ({ executable: true }) } as never;
+    await expect(assertOfficialTxLineVerifier(connection, PublicKey.unique())).rejects.toThrow(
+      TXLINE_DEVNET_PROGRAM_ID.toBase58()
+    );
+  });
+
+  it("requires the market proof PDA for settlement and has no result argument", () => {
+    const programId = PublicKey.unique();
+    const market = PublicKey.unique();
+    const ix = buildSettleMarketInstruction(programId, market);
+    expect(ix.keys).toHaveLength(2);
+    expect(ix.keys[1].pubkey.equals(PublicKey.findProgramAddressSync([
+      Buffer.from("proof"),
+      market.toBuffer()
+    ], programId)[0])).toBe(true);
+    expect(ix.data).toHaveLength(8);
   });
 });
