@@ -524,6 +524,27 @@ export type Tutela = {
         {
           "name": "market",
           "writable": true
+        },
+        {
+          "name": "proof",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  111,
+                  102
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
         }
       ],
       "args": []
@@ -747,7 +768,8 @@ export type Tutela = {
           }
         },
         {
-          "name": "txlineProgram"
+          "name": "txlineProgram",
+          "address": "6pW64gN1s2uqjHkn1unFeEjAwJkPGHoppGvS715wyP2J"
         },
         {
           "name": "dailyScoresMerkleRoots"
@@ -1180,21 +1202,26 @@ export type Tutela = {
     },
     {
       "code": 6027,
+      "name": "authenticatedStatsMissing",
+      "msg": "Settlement requires statistics authenticated by the verified TxLINE proof."
+    },
+    {
+      "code": 6028,
       "name": "invalidWinningPool",
       "msg": "Winning pool is invalid."
     },
     {
-      "code": 6028,
+      "code": 6029,
       "name": "notWinningPosition",
       "msg": "Position is not on the winning side."
     },
     {
-      "code": 6029,
+      "code": 6030,
       "name": "unauthorized",
       "msg": "Unauthorized."
     },
     {
-      "code": 6030,
+      "code": 6031,
       "name": "mathOverflow",
       "msg": "Math overflow."
     }

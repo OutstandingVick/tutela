@@ -56,9 +56,15 @@ Source pages: `/documentation/quickstart`, `/documentation/worldcup`, `/document
 
 ## Deployment Gate
 
-The source, generated IDL, client transaction builders and adversarial tests are complete. A devnet
-upgrade must not be represented as deployed until the upgrade transaction has been simulated,
-approved by the upgrade authority and confirmed. The frontend must use that confirmed program ID.
+The source, official TxLINE IDL snapshot, generated Tutela IDL, client transaction builders and
+adversarial boundary tests are complete. `corepack pnpm verify:devnet` checks that both configured
+program accounts exist and are executable before a demo.
+
+As of 2026-07-19, TxLINE `6pW64gN1s2uqjHkn1unFeEjAwJkPGHoppGvS715wyP2J` is executable on
+devnet. Tutela `GPhEqiNUU86oYW53NGUcS4DfZNCcYimiZuM5jaXwf1rG` is not deployed. The attempted
+deployment required approximately 3.904 devnet SOL; the deployer had approximately 1.954 SOL and
+the public faucet was rate-limited. Do not represent Tutela as deployed until the deploy command and
+`corepack pnpm verify:devnet` both succeed.
 
 ## Submission Endpoint List
 

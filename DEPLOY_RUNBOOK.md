@@ -20,12 +20,12 @@ unit tests, and manual review of TxLINE's public docs instead.
 - Full workspace `typecheck` and `test` pass. New adapter logic has unit tests
   (`packages/txline-adapter/src/index.test.ts`).
 
-**Not done, and out of scope for tonight:** CPI'ing Tutela's own Anchor program into TxLINE's
-`validate_stat_v2` for on-chain settlement verification. That needs a Rust change plus an
-`anchor build`/`anchor deploy`, which requires tooling this sandbox doesn't have, and is too risky to
-ship uncompiled hours before a live demo. Settlement still runs on the existing, tested mock-verifier
-program — real escrow, real deterministic condition evaluation, real Force Refund, per the PRD's own
-allowance that the data-source/verifier may be simulated for the hackathon demo.
+**Current settlement status (2026-07-19):** Tutela now CPIs into TxLINE's official devnet
+`validate_stat_v2`, derives the winning side only from authenticated final-period statistics,
+evaluates stored AND/OR conditions on-chain, and requires the verified proof PDA plus matching
+authenticated-stat hash during settlement. The source builds and the security tests pass. The
+configured Tutela address is not yet deployed because its first deployment requires approximately
+3.904 devnet SOL and the deployer currently has approximately 1.954 SOL.
 
 ## Step 1 — Install and sanity-check
 
@@ -84,6 +84,7 @@ If either says "Unable to find the account" (not deployed yet):
 ```bash
 NO_DNA=1 anchor build
 anchor deploy --provider.cluster devnet
+corepack pnpm verify:devnet
 ```
 
 If `anchor deploy` assigns different program IDs than the ones above, update

@@ -13,7 +13,8 @@
     "seed": "tsx scripts/seed-demo.ts",
     "demo:settle": "tsx scripts/run-demo-settlement.ts",
     "demo:refund": "tsx scripts/run-demo-refund.ts",
-    "validate:env": "tsx scripts/validate-environment.ts"
+    "validate:env": "tsx scripts/validate-environment.ts",
+    "verify:devnet": "tsx scripts/verify-devnet.ts"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
