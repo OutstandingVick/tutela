@@ -11,16 +11,21 @@ export function explorerTx(signature: string, cluster = "devnet") {
 }
 
 export function getPublicConfig() {
+  const cluster = process.env.NEXT_PUBLIC_SOLANA_CLUSTER ?? "devnet";
   return {
-    cluster: process.env.NEXT_PUBLIC_SOLANA_CLUSTER ?? "devnet",
+    cluster,
     rpcUrl: process.env.NEXT_PUBLIC_SOLANA_RPC_URL ?? "https://api.devnet.solana.com",
-    tutelaProgramId: process.env.NEXT_PUBLIC_TUTELA_PROGRAM_ID || TUTELA_DEVNET_PROGRAM_ID,
+    tutelaProgramId: cluster === "devnet"
+      ? TUTELA_DEVNET_PROGRAM_ID
+      : process.env.NEXT_PUBLIC_TUTELA_PROGRAM_ID ?? "",
     mockVerifierProgramId: process.env.NEXT_PUBLIC_MOCK_VERIFIER_PROGRAM_ID ?? "",
     testUsdcMint: process.env.NEXT_PUBLIC_TEST_USDC_MINT ?? "",
     indexerUrl: process.env.NEXT_PUBLIC_INDEXER_URL ?? "http://localhost:8787",
     dataSource: process.env.NEXT_PUBLIC_DATA_SOURCE ?? "txline",
     txlineMode: process.env.NEXT_PUBLIC_TXLINE_MODE ?? "txline-primary-with-simulated-fallback",
-    txlineProgramId: process.env.NEXT_PUBLIC_TXLINE_PROGRAM_ID ?? TXLINE_DEVNET_PROGRAM_ID,
+    txlineProgramId: cluster === "devnet"
+      ? TXLINE_DEVNET_PROGRAM_ID
+      : process.env.NEXT_PUBLIC_TXLINE_PROGRAM_ID ?? TXLINE_DEVNET_PROGRAM_ID,
     txlineApiOrigin: process.env.NEXT_PUBLIC_TXLINE_API_ORIGIN ?? TXLINE_DEVNET_API_ORIGIN
   };
 }

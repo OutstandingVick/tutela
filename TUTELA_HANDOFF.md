@@ -108,6 +108,8 @@ required proof PDA on settlement.
   Devnet program IDs to the browser bundle.
 - `@tutela/config` also defaults Tutela's public program ID to the deployed Devnet address, avoiding
   a broken verification screen when a hosting environment omits the redundant public variable.
+- Devnet program IDs are canonical and cannot be overridden by stale hosting variables. This also
+  protects the official TxLINE address from an incorrect Vercel project-level value.
 
 ## Next Commands
 
