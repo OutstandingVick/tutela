@@ -110,6 +110,8 @@ required proof PDA on settlement.
   a broken verification screen when a hosting environment omits the redundant public variable.
 - Devnet program IDs are canonical and cannot be overridden by stale hosting variables. This also
   protects the official TxLINE address from an incorrect Vercel project-level value.
+- Vercel also receives the official non-secret TxLINE Devnet API and guest-auth URLs; the
+  `TXLINE_API_TOKEN` remains a secret that must be managed in the Vercel project environment.
 
 ## Next Commands
 

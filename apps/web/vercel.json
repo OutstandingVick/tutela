@@ -6,6 +6,8 @@
   "env": {
     "NEXT_PUBLIC_SOLANA_CLUSTER": "devnet",
     "NEXT_PUBLIC_TUTELA_PROGRAM_ID": "GPhEqiNUU86oYW53NGUcS4DfZNCcYimiZuM5jaXwf1rG",
-    "NEXT_PUBLIC_TXLINE_PROGRAM_ID": "6pW64gN1s2uqjHkn1unFeEjAwJkPGHoppGvS715wyP2J"
+    "NEXT_PUBLIC_TXLINE_PROGRAM_ID": "6pW64gN1s2uqjHkn1unFeEjAwJkPGHoppGvS715wyP2J",
+    "TXLINE_API_BASE_URL": "https://txline-dev.txodds.com/api",
+    "TXLINE_GUEST_AUTH_URL": "https://txline-dev.txodds.com/auth/guest/start"
   }
 }
