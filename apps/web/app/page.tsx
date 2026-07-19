@@ -967,6 +967,7 @@ export default function LandingPage() {
             </div>
           </section>
 
+          <span id="documentation" aria-hidden="true" className="block scroll-mt-24" />
           <section id="developer-sdk" className="mx-auto max-w-7xl border-t border-[#D0FEF5]/18 py-20 md:py-28">
             <div className="grid gap-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-end">
               <div>
