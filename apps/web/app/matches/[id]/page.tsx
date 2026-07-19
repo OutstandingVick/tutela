@@ -18,7 +18,10 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ id
   const isCompleted = liveMatch.status === "completed";
   return (
     <AppShell>
-      <section className="rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] text-[#4A051C] p-5">
+      <section
+        data-match-status={liveMatch.status}
+        className="rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] text-[#4A051C] p-5"
+      >
         <p className="text-xs font-black uppercase tracking-[0.18em] text-[#6FB4EB]">
           {isUpcoming ? "Upcoming match" : formatMatchClock(liveMatch)}{live ? " · TxLINE connected" : ""}
         </p>
