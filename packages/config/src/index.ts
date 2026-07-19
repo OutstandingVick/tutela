@@ -2,6 +2,7 @@ export const DEVNET_DISCLOSURE =
   "Hackathon prototype on Solana devnet. Test tokens have no monetary value. Not audited or production ready.";
 
 export const EXPLORER_BASE = "https://explorer.solana.com";
+export const TUTELA_DEVNET_PROGRAM_ID = "GPhEqiNUU86oYW53NGUcS4DfZNCcYimiZuM5jaXwf1rG";
 export const TXLINE_DEVNET_PROGRAM_ID = "6pW64gN1s2uqjHkn1unFeEjAwJkPGHoppGvS715wyP2J";
 export const TXLINE_DEVNET_API_ORIGIN = "https://txline-dev.txodds.com";
 
@@ -13,7 +14,7 @@ export function getPublicConfig() {
   return {
     cluster: process.env.NEXT_PUBLIC_SOLANA_CLUSTER ?? "devnet",
     rpcUrl: process.env.NEXT_PUBLIC_SOLANA_RPC_URL ?? "https://api.devnet.solana.com",
-    tutelaProgramId: process.env.NEXT_PUBLIC_TUTELA_PROGRAM_ID ?? "",
+    tutelaProgramId: process.env.NEXT_PUBLIC_TUTELA_PROGRAM_ID || TUTELA_DEVNET_PROGRAM_ID,
     mockVerifierProgramId: process.env.NEXT_PUBLIC_MOCK_VERIFIER_PROGRAM_ID ?? "",
     testUsdcMint: process.env.NEXT_PUBLIC_TEST_USDC_MINT ?? "",
     indexerUrl: process.env.NEXT_PUBLIC_INDEXER_URL ?? "http://localhost:8787",

@@ -102,6 +102,13 @@ required proof PDA on settlement.
 - The hosted documentation index links to the repository README, TxLINE integration guide, Devnet
   evidence and TypeScript SDK source while summarizing the authenticated settlement architecture.
 
+## Production Verification Configuration
+
+- The checked-in Vercel configuration now supplies the exact executable Tutela and official TxLINE
+  Devnet program IDs to the browser bundle.
+- `@tutela/config` also defaults Tutela's public program ID to the deployed Devnet address, avoiding
+  a broken verification screen when a hosting environment omits the redundant public variable.
+
 ## Next Commands
 
 ```bash

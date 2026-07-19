@@ -4,6 +4,8 @@
   "installCommand": "cd ../.. && corepack pnpm install --frozen-lockfile",
   "devCommand": "corepack pnpm --filter @tutela/web dev",
   "env": {
-    "NEXT_PUBLIC_SOLANA_CLUSTER": "devnet"
+    "NEXT_PUBLIC_SOLANA_CLUSTER": "devnet",
+    "NEXT_PUBLIC_TUTELA_PROGRAM_ID": "GPhEqiNUU86oYW53NGUcS4DfZNCcYimiZuM5jaXwf1rG",
+    "NEXT_PUBLIC_TXLINE_PROGRAM_ID": "6pW64gN1s2uqjHkn1unFeEjAwJkPGHoppGvS715wyP2J"
   }
 }
