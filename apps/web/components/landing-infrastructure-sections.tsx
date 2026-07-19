@@ -807,7 +807,7 @@ export function LandingInfrastructureSections() {
 
       <section className="mx-auto max-w-7xl border-y border-[#D0FEF5]/18 py-20 md:py-28">
         <p className="text-xs font-black uppercase tracking-[0.18em] text-[#6FB4EB]">BUILD WITH TUTELA</p>
-        <div className="mt-5 grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end"><div><h2 className="max-w-4xl text-4xl font-black leading-[1.02] text-white sm:text-5xl md:text-6xl">Build the next generation of football markets.</h2><p className="mt-6 max-w-3xl text-base font-semibold leading-7 text-[#D0FEF5]/68">Define typed football conditions, inspect the verification path and experience the current Solana Devnet prototype.</p></div><div className="flex flex-wrap gap-3"><Link href="/app" className="inline-flex items-center gap-2 bg-[#6FB4EB] px-6 py-4 font-black text-[#020B12]">Explore Markets <ArrowRight size={17} /></Link><a href={`${GITHUB}#readme`} className="inline-flex items-center gap-2 border border-[#D0FEF5]/28 px-6 py-4 font-black text-[#D0FEF5]">Documentation <BookOpen size={17} /></a></div></div>
+        <div className="mt-5 grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end"><div><h2 className="max-w-4xl text-4xl font-black leading-[1.02] text-white sm:text-5xl md:text-6xl">Build the next generation of football markets.</h2><p className="mt-6 max-w-3xl text-base font-semibold leading-7 text-[#D0FEF5]/68">Define typed football conditions, inspect the verification path and experience the current Solana Devnet prototype.</p></div><div className="flex flex-wrap gap-3"><Link href="/app" className="inline-flex items-center gap-2 bg-[#6FB4EB] px-6 py-4 font-black text-[#020B12]">Explore Markets <ArrowRight size={17} /></Link><Link href="/documentation" className="inline-flex items-center gap-2 border border-[#D0FEF5]/28 px-6 py-4 font-black text-[#D0FEF5]">Documentation <BookOpen size={17} /></Link></div></div>
       </section>
 
       <footer className="mx-auto max-w-7xl py-16">
@@ -816,14 +816,14 @@ export function LandingInfrastructureSections() {
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {[
               ["Platform", [["Architecture", "#architecture"], ["Verification", "#verification-showcase"], ["Safety Circuit", "#safety-circuit"], ["Protocol metrics", "#protocol-activity"]]],
-              ["Developers", [["Documentation", `${GITHUB}#readme`], ["@tutela/sdk", `${GITHUB}/tree/main/packages/sdk`], ["GitHub", GITHUB]]],
+              ["Developers", [["Documentation", "/documentation"], ["@tutela/sdk", `${GITHUB}/tree/main/packages/sdk`], ["GitHub", GITHUB]]],
               ["Tutela Markets", [["Explore Markets", "/app"], ["Match browser", "/matches"], ["Activity", "/activity"], ["Verification receipts", "/verify"]]],
               ["Resources", [["Roadmap", "#roadmap"], ["FAQ", "#faq"], ["Trust model", "#security"], ["Current limitations", "#security"]]]
             ].map(([heading, links]) => <div key={String(heading)}><h3 className="text-sm font-black text-white">{String(heading)}</h3><ul className="mt-4 space-y-3">{(links as string[][]).map(([label, href]) => <li key={label}><a href={href} className="text-sm font-semibold text-[#D0FEF5]/56 transition hover:text-[#6FB4EB]">{label}</a></li>)}</ul></div>)}
           </div>
         </div>
         <p className="mt-8 max-w-4xl text-sm font-semibold leading-6 text-[#D0FEF5]/58">Tutela is experimental and available on Solana Devnet. Test credits and test assets have no monetary value. The protocol is currently unaudited and should not be treated as production-ready infrastructure.</p>
-        <div className="mt-8 flex flex-col gap-4 border-t border-[#D0FEF5]/18 pt-7 text-xs font-bold text-[#D0FEF5]/48 md:flex-row md:items-center md:justify-between"><p>© 2026 Tutela</p><div className="flex flex-wrap gap-5"><a href={`${GITHUB}#readme`}>Documentation</a><a href={GITHUB} className="inline-flex items-center gap-1">GitHub <ExternalLink size={12} /></a><span>Solana Devnet · Experimental</span></div></div>
+        <div className="mt-8 flex flex-col gap-4 border-t border-[#D0FEF5]/18 pt-7 text-xs font-bold text-[#D0FEF5]/48 md:flex-row md:items-center md:justify-between"><p>© 2026 Tutela</p><div className="flex flex-wrap gap-5"><Link href="/documentation">Documentation</Link><a href={GITHUB} className="inline-flex items-center gap-1">GitHub <ExternalLink size={12} /></a><span>Solana Devnet · Experimental</span></div></div>
       </footer>
     </div>
   );

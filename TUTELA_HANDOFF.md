@@ -95,6 +95,13 @@ required proof PDA on settlement.
   team names, matching both the condition engine and the on-chain evaluator.
 - Web type-check, test command and production build pass with the new dynamic participation route.
 
+## Website Documentation Route
+
+- Landing-page Documentation links now open `/documentation` instead of scrolling to an SDK teaser.
+- Existing `/#documentation` URLs redirect client-side to `/documentation` for compatibility.
+- The hosted documentation index links to the repository README, TxLINE integration guide, Devnet
+  evidence and TypeScript SDK source while summarizing the authenticated settlement architecture.
+
 ## Next Commands
 
 ```bash

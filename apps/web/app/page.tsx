@@ -28,7 +28,7 @@ const navItems = [
   { label: "Product", href: "#product" },
   { label: "How It Works", href: "#how-it-works" },
   { label: "Developers", href: "#developers" },
-  { label: "Documentation", href: "#documentation" }
+  { label: "Documentation", href: "/documentation" }
 ];
 
 const infrastructureLabels = [
@@ -515,6 +515,12 @@ export default function LandingPage() {
   const [sdkTab, setSdkTab] = useState<keyof typeof sdkCodePanels>("input");
 
   useEffect(() => {
+    if (window.location.hash === "#documentation") {
+      window.location.replace("/documentation");
+    }
+  }, []);
+
+  useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -967,7 +973,6 @@ export default function LandingPage() {
             </div>
           </section>
 
-          <span id="documentation" aria-hidden="true" className="block scroll-mt-24" />
           <section id="developer-sdk" className="mx-auto max-w-7xl border-t border-[#D0FEF5]/18 py-20 md:py-28">
             <div className="grid gap-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-end">
               <div>
@@ -983,9 +988,9 @@ export default function LandingPage() {
                   Use @tutela/sdk to build typed conditions, validate supported statistics, generate deterministic payloads, and prepare Solana Devnet transactions without rebuilding the underlying football-market infrastructure.
                 </p>
                 <div className="mt-7 flex flex-wrap gap-3">
-                  <a href="https://github.com/OutstandingVick/tutela#readme" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 bg-[#6FB4EB] px-5 py-3 text-sm font-black text-[#020B12] transition hover:bg-[#D0FEF5] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#D0FEF5]">
+                  <Link href="/documentation" className="inline-flex items-center gap-2 bg-[#6FB4EB] px-5 py-3 text-sm font-black text-[#020B12] transition hover:bg-[#D0FEF5] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#D0FEF5]">
                     Read the documentation <ArrowRight aria-hidden="true" size={16} />
-                  </a>
+                  </Link>
                   <a href="https://github.com/OutstandingVick/tutela/tree/main/packages/sdk" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 border border-[#D0FEF5]/28 px-5 py-3 text-sm font-black text-[#D0FEF5] transition hover:border-[#6FB4EB] hover:text-[#6FB4EB] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6FB4EB]">
                     View SDK reference <ArrowRight aria-hidden="true" size={16} />
                   </a>
