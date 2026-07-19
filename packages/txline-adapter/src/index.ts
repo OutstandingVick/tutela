@@ -115,11 +115,39 @@ function deriveStatus(phaseId: number | undefined): MatchSummary["status"] {
   return "upcoming";
 }
 
-function deriveFixtureStatus(base: MatchDetails): MatchSummary["status"] {
-  const now = Date.now();
+function deriveFixtureStatus(base: MatchDetails, now = Date.now()): MatchSummary["status"] {
   if (now < Date.parse(base.startsAt)) return "upcoming";
   if (now > Date.parse(base.expectedEndAt)) return "completed";
   return "live";
+}
+
+export function resolveTxLineMatchStatus(
+  base: MatchDetails,
+  record: Record<string, unknown>,
+  now = Date.now()
+): MatchSummary["status"] {
+  const phaseId = derivePhaseId(record);
+  if (phaseId === 19) return "upcoming"; // Explicitly postponed; do not infer live from the clock.
+  const txLineStatus = deriveStatus(phaseId);
+  return txLineStatus === "upcoming" ? deriveFixtureStatus(base, now) : txLineStatus;
+}
+
+export function selectLatestScoreRecord(records: Record<string, unknown>[]) {
+  return records.reduce<Record<string, unknown> | undefined>((latest, candidate) => {
+    if (!latest) return candidate;
+    const latestSequence = numericField(latest, "seq", "Seq");
+    const candidateSequence = numericField(candidate, "seq", "Seq");
+    if (candidateSequence !== latestSequence) {
+      return candidateSequence > latestSequence ? candidate : latest;
+    }
+    return numericField(candidate, "ts", "Ts") > numericField(latest, "ts", "Ts") ? candidate : latest;
+  }, undefined);
+}
+
+function numericField(record: Record<string, unknown>, ...keys: string[]) {
+  const raw = keys.map((key) => record[key]).find((value) => value !== undefined);
+  const value = typeof raw === "string" ? Number(raw) : raw;
+  return typeof value === "number" && Number.isFinite(value) ? value : -1;
 }
 
 function readStatValue(record: Record<string, unknown>, key: number): number {
@@ -290,9 +318,9 @@ export class TxLineSportsDataAdapter implements SportsDataAdapter {
     );
     const records = Array.isArray(snapshot) ? snapshot : [snapshot];
     if (records.length === 0) return undefined;
-    // Snapshot is expected newest-last per the historical-updates examples; fall
-    // back to the last element defensively either way.
-    return records[records.length - 1];
+    // TxLINE snapshots are not guaranteed to be ordered. Use sequence first and
+    // timestamp second so pre-match metadata cannot overwrite a newer live event.
+    return selectLatestScoreRecord(records);
   }
 
   private async fetchFixtureSnapshot(): Promise<Record<string, unknown>[]> {
@@ -345,11 +373,10 @@ export class TxLineSportsDataAdapter implements SportsDataAdapter {
       return { ...base, status: deriveFixtureStatus(base), simulated: false };
     }
 
-    const phaseId = derivePhaseId(record);
     const stats = normalizeScoreRecord(record);
     return {
       ...base,
-      status: deriveStatus(phaseId),
+      status: resolveTxLineMatchStatus(base, record),
       score: { home: stats.homeGoals, away: stats.awayGoals },
       stats,
       simulated: false

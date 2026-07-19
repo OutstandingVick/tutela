@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { demoMatches, MockSportsDataAdapter, normalizeScoreRecord, PLAYABLE_MATCH_IDS, TXLINE_FIXTURE_MAP } from "./index";
+import {
+  demoMatches,
+  MockSportsDataAdapter,
+  normalizeScoreRecord,
+  PLAYABLE_MATCH_IDS,
+  resolveTxLineMatchStatus,
+  selectLatestScoreRecord,
+  TXLINE_FIXTURE_MAP
+} from "./index";
 
 describe("normalizeScoreRecord", () => {
   it("maps documented stat-array shape (statKey/value) into MatchStats", () => {
@@ -79,5 +87,34 @@ describe("playable TxLINE fixtures", () => {
       .toBe("2026-07-18T21:00:00.000Z");
     expect(demoMatches.find((match) => match.id === "worldcup-spain-argentina-2026-07-19")?.startsAt)
       .toBe("2026-07-19T19:00:00.000Z");
+  });
+});
+
+describe("TxLINE live status", () => {
+  const match = demoMatches.find((item) => item.id === "worldcup-spain-argentina-2026-07-19")!;
+
+  it("selects the greatest sequence from an unordered snapshot", () => {
+    expect(selectLatestScoreRecord([
+      { Seq: 13, Action: "players_warming_up" },
+      { Seq: 3, Action: "venue" },
+      { Seq: 16, Action: "standby" },
+      { Seq: 10, Action: "weather" }
+    ])?.Action).toBe("standby");
+  });
+
+  it("uses the scheduled window after kickoff while TxLINE still reports not-started", () => {
+    expect(resolveTxLineMatchStatus(
+      match,
+      { StatusId: 1, GameState: "scheduled" },
+      Date.parse("2026-07-19T19:05:00.000Z")
+    )).toBe("live");
+  });
+
+  it("does not turn an explicitly postponed fixture live", () => {
+    expect(resolveTxLineMatchStatus(
+      match,
+      { StatusId: 19 },
+      Date.parse("2026-07-19T19:05:00.000Z")
+    )).toBe("upcoming");
   });
 });

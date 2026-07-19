@@ -52,6 +52,17 @@ required proof PDA on settlement.
 - `corepack pnpm exec vitest run tests/integration/txline-security.test.ts` — passed: 5 tests.
 - `NO_DNA=1 anchor build` — passed with existing Anchor/Solana cfg and LTO warnings.
 
+## Live Match Status Correction
+
+- TxLINE `/scores/snapshot/{fixtureId}` responses are not assumed to be chronological; the adapter
+  now selects the record with the greatest sequence number, using its timestamp as a tiebreaker.
+- A fixture still marked `StatusId=1` after scheduled kickoff uses the bounded kickoff/end-time
+  fallback, while explicit postponements remain upcoming.
+- Verified against fixture `18257739` during the match: the adapter returned `status=live` and a
+  TxLINE-backed `0-0` score.
+- TxLINE adapter tests now include 8 passing cases, including unordered snapshot and live-status
+  regressions. Web and adapter type-checks and the web production build pass.
+
 ## Devnet Evidence and Remaining Blocker
 
 - Tutela was deployed successfully to Devnet at
