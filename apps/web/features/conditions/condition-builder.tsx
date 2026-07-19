@@ -174,9 +174,9 @@ export function ConditionBuilder({
                     onChange={(event) => update(index, { ...condition, operator: "Eq", value: { kind: "team", value: event.target.value } })}
                     className="min-h-11 w-full rounded-lg border border-[#6FB4EB]/70 bg-[#D0FEF5] px-3 py-2 text-sm font-black text-[#4A051C] outline-none focus:border-[#094586] focus:ring-2 focus:ring-[#6FB4EB]"
                   >
-                    <option value={selectedMatch.homeTeam}>{selectedMatch.homeTeam}</option>
-                    <option value={selectedMatch.awayTeam}>{selectedMatch.awayTeam}</option>
-                    <option value="Draw">Draw</option>
+                    <option value="HOME">{selectedMatch.homeTeam}</option>
+                    <option value="AWAY">{selectedMatch.awayTeam}</option>
+                    <option value="DRAW">Draw</option>
                   </select>
                 ) : condition.field === "BothTeamsScore" ? (
                   <select
@@ -313,7 +313,7 @@ export function ConditionBuilder({
   function updateField(index: number, field: MarketCondition["field"]) {
     setConditions((items) => items.map((item, i) => {
       if (i !== index) return item;
-      if (field === "MatchWinner") return { ...item, field, operator: "Eq", scope: "FullTime", value: { kind: "team", value: selectedMatch.homeTeam } };
+      if (field === "MatchWinner") return { ...item, field, operator: "Eq", scope: "FullTime", value: { kind: "team", value: "HOME" } };
       if (field === "BothTeamsScore") return { ...item, field, operator: "Eq", scope: "FullTime", value: { kind: "bool", value: true } };
       return { ...item, field, value: { kind: "u16", value: 1 } };
     }));
@@ -368,7 +368,7 @@ export function ConditionBuilder({
     if (!nextMatch) return;
     setSelectedMatchId(nextMatch.id);
     setConditions((items) => items.map((item) => item.field === "MatchWinner"
-      ? { ...item, value: { kind: "team", value: nextMatch.homeTeam } }
+      ? { ...item, value: { kind: "team", value: "HOME" } }
       : item));
     requestKey.current = null;
     setSubmission({ state: "idle" });
@@ -377,7 +377,7 @@ export function ConditionBuilder({
 
 function conditionForField(field: MarketCondition["field"], match: ForecastMatchOption): MarketCondition {
   if (field === "MatchWinner") {
-    return { field, operator: "Eq", scope: "FullTime", value: { kind: "team", value: match.homeTeam } };
+    return { field, operator: "Eq", scope: "FullTime", value: { kind: "team", value: "HOME" } };
   }
   if (field === "BothTeamsScore") {
     return { field, operator: "Eq", scope: "FullTime", value: { kind: "bool", value: true } };

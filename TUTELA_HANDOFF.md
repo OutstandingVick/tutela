@@ -79,6 +79,22 @@ required proof PDA on settlement.
   TxLINE publishing the fixture's finalized proof after the match completes. Do not claim the full
   end-to-end flow until those final signatures are appended.
 
+## Consumer Match-Market Participation
+
+- Match-detail stat cards now open a dedicated route at
+  `/matches/[id]/markets/[marketId]` instead of sending users to the custom market composer.
+- Each single-market screen keeps the selected fixture/statistic fixed, lets the player configure
+  its relevant outcome or threshold, select YES or NO, and commit 1–100 demo points.
+- The existing authenticated forecast API, idempotency protection, Privy profile, demo-point ledger
+  and receipt route are reused; no second participation system was introduced.
+- The custom composer remains available through the explicitly labelled `Create a custom market`
+  action.
+- Demo-point participation now remains available through a live fixture's configured expected end
+  time rather than closing at kickoff. Completed/expired fixtures are closed.
+- Match-winner controls now persist canonical `HOME`, `AWAY` and `DRAW` values while displaying the
+  team names, matching both the condition engine and the on-chain evaluator.
+- Web type-check, test command and production build pass with the new dynamic participation route.
+
 ## Next Commands
 
 ```bash

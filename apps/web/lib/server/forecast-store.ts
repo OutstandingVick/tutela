@@ -41,6 +41,7 @@ export type CreateParticipationInput = {
   matchId: string;
   matchTitle: string;
   kickoffAt: string;
+  participationClosesAt: string;
   conditionHash: string;
   group: ConditionGroup;
   side: ForecastSide;
@@ -179,8 +180,8 @@ export async function createParticipation(input: CreateParticipationInput) {
     `;
     if (existing[0]) return { ...(await snapshotInTransaction(tx, input.userId)), duplicate: true };
 
-    const kickoff = new Date(input.kickoffAt);
-    if (!Number.isFinite(kickoff.getTime()) || kickoff.getTime() <= Date.now()) {
+    const participationClosesAt = new Date(input.participationClosesAt);
+    if (!Number.isFinite(participationClosesAt.getTime()) || participationClosesAt.getTime() <= Date.now()) {
       throw new ForecastStoreError("Forecasting for this match is closed.", 409);
     }
 

@@ -69,7 +69,7 @@ export default async function MatchesPage() {
         </div>
         <div className="grid gap-3">
           {forecastStatMarkets.slice(2, 4).map((market) => (
-            <Link key={market.id} href={`/markets?match=${currentMatch.id}&field=${market.field}`} className="rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] text-[#4A051C] p-4 transition hover:border-[#6FB4EB]">
+            <Link key={market.id} href={`/matches/${currentMatch.id}/markets/${market.id}`} className="rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] text-[#4A051C] p-4 transition hover:border-[#6FB4EB]">
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="text-lg font-black">{market.label}</p>

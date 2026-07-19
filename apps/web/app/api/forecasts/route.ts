@@ -47,6 +47,7 @@ export async function POST(request: NextRequest) {
       userId: user.id,
       matchTitle: `${match.homeTeam} vs ${match.awayTeam}`,
       kickoffAt: match.startsAt,
+      participationClosesAt: match.expectedEndAt,
       group,
       conditionHash: conditionHash(group)
     });

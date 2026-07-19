@@ -40,7 +40,7 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ id
         </div>
         {!isCompleted ? (
           <Link href={`/markets?match=${match.id}`} className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-lg bg-[#6FB4EB] px-4 py-3 text-sm font-black text-[#4A051C]">
-            Build a forecast <ChevronRight size={17} />
+            Create a custom market <ChevronRight size={17} />
           </Link>
         ) : null}
       </section>
@@ -51,7 +51,7 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ id
         </div>
         <div className="grid gap-3">
           {forecastStatMarkets.map((stat) => (
-            <Link key={stat.id} href={`/markets?match=${match.id}&field=${stat.field}`} className="grid grid-cols-[1fr_auto] items-center gap-3 rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] text-[#4A051C] p-4">
+            <Link key={stat.id} href={`/matches/${match.id}/markets/${stat.id}`} className="grid grid-cols-[1fr_auto] items-center gap-3 rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] text-[#4A051C] p-4">
               <div>
                 <p className="font-black">{stat.label}</p>
                 <p className="mt-1 text-sm font-semibold text-[#4A051C]">{stat.description}</p>
