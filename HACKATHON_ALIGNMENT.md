@@ -27,16 +27,13 @@ Source listing: Superteam Earn, TxODDS, "Prediction Markets and Settlement".
 | --- | --- | --- |
 | Working web build | Aligned | Next.js app builds and exposes the core user journey. |
 | Devnet/testnet | Aligned | Configuration targets Solana devnet and labels all test coins. |
-| TxLINE primary data | Partially aligned | Adapter/config/docs are TxLINE-primary, but live credentials and endpoint paths must be filled before submission. |
-| On-chain settlement | Partially aligned | Tutela Anchor source implements escrow/settlement semantics; CPI into TxLINE `validate_stat` still requires matching IDL/account layout. |
+| TxLINE primary data | Aligned | The configured adapter uses live TxLINE credentials and the documented Devnet endpoints; mock data remains labelled fallback-only. |
+| On-chain settlement | Aligned pending final receipt | Tutela is deployed on Devnet and invokes official TxLINE `validate_stat_v2`; the fixture-bound market is locked while waiting for TxLINE's finalized proof. |
 | Demo readiness | Aligned with caveat | Demo script covers the full flow and labels fallback data. |
 | Submission docs | Aligned | README, TxLINE integration notes and this checklist cover the required docs. |
 
 ## Before July 19, 2026 Submission
 
-- Activate TxLINE devnet free-tier access using service level `1`.
-- Configure `TXLINE_GUEST_JWT`, `TXLINE_API_TOKEN` and endpoint paths.
-- Replace fallback match data on `/matches` with TxLINE-backed World Cup fixtures and score streams.
+- Publish the remaining proof-validation-settlement-claim Explorer receipts after TxLINE finalizes fixture `18257739`.
 - Record the July 14, 2026 semifinal demo path, or replay it with a labelled TxLINE/historical feed.
-- Fill the exact endpoint list in `docs/txline-integration.md`.
-- Add one paragraph of TxLINE API feedback for the submission form.
+- Include the TxLINE API feedback paragraph from `docs/txline-integration.md` in the submission form.

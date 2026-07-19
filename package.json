@@ -14,7 +14,11 @@
     "demo:settle": "tsx scripts/run-demo-settlement.ts",
     "demo:refund": "tsx scripts/run-demo-refund.ts",
     "validate:env": "tsx scripts/validate-environment.ts",
-    "verify:devnet": "tsx scripts/verify-devnet.ts"
+    "verify:devnet": "tsx scripts/verify-devnet.ts",
+    "evidence:prepare": "node --env-file=apps/web/.env.local --import tsx scripts/devnet-evidence.ts prepare",
+    "evidence:lock": "node --env-file=apps/web/.env.local --import tsx scripts/devnet-evidence.ts lock",
+    "evidence:settle": "node --env-file=apps/web/.env.local --import tsx scripts/devnet-evidence.ts settle",
+    "evidence:claim": "node --env-file=apps/web/.env.local --import tsx scripts/devnet-evidence.ts claim"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

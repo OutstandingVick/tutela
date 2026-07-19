@@ -60,11 +60,10 @@ The source, official TxLINE IDL snapshot, generated Tutela IDL, client transacti
 adversarial boundary tests are complete. `corepack pnpm verify:devnet` checks that both configured
 program accounts exist and are executable before a demo.
 
-As of 2026-07-19, TxLINE `6pW64gN1s2uqjHkn1unFeEjAwJkPGHoppGvS715wyP2J` is executable on
-devnet. Tutela `GPhEqiNUU86oYW53NGUcS4DfZNCcYimiZuM5jaXwf1rG` is not deployed. The attempted
-deployment required approximately 3.904 devnet SOL; the deployer had approximately 1.954 SOL and
-the public faucet was rate-limited. Do not represent Tutela as deployed until the deploy command and
-`corepack pnpm verify:devnet` both succeed.
+As of 2026-07-19, TxLINE `6pW64gN1s2uqjHkn1unFeEjAwJkPGHoppGvS715wyP2J` and Tutela
+`GPhEqiNUU86oYW53NGUcS4DfZNCcYimiZuM5jaXwf1rG` are both executable on Devnet.
+`corepack pnpm verify:devnet` passes. The Tutela deployment transaction and the fixture-bound flow
+transactions are recorded in [`docs/devnet-evidence.md`](devnet-evidence.md).
 
 ## Submission Endpoint List
 
@@ -78,3 +77,15 @@ Endpoints actually used in the deployed build:
 | Scores snapshot (live match state) | `GET /scores/snapshot/{fixtureId}` |
 | Scores stream (SSE, not yet wired client-side) | `GET /scores/stream` |
 | Validation proof | `GET /scores/stat-validation?fixtureId=...&seq=...&statKeys=1,2,3,4,5,6,7,8` |
+
+## TxLINE API Feedback
+
+TxLINE's public Devnet program address, published Anchor IDL and stat-validation endpoint made the
+on-chain verification boundary unusually concrete: Tutela could build against the real
+`validate_stat_v2` payload instead of inventing an oracle-shaped mock. The main integration friction
+was the multi-step credential lifecycle (guest JWT, API token and on-chain service subscription),
+combined with response examples that use more than one field-casing and timestamp convention; that
+forced defensive normalization and extra checks before a proof could safely reach the program. A
+single copy-paste Devnet example covering fixture discovery, sequence selection, the exact
+`/scores/stat-validation` response, `validate_stat_v2` account metas and common error responses would
+make the first secure end-to-end integration substantially faster.

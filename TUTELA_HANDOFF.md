@@ -46,22 +46,27 @@ required proof PDA on settlement.
 
 - `corepack pnpm -r build` — passed.
 - `corepack pnpm -r typecheck` — passed when run serially after the Next.js build.
-- `corepack pnpm test` — passed before the security hardening.
+- `corepack pnpm test` — passed after the security hardening (6 TypeScript integration tests and 8
+  Rust tests in the full command).
 - `cargo test -p tutela --lib` — passed after hardening: 8 tests.
 - `corepack pnpm exec vitest run tests/integration/txline-security.test.ts` — passed: 5 tests.
 - `NO_DNA=1 anchor build` — passed with existing Anchor/Solana cfg and LTO warnings.
 
 ## Devnet Evidence and Remaining Blocker
 
-- TxLINE executable check succeeded on devnet. Explorer:
+- Tutela was deployed successfully to Devnet at
+  `GPhEqiNUU86oYW53NGUcS4DfZNCcYimiZuM5jaXwf1rG`. Deployment transaction:
+  https://explorer.solana.com/tx/4LLgFX85ynwQVxN1gdaFV7rJGXSE52JdycVAzVcrE24cDPm1Qiiq69MC1AuBZBWKsCeMrbgoK9Q3dHfXeznYEB8u?cluster=devnet
+- TxLINE and Tutela executable checks both pass with `corepack pnpm verify:devnet`:
   https://explorer.solana.com/address/6pW64gN1s2uqjHkn1unFeEjAwJkPGHoppGvS715wyP2J?cluster=devnet
-- Tutela executable check failed because the configured program account does not exist yet. Explorer:
   https://explorer.solana.com/address/GPhEqiNUU86oYW53NGUcS4DfZNCcYimiZuM5jaXwf1rG?cluster=devnet
-- Deployment was attempted with the existing program keypair. It required approximately 3.904
-  devnet SOL; the deployer had approximately 1.954 SOL. Faucet requests for 2, 1 and 0.5 SOL were
-  rate-limited. No deployment transaction was created and no temporary buffer retained funds.
-- Because Tutela is not deployed, a complete live proof-validation-settlement transaction and its
-  Explorer links cannot yet be produced. Do not claim deployment or end-to-end devnet completion.
+- Protocol initialization, a fixture-bound market, YES/NO test deposits and the permissionless lock
+  are confirmed for TxLINE fixture `18257739`. The market address is
+  `4djfbpqndihNKBbQseHcpxEhr53JxREdRtSryPsHgyFS`.
+- All confirmed signatures are recorded in `docs/devnet-evidence.md`.
+- The remaining proof submission, TxLINE CPI validation, settlement and payout claim depend on
+  TxLINE publishing the fixture's finalized proof after the match completes. Do not claim the full
+  end-to-end flow until those final signatures are appended.
 
 ## Next Commands
 
@@ -77,5 +82,12 @@ corepack pnpm test
 corepack pnpm --filter @tutela/web build
 ```
 
-After funding/deployment, initialize the protocol and execute a real finalized TxLINE proof through
-`/verify`; record both transaction signatures and add their Solana Explorer links here.
+After TxLINE finalizes fixture `18257739`, run the remaining evidence commands with the configured
+Devnet keypair and `apps/web/.env.local` loaded:
+
+```bash
+corepack pnpm evidence:settle
+corepack pnpm evidence:claim
+```
+
+Append the returned Explorer links to `docs/devnet-evidence.md`, then rerun the checks above.
