@@ -2,7 +2,10 @@
 
 **Guardianship Through Verifiable Truth**
 
-Tutela is programmable football-market infrastructure built on Solana and TxLINE-compatible match data.
+Tutela is a **2-in-1 football prediction platform** built on Solana and TxLINE-compatible match data:
+
+1. **Tutela Markets** — the consumer application where fans browse matches, enter individual YES/NO stat markets, create custom predictions, compete with friends and claim Devnet demo-point rewards.
+2. **Tutela Protocol** — reusable infrastructure for TxLINE-authenticated statistics, on-chain condition evaluation, escrow, deterministic settlement, payouts and safety refunds.
 
 **TxLINE provides the match data. Tutela turns that data into programmable, verifiable football markets.**
 
@@ -36,9 +39,9 @@ const [protocolAddress] = sdk.protocolAddress();
 
 The SDK never treats live UI data as settlement authority. Applications submit supported final proof packages to the Protocol, which validates them through the configured TxLINE program before evaluating stored conditions.
 
-### Tutela Reference App
+### Tutela Markets
 
-`apps/web` demonstrates match discovery, market construction, demo participation, verification receipts and activity views. It is a consumer surface built on the same Protocol and SDK boundaries available to third-party applications.
+`apps/web` is the consumer-facing football prediction application and the reference product built on Tutela Protocol. It provides match discovery, individual stat-market participation, custom market construction, demo-point activity, verification receipts and claims.
 
 ## What Works In P0
 

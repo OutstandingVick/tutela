@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { ArrowLeft, ArrowRight, Blocks, BookOpen, DatabaseZap, ExternalLink, ShieldCheck } from "lucide-react";
+import { ArrowLeft, ArrowRight, Blocks, BookOpen, DatabaseZap, ExternalLink, ShieldCheck, Trophy } from "lucide-react";
 
 const GITHUB = "https://github.com/OutstandingVick/tutela";
 
@@ -46,11 +46,26 @@ export default function DocumentationPage() {
 
         <header className="border-b border-[#D0FEF5]/18 py-16 md:py-24">
           <p className="text-xs font-black uppercase tracking-[0.18em] text-[#6FB4EB]">Tutela documentation</p>
-          <h1 className="mt-5 max-w-4xl text-4xl font-black leading-tight text-white sm:text-5xl md:text-6xl">Build with the protocol behind Tutela Markets.</h1>
+          <h1 className="mt-5 max-w-4xl text-4xl font-black leading-tight text-white sm:text-5xl md:text-6xl">Tutela is a 2-in-1 football prediction platform.</h1>
           <p className="mt-6 max-w-3xl text-base font-semibold leading-7 text-[#D0FEF5]/72 md:text-lg">
-            Tutela Markets is the consumer football prediction app. Tutela Protocol supplies its reusable Solana infrastructure for authenticated match statistics, deterministic conditions, escrow, settlement, payouts and refunds.
+            The consumer experience and the reusable settlement infrastructure are delivered together: Tutela Markets gives fans the product they use, while Tutela Protocol provides the trusted engine underneath it.
           </p>
         </header>
+
+        <section className="grid border-l border-t border-[#D0FEF5]/18 md:grid-cols-2">
+          <ProductLayer
+            icon={<Trophy size={22} />}
+            label="Product 1 · Consumer application"
+            title="Tutela Markets"
+            body="The football prediction app where fans browse matches, enter individual YES/NO stat markets, create custom predictions, compete with friends and claim Devnet demo-point rewards."
+          />
+          <ProductLayer
+            icon={<Blocks size={22} />}
+            label="Product 2 · Infrastructure layer"
+            title="Tutela Protocol"
+            body="Reusable Solana infrastructure for TxLINE-authenticated statistics, on-chain AND/OR condition evaluation, escrow, deterministic settlement, payouts and safety refunds."
+          />
+        </section>
 
         <section className="grid border-l border-t border-[#D0FEF5]/18 md:grid-cols-3">
           <ArchitectureStep icon={<DatabaseZap size={21} />} number="01" title="Authenticate statistics" body="TxLINE provides the fixture-bound sporting facts through its official Devnet validation program." />
@@ -83,6 +98,19 @@ export default function DocumentationPage() {
         </footer>
       </div>
     </main>
+  );
+}
+
+function ProductLayer({ icon, label, title, body }: { icon: ReactNode; label: string; title: string; body: string }) {
+  return (
+    <article className="border-b border-r border-[#D0FEF5]/18 bg-[#094586]/28 p-6 md:p-8">
+      <div className="flex items-center gap-3 text-[#6FB4EB]">
+        {icon}
+        <p className="text-xs font-black uppercase tracking-[0.14em]">{label}</p>
+      </div>
+      <h2 className="mt-6 text-2xl font-black text-white">{title}</h2>
+      <p className="mt-3 text-sm font-semibold leading-6 text-[#D0FEF5]/72">{body}</p>
+    </article>
   );
 }
 

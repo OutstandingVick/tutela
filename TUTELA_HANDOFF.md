@@ -119,6 +119,12 @@ required proof PDA on settlement.
 - Landing continuation sections, documentation and outer application wrappers are transparent over
   the global fixed background; existing cards, phone frames and brand colors remain unchanged.
 
+## Explicit 2-in-1 Product Documentation
+
+- The hosted documentation and repository README now explicitly define Tutela as a 2-in-1 football
+  prediction platform: Tutela Markets is the consumer application and Tutela Protocol is the
+  reusable TxLINE-authenticated Solana infrastructure layer.
+
 ## Next Commands
 
 ```bash
