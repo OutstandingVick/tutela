@@ -113,6 +113,12 @@ required proof PDA on settlement.
 - Vercel also receives the official non-secret TxLINE Devnet API and guest-auth URLs; the
   `TXLINE_API_TOKEN` remains a secret that must be managed in the Vercel project environment.
 
+## Unified Website Background
+
+- Every website and application route now shares the landing hero's dark navy-to-slate radial glow.
+- Landing continuation sections, documentation and outer application wrappers are transparent over
+  the global fixed background; existing cards, phone frames and brand colors remain unchanged.
+
 ## Next Commands
 
 ```bash

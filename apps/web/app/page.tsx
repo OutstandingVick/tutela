@@ -532,7 +532,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-[#020B12] text-[#D0FEF5] overflow-hidden">
+    <main className="min-h-screen bg-transparent text-[#D0FEF5] overflow-hidden">
       <div className="text-[#4A051C] top-0 z-50">
         <nav
           className={`bg-transparent border-b px-4 md:px-6 lg:px-8 transition ${scrolled ? "border-[#D0FEF5]/12 shadow-sm backdrop-blur" : "border-transparent backdrop-blur"}`}
@@ -629,7 +629,7 @@ export default function LandingPage() {
 
       <section
         aria-label="Infrastructure credibility"
-        className="border-y border-[#D0FEF5]/10 bg-[#020B12] px-4 md:px-6 lg:px-8"
+        className="border-y border-[#D0FEF5]/10 bg-[#020B12]/58 px-4 backdrop-blur-sm md:px-6 lg:px-8"
       >
         <div className="mx-auto flex max-w-[90rem] flex-wrap items-center justify-center gap-x-8 gap-y-4 py-6 text-[#D0FEF5]/58 sm:gap-x-10 md:flex-nowrap md:justify-between md:gap-x-6 lg:gap-x-12">
           {infrastructureLabels.map(({ label, Icon }) => (

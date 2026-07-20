@@ -33,7 +33,7 @@ const documents = [
 
 export default function DocumentationPage() {
   return (
-    <main className="min-h-screen bg-[#020B12] px-4 py-8 text-[#D0FEF5] md:px-6 lg:px-8">
+    <main className="min-h-screen bg-transparent px-4 py-8 text-[#D0FEF5] md:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
         <nav className="flex items-center justify-between gap-4 border-b border-[#D0FEF5]/18 pb-6">
           <Link href="/" className="inline-flex min-h-11 items-center gap-2 text-sm font-black text-[#D0FEF5] transition hover:text-[#6FB4EB]">
