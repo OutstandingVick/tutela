@@ -20,8 +20,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="tutela-shell-page">
       <div className="tutela-phone-frame tutela-app-frame tutela-app-content relative mx-auto">
-        <header className="tutela-shell-header px-5 pb-3 pt-5">
-          <div className="flex items-start justify-between gap-4">
+        <header className="tutela-shell-header px-4 pb-3 pt-4 sm:px-5 sm:pt-5">
+          <div className="flex items-start justify-between gap-2 sm:gap-4">
             <div className="flex items-center gap-2">
               {isDetailPage ? (
                 <Link
@@ -71,12 +71,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </p>
           ) : null}
         </header>
-        <main className="tutela-shell-main px-5 pb-5 no-scrollbar">{children}</main>
+        <main className="tutela-shell-main px-4 pb-4 no-scrollbar sm:px-5 sm:pb-5">{children}</main>
         <nav className="tutela-bottom-nav z-40 grid-cols-4 border-t border-[#094586] px-2 py-2 backdrop-blur">
           {nav.map(({ label, href, Icon }) => {
             const active = pathname === href || (href !== "/matches" && pathname.startsWith(href));
             return (
-              <Link key={href} href={href} className={`grid place-items-center gap-1 rounded-lg px-2 py-2 text-xs font-bold ${active ? "text-[#6FB4EB]" : "text-[#D0FEF5]"}`}>
+              <Link key={href} href={href} className={`grid min-w-0 place-items-center gap-1 rounded-lg px-1 py-2 text-[11px] font-bold sm:px-2 sm:text-xs ${active ? "text-[#6FB4EB]" : "text-[#D0FEF5]"}`}>
                 <Icon size={21} strokeWidth={active ? 2.5 : 2} />
                 <span>{label}</span>
               </Link>

@@ -125,6 +125,21 @@ required proof PDA on settlement.
   prediction platform: Tutela Markets is the consumer application and Tutela Protocol is the
   reusable TxLINE-authenticated Solana infrastructure layer.
 
+## Responsive Website and Consumer App
+
+- The landing page, documentation and framed consumer application now adapt from 320px phones to
+  tablets, laptops and wide desktop displays without horizontal page overflow.
+- Small-screen application spacing, safe-area padding, frame radius, headers and bottom navigation
+  were tightened while preserving the existing phone-frame presentation on larger displays.
+- Dense condition controls now use a readable two-column responsive layout instead of compressing
+  five fields into the framed application width.
+- Match cards, fixture rows, leaderboard tabs and rows, profile summaries and creation-page actions
+  now reflow or resize at narrow breakpoints rather than clipping text or controls.
+- Browser QA covered `/`, `/documentation`, `/app`, `/matches`, `/markets`, `/leaderboards`,
+  `/profile` and `/verify` at 320, 375, 768, 1024 and 1440 pixel widths. All tested routes reported
+  document widths equal to their viewport widths.
+- Web type-check, test command and production build pass after the responsive changes.
+
 ## Next Commands
 
 ```bash

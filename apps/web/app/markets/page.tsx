@@ -43,7 +43,7 @@ export default async function MarketsPage({ searchParams }: { searchParams: Prom
 
   return (
     <AppShell>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-col items-start justify-between gap-3 min-[390px]:flex-row min-[390px]:items-center">
         <div>
           <h1 className="text-3xl font-black">Create markets</h1>
           <p className="mt-1 text-sm font-semibold text-[#D0FEF5]">Build markets, battle friends, join contests.</p>
@@ -52,7 +52,7 @@ export default async function MarketsPage({ searchParams }: { searchParams: Prom
       </div>
 
       <section className="rounded-lg border border-dashed border-[#6FB4EB] bg-[#D0FEF5] text-[#4A051C] p-4">
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-col items-start justify-between gap-3 min-[390px]:flex-row min-[390px]:items-center min-[390px]:gap-4">
           <div>
             <h2 className="text-lg font-black">Challenge a friend</h2>
             <p className="mt-1 text-sm text-[#D0FEF5]">Pick a match statistic and send a private link.</p>

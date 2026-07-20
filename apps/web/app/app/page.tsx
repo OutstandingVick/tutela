@@ -31,7 +31,7 @@ export default function AppWelcomePage() {
   return (
     <main className="tutela-frame-page text-[#D0FEF5]">
       <section
-        className="tutela-welcome-frame tutela-app-frame tutela-app-content mx-auto flex flex-col px-6 pb-[calc(1.25rem+env(safe-area-inset-bottom))] pt-[calc(2.5rem+env(safe-area-inset-top))] sm:px-10"
+        className="tutela-welcome-frame tutela-app-frame tutela-app-content mx-auto flex flex-col px-4 pb-[calc(1.25rem+env(safe-area-inset-bottom))] pt-[calc(2rem+env(safe-area-inset-top))] min-[380px]:px-6 sm:px-10 sm:pt-[calc(2.5rem+env(safe-area-inset-top))]"
         aria-labelledby="welcome-title"
       >
         <div className="flex flex-1 flex-col items-center justify-center text-center">
@@ -40,10 +40,10 @@ export default function AppWelcomePage() {
           </div>
 
           <div className="welcome-copy-motion mt-2">
-            <h1 id="welcome-title" className="text-5xl font-black leading-none tracking-normal text-[#D0FEF5] sm:text-6xl">
+            <h1 id="welcome-title" className="text-4xl font-black leading-none tracking-normal text-[#D0FEF5] min-[380px]:text-5xl sm:text-6xl">
               Tutela
             </h1>
-            <p className="mt-4 text-xl font-black leading-tight text-white">
+            <p className="mt-4 text-lg font-black leading-tight text-white min-[380px]:text-xl">
                Watch the game. Predict every moment.
             </p>
             

@@ -69,6 +69,25 @@ a {
   background: transparent;
 }
 
+@media (max-width: 379px) {
+  :root {
+    --app-frame-radius: 1.5rem;
+  }
+
+  .tutela-frame-page,
+  .tutela-shell-page {
+    padding:
+      max(0.35rem, env(safe-area-inset-top))
+      max(0.35rem, env(safe-area-inset-right))
+      max(0.35rem, env(safe-area-inset-bottom))
+      max(0.35rem, env(safe-area-inset-left));
+  }
+
+  .tutela-welcome-frame {
+    min-height: calc(100dvh - 0.7rem);
+  }
+}
+
 .tutela-frame-page {
   overflow-x: hidden;
 }

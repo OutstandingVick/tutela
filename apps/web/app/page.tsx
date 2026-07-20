@@ -589,12 +589,8 @@ export default function LandingPage() {
       </div>
       <section
         id="product"
-        className="relative overflow-hidden px-4 pb-0 pt-14 md:px-6 md:pt-20 lg:px-8"
+        className="relative overflow-hidden px-4 pb-0 pt-24 sm:pt-28 md:px-6 md:pt-36 lg:px-8"
       >
-      <br />
-      <br />
-      <br />
-      <br />
         <div className="absolute inset-0 z-0 overflow-hidden">
           <img
             src="/landing-stadium-bg.png"
@@ -607,7 +603,7 @@ export default function LandingPage() {
         <div className="absolute inset-x-0 top-24 z-0 mx-auto h-[420px] max-w-5xl rounded-[50%] bg-[#6FB4EB]/16 blur-3xl" />
         <div className="relative z-10 mx-auto max-w-[90rem]">
           <div className="mx-auto max-w-5xl text-center">
-            <h1 className="mx-auto max-w-6xl text-3xl font-black leading-[0.95] tracking-normal text-white md:text-7xl">
+            <h1 className="mx-auto max-w-6xl text-[2.1rem] font-black leading-[0.98] tracking-normal text-white sm:text-5xl md:text-7xl">
               Every football statistical 
               <span className="block text-[#D0FEF5]">outcome verified On-chain</span>
             </h1>
@@ -620,10 +616,9 @@ export default function LandingPage() {
               </Link>
             </div>
           </div>
-          <br />
-          <br />
-          <br />
-          <ProductShowcase />
+          <div className="mt-14 sm:mt-20">
+            <ProductShowcase />
+          </div>
         </div>
       </section>
 
@@ -1084,11 +1079,11 @@ function ProductShowcase() {
   return (
     <>
       {/* Desktop / tablet: staggered showcase */}
-      <div className="mt-12 hidden items-end justify-center gap-6 md:flex lg:gap-8">
+      <div className="hidden items-end justify-center gap-4 md:flex lg:gap-8">
         {productPreviews.map((preview) => (
           <figure
             key={preview.label}
-            className={`flex flex-col items-center transition ${preview.translate} ${preview.emphasis ? "z-10 w-52 lg:w-60" : "w-44 opacity-90 lg:w-52"}`}
+            className={`flex min-w-0 flex-col items-center transition ${preview.translate} ${preview.emphasis ? "z-10 w-[19%] max-w-60" : "w-[17%] max-w-52 opacity-90"}`}
           >
             <div
               className={`relative w-full overflow-hidden rounded-[1.75rem] border border-[#6FB4EB]/35 bg-[#0B111A] shadow-[0_30px_80px_rgba(2,11,18,0.5)] ${preview.emphasis ? "ring-1 ring-[#6FB4EB]/40" : ""}`}
@@ -1102,9 +1097,9 @@ function ProductShowcase() {
       </div>
 
       {/* Mobile: swipeable, scroll-snapped row */}
-      <div className="no-scrollbar -mx-4 mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 md:hidden">
+      <div className="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 md:hidden">
         {productPreviews.map((preview) => (
-          <figure key={preview.label} className="flex w-[72%] shrink-0 snap-center flex-col items-center">
+          <figure key={preview.label} className="flex w-[78%] max-w-72 shrink-0 snap-center flex-col items-center sm:w-[56%]">
             <div
               className="relative w-full overflow-hidden rounded-[1.75rem] border border-[#6FB4EB]/35 bg-[#0B111A] shadow-[0_20px_60px_rgba(2,11,18,0.5)]"
               style={{ aspectRatio: "402 / 874" }}

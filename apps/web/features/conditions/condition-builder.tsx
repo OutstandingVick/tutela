@@ -105,7 +105,7 @@ export function ConditionBuilder({
   }, [selectedMatch.kickoffAt]);
 
   return (
-    <div className="rounded-lg border border-[#6FB4EB]/70 bg-[#D0FEF5] p-4 text-[#4A051C] shadow-[0_12px_30px_rgba(9,69,134,0.18)]">
+    <div className="rounded-lg border border-[#6FB4EB]/70 bg-[#D0FEF5] p-3 text-[#4A051C] shadow-[0_12px_30px_rgba(9,69,134,0.18)] sm:p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-xl font-black tracking-normal">Build your conditions</h2>
@@ -130,7 +130,7 @@ export function ConditionBuilder({
           </select>
           <span className="text-xs font-semibold text-[#4A051C]/75">{selectedMatch.competition}</span>
         </label>
-        <div className="inline-grid grid-cols-2 rounded-lg border border-[#6FB4EB]/80 bg-white/30 p-1">
+        <div className="grid w-full grid-cols-2 rounded-lg border border-[#6FB4EB]/80 bg-white/30 p-1 sm:inline-grid sm:w-auto">
           {(["AND", "OR"] as const).map((value) => (
             <button
               key={value}
@@ -151,12 +151,12 @@ export function ConditionBuilder({
       <div className="mt-4 grid gap-3">
         {conditions.map((condition, index) => (
           <div key={index} className="rounded-lg border border-[#6FB4EB]/70 bg-white/35 p-3 shadow-sm">
-            <div className="mb-2 flex items-center justify-between gap-2 sm:hidden">
+            <div className="mb-2 flex items-center justify-between gap-2">
               <p className="text-xs font-black uppercase tracking-[0.14em] text-[#094586]">Condition {index + 1}</p>
               <RemoveButton onClick={() => remove(index)} />
             </div>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)_minmax(74px,0.72fr)_minmax(0,1fr)_44px]">
-              <Field label="Statistic" className="col-span-2 sm:col-span-1">
+            <div className="grid grid-cols-2 gap-2">
+              <Field label="Statistic" className="col-span-2">
                 <Select value={condition.field} onChange={(field) => updateField(index, field as MarketCondition["field"])} options={fieldOptions} labels={fieldLabel} />
               </Field>
               <Field label="Operator">
@@ -197,12 +197,9 @@ export function ConditionBuilder({
                   />
                 )}
               </Field>
-              <Field label="Period" className="col-span-2 sm:col-span-1">
+              <Field label="Period" className="col-span-2">
                 <Select value={condition.scope} onChange={(scope) => update(index, { ...condition, scope: scope as MarketCondition["scope"] })} options={scopeOptions} labels={scopeLabel} />
               </Field>
-              <div className="hidden items-end sm:flex">
-                <RemoveButton onClick={() => remove(index)} />
-              </div>
             </div>
             <p className="mt-2 text-xs font-semibold leading-5 text-[#4A051C]/75">{describeCondition(condition)}.</p>
           </div>

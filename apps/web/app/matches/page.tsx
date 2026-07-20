@@ -32,7 +32,7 @@ export default async function MatchesPage() {
   return (
     <AppShell>
       <div className="mb-6">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-col items-start justify-between gap-3 min-[390px]:flex-row min-[390px]:items-center">
           <div>
             <h1 className="text-3xl font-black tracking-normal text-[#D0FEF5]">Match markets</h1>
             <p className="mt-1 text-sm font-semibold text-[#D0FEF5]">Trade live football stats with testnet coins.</p>
@@ -46,13 +46,13 @@ export default async function MatchesPage() {
           <span>{liveMatch.homeTeam} v {liveMatch.awayTeam}</span>
           <span className="text-[#6FB4EB]">{formatMatchClock(liveMatch)}</span>
         </div>
-        <div className="mt-3 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+        <div className="mt-3 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 sm:gap-3">
           <div>
-            <p className="text-xl font-black">{liveMatch.homeTeam}</p>
+            <p className="break-words text-base font-black sm:text-xl">{liveMatch.homeTeam}</p>
           </div>
           <div className="rounded-lg bg-[#094586] px-3 py-2 text-lg font-black text-[#D0FEF5]">{formatScoreline(liveMatch)}</div>
           <div className="text-right">
-            <p className="text-xl font-black">{liveMatch.awayTeam}</p>
+            <p className="break-words text-base font-black sm:text-xl">{liveMatch.awayTeam}</p>
           </div>
         </div>
         <div className="mt-4 flex items-center justify-end text-xs font-black text-[#094586]">
@@ -99,9 +99,9 @@ export default async function MatchesPage() {
               const marketCount = meta?.markets ?? (match.competition.includes("World Cup") ? 16 : 9);
 
               return (
-              <Link key={match.id} href={`/matches/${match.id}`} className="grid grid-cols-[64px_1fr_auto] items-center gap-3 rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] text-[#4A051C] p-4">
-                <div className="text-lg font-black">{time}</div>
-                <div>
+              <Link key={match.id} href={`/matches/${match.id}`} className="grid grid-cols-[48px_minmax(0,1fr)_auto] items-center gap-2 rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] p-3 text-[#4A051C] sm:grid-cols-[64px_minmax(0,1fr)_auto] sm:gap-3 sm:p-4">
+                <div className="text-sm font-black sm:text-lg">{time}</div>
+                <div className="min-w-0">
                   <p className="font-black">{match.homeTeam}</p>
                   <p className="font-black">{match.awayTeam}</p>
                   <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-[#4A051C]"><Clock size={13} /> {date} · {marketCount} markets</p>

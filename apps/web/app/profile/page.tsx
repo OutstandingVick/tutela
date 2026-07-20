@@ -18,13 +18,13 @@ export default function ProfilePage() {
         <div className="rounded-full bg-[#094586] px-3 py-2 text-sm font-black text-[#6FB4EB]">{demoPoints.toLocaleString()} coins</div>
       </div>
 
-      <section className="flex items-center gap-4">
-        <div className="relative grid h-20 w-20 place-items-center rounded-full bg-[#094586] text-3xl font-black text-[#6FB4EB]">
+      <section className="flex items-center gap-3 sm:gap-4">
+        <div className="relative grid h-16 w-16 shrink-0 place-items-center rounded-full bg-[#094586] text-2xl font-black text-[#6FB4EB] sm:h-20 sm:w-20 sm:text-3xl">
           {authenticated ? initials : "T"}
           <span className="absolute bottom-0 right-0 grid h-7 w-7 place-items-center rounded-full bg-[#6FB4EB] text-[#4A051C]"><Camera size={15} /></span>
         </div>
-        <div>
-          <h2 className="text-2xl font-black">{authenticated ? displayName : "Testnet Player"}</h2>
+        <div className="min-w-0">
+          <h2 className="break-words text-xl font-black sm:text-2xl">{authenticated ? displayName : "Testnet Player"}</h2>
           <p className="text-sm font-semibold text-[#D0FEF5]">
             {authenticated ? email ?? "Signed in with Privy" : "Sign in to claim 1,000 demo coins"}
           </p>
@@ -35,7 +35,7 @@ export default function ProfilePage() {
       </section>
 
       <section className="mt-5 rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] p-4 text-[#4A051C]">
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col items-start justify-between gap-3 min-[390px]:flex-row min-[390px]:gap-4">
           <div>
             <p className="font-black">{authenticated ? "Signed in for testnet play" : "Create your Tutela account"}</p>
             <p className="mt-1 text-sm font-semibold">
@@ -65,7 +65,7 @@ export default function ProfilePage() {
         <div className="rounded-lg py-3 text-center text-sm font-black text-[#D0FEF5]">Receipts</div>
       </div>
 
-      <section className="mt-5 grid grid-cols-3 gap-2">
+      <section className="mt-5 grid grid-cols-1 gap-2 min-[360px]:grid-cols-3">
         <Tile value={String(activity.length)} label="forecasts" />
         <Tile value={String(committedPoints)} label="points played" accent />
         <Tile value={settled.length > 0 ? `${Math.round((wins / settled.length) * 100)}%` : "-"} label="hit rate" good />
@@ -75,7 +75,7 @@ export default function ProfilePage() {
         <h2 className="mb-3 text-sm font-black uppercase tracking-[0.18em] text-[#D0FEF5]">Coins</h2>
         <div className="rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] text-[#4A051C] p-5 text-center">
           <Coins className="mx-auto text-[#6FB4EB]" size={30} />
-          <p className="mt-2 text-5xl font-black">{demoPoints.toLocaleString()}</p>
+          <p className="mt-2 break-words text-4xl font-black sm:text-5xl">{demoPoints.toLocaleString()}</p>
           <p className="mt-2 text-sm font-semibold text-[#D0FEF5]">testnet coins · never cashable · no monetary value</p>
           <button disabled className="mt-5 cursor-not-allowed rounded-lg bg-[#6FB4EB]/70 px-5 py-3 text-sm font-black text-[#4A051C]">No purchases or cash-out</button>
         </div>
@@ -90,7 +90,7 @@ export default function ProfilePage() {
           ) : activity.length === 0 ? (
             <p className="rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] p-4 text-sm font-bold text-[#4A051C]">No forecasts yet. Create one to see it here.</p>
           ) : activity.map((item) => (
-            <div key={item.id} className="grid grid-cols-[34px_1fr_auto] items-center gap-3 rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] text-[#4A051C] p-4">
+            <div key={item.id} className="grid grid-cols-[28px_minmax(0,1fr)_auto] items-center gap-2 rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] p-3 text-[#4A051C] sm:grid-cols-[34px_1fr_auto] sm:gap-3 sm:p-4">
               <ShieldCheck size={22} className="text-[#6FB4EB]" />
               <div>
                 <p className="font-black">{item.title}</p>
@@ -118,7 +118,7 @@ export default function ProfilePage() {
 
       <section className="mt-7">
         <h2 className="mb-3 text-sm font-black uppercase tracking-[0.18em] text-[#D0FEF5]">Verified</h2>
-        <div className="grid grid-cols-[34px_1fr_auto] items-center gap-3 rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] text-[#4A051C] p-4">
+        <div className="grid grid-cols-[28px_minmax(0,1fr)_auto] items-center gap-2 rounded-lg border border-[#6FB4EB] bg-[#D0FEF5] p-3 text-[#4A051C] sm:grid-cols-[34px_1fr_auto] sm:gap-3 sm:p-4">
           <FileText size={22} className="text-[#6FB4EB]" />
           <div>
             <p className="font-black">On-chain receipts</p>

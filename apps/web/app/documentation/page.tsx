@@ -33,20 +33,20 @@ const documents = [
 
 export default function DocumentationPage() {
   return (
-    <main className="min-h-screen bg-transparent px-4 py-8 text-[#D0FEF5] md:px-6 lg:px-8">
+    <main className="min-h-screen bg-transparent px-4 py-5 text-[#D0FEF5] sm:py-8 md:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
-        <nav className="flex items-center justify-between gap-4 border-b border-[#D0FEF5]/18 pb-6">
+        <nav className="flex items-center justify-between gap-2 border-b border-[#D0FEF5]/18 pb-5 sm:gap-4 sm:pb-6">
           <Link href="/" className="inline-flex min-h-11 items-center gap-2 text-sm font-black text-[#D0FEF5] transition hover:text-[#6FB4EB]">
             <ArrowLeft size={17} /> Tutela
           </Link>
-          <Link href="/matches" className="bg-[#6FB4EB] px-5 py-3 text-sm font-black text-[#020B12] transition hover:bg-[#D0FEF5]">
+          <Link href="/matches" className="bg-[#6FB4EB] px-3 py-3 text-center text-xs font-black leading-4 text-[#020B12] transition hover:bg-[#D0FEF5] sm:px-5 sm:text-sm">
             Open Tutela Markets
           </Link>
         </nav>
 
-        <header className="border-b border-[#D0FEF5]/18 py-16 md:py-24">
+        <header className="border-b border-[#D0FEF5]/18 py-12 sm:py-16 md:py-24">
           <p className="text-xs font-black uppercase tracking-[0.18em] text-[#6FB4EB]">Tutela documentation</p>
-          <h1 className="mt-5 max-w-4xl text-4xl font-black leading-tight text-white sm:text-5xl md:text-6xl">Tutela is a 2-in-1 football prediction platform.</h1>
+          <h1 className="mt-5 max-w-4xl text-3xl font-black leading-tight text-white sm:text-5xl md:text-6xl">Tutela is a 2-in-1 football prediction platform.</h1>
           <p className="mt-6 max-w-3xl text-base font-semibold leading-7 text-[#D0FEF5]/72 md:text-lg">
             The consumer experience and the reusable settlement infrastructure are delivered together: Tutela Markets gives fans the product they use, while Tutela Protocol provides the trusted engine underneath it.
           </p>
